@@ -67,14 +67,20 @@ export function Jar({ onPull, idle }: { onPull: () => void; idle: boolean }) {
       {/* contact shadow that reacts to the drop */}
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-3 mx-auto h-3 rounded-[100%] bg-ink/15 blur-[6px]"
-        initial={{ width: "18%", opacity: 0 }}
+        className="pointer-events-none absolute inset-x-0 -bottom-3 mx-auto h-3 rounded-[100%] bg-ink/15 blur-[7px]"
+        initial={{ width: "14%", opacity: 0 }}
         animate={{
-          width: ["18%", "72%", "48%", "66%", "58%", "64%"],
-          opacity: [0, 1, 0.75, 0.95, 0.85, 0.9],
+          width: ["14%", "84%", "40%", "74%", "52%", "70%", "62%", "68%"],
+          opacity: [0, 1, 0.6, 0.92, 0.74, 0.9, 0.84, 0.88],
         }}
-        transition={{ duration: 1.6, delay: 0.68, ease: "easeOut" }}
+        transition={{
+          duration: 1.7,
+          delay: 0.72,
+          times: [0, 0.05, 0.18, 0.36, 0.53, 0.7, 0.86, 1],
+          ease: "easeOut",
+        }}
       />
+
     </motion.button>
   );
 }
