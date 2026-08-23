@@ -1,6 +1,12 @@
-import note1 from "@/assets/note-1.png";
-import note2 from "@/assets/note-2.png";
-import note3 from "@/assets/note-3.png";
+import noteRoslan from "@/assets/note-roslan.png.asset.json";
+import noteLady from "@/assets/note-lady.png.asset.json";
+import noteKappi from "@/assets/note-kappi.png.asset.json";
+import videoRoslan from "@/assets/video-roslan.mp4.asset.json";
+import videoLady from "@/assets/video-lady.mp4.asset.json";
+import videoKappi from "@/assets/video-kappi.mp4.asset.json";
+import posterRoslan from "@/assets/poster-roslan.jpg.asset.json";
+import posterLady from "@/assets/poster-lady.jpg.asset.json";
+import posterKappi from "@/assets/poster-kappi.jpg.asset.json";
 
 export type Note = {
   id: string;
@@ -8,6 +14,8 @@ export type Note = {
   image: string;
   /** Typed version of the handwriting, for accessibility + search. */
   transcript: string;
+  /** English reading, when the note is written in another language. */
+  translation?: string;
   /** First name (or blank to stay anonymous). */
   name?: string;
   place?: string;
@@ -21,20 +29,28 @@ export const TOTAL_GOAL = 100;
 export const notes: Note[] = [
   {
     id: "001",
-    image: note1,
-    transcript: "Be gentle with yourself, you're doing better than you think",
-    name: "Placeholder",
+    image: noteRoslan.url,
+    transcript: "Cari kekuatan diri, dan usahakan kekuatan itu hingga berjaya.",
+    translation: "Find your own strength, and work at that strength until you succeed.",
+    name: "Uncle Roslan",
+    videoUrl: videoRoslan.url,
+    posterUrl: posterRoslan.url,
   },
   {
     id: "002",
-    image: note2,
-    transcript: "Call your mother today. Not tomorrow.",
-    name: "Placeholder",
+    image: noteLady.url,
+    transcript: "Tetap berlaku jujur dan semangat untuk majukan diri anda.",
+    translation: "Stay honest, and keep the fire to better yourself.",
+    name: "The Lady Picker",
+    videoUrl: videoLady.url,
+    posterUrl: posterLady.url,
   },
   {
     id: "003",
-    image: note3,
-    transcript: "The world is not as scary as the news says. Go outside.",
-    name: "Placeholder",
+    image: noteKappi.url,
+    transcript: "Don't worry, drink coffee.",
+    name: "Kappidays",
+    videoUrl: videoKappi.url,
+    posterUrl: posterKappi.url,
   },
 ];

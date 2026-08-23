@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
 import { PaperPlanes } from "@/components/PaperPlanes";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes, TOTAL_GOAL } from "@/data/notes";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,11 +49,13 @@ function Index() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
-      <PaperPlanes />
+      <PaperPlanes count={notes.length} />
+      <BackgroundMusic />
       <div className="relative z-10 flex w-full flex-col items-center">
       <AnimatePresence mode="wait">
         {note ? (
-          <NoteReveal key={note.id} note={note} onNext={draw} onBack={() => setCurrent(null)} />
+          <NoteReveal key={note.id} note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
+
         ) : (
           <motion.div
             key="jar"
@@ -75,7 +79,7 @@ function Index() {
               </h1>
               <p className="mt-4 max-w-md text-pretty text-base text-muted-foreground">
                 I am asking a hundred strangers to write one message to the world in my notebook,
-                and to say it out loud. Tap the jar and one of them lands in your hands.
+                and to say it out loud. Tap the jar once and the notes play themselves, one stranger after another.
               </p>
               <p className="mt-8 font-display text-2xl text-foreground">
                 <span className="text-accent-foreground">{notes.length}</span>
