@@ -17,7 +17,7 @@ export function NoteReveal({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     duckMusic(true);
@@ -26,18 +26,16 @@ export function NoteReveal({
 
   useEffect(() => {
     if (!autoplay) return;
-    const el = videoRef.current;
+    const el = audioRef.current;
     if (el) {
       el.currentTime = 0;
-      el.play().catch(() => {
-        el.muted = true;
-        el.play().catch(() => undefined);
-      });
+      el.play().catch(() => undefined);
       return;
     }
     const t = setTimeout(onNext, READ_MS);
     return () => clearTimeout(t);
   }, [note.id, autoplay, onNext]);
+
 
   return (
     <motion.div
