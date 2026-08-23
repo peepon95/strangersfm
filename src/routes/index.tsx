@@ -1,24 +1,101 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useRef, useState } from "react";
+import { Jar } from "@/components/Jar";
+import { NoteReveal } from "@/components/NoteReveal";
+import { notes, TOTAL_GOAL } from "@/data/notes";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "100 Strangers · A jar of handwritten notes" },
+      {
+        name: "description",
+        content:
+          "One hundred strangers, one notebook. Pull a note from the jar and read a handwritten message to the world — in their own hand, in their own voice.",
+      },
+      { property: "og:title", content: "100 Strangers · A jar of handwritten notes" },
+      {
+        property: "og:description",
+        content:
+          "Pull a note from the jar and read a handwritten message to the world, in a stranger's own hand and voice.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const [current, setCurrent] = useState<number | null>(null);
+  const bag = useRef<number[]>([]);
+
+  const draw = useCallback(() => {
+    if (bag.current.length === 0) {
+      bag.current = notes
+        .map((_, i) => i)
+        .sort(() => Math.random() - 0.5)
+        .filter((i) => i !== current);
+      if (bag.current.length === 0) bag.current = notes.map((_, i) => i);
+    }
+    setCurrent(bag.current.pop() ?? 0);
+  }, [current]);
+
+  const note = current === null ? null : notes[current];
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
+      <AnimatePresence mode="wait">
+        {note ? (
+          <NoteReveal key={note.id} note={note} onNext={draw} onBack={() => setCurrent(null)} />
+        ) : (
+          <motion.div
+            key="jar"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center"
+          >
+            <Jar onPull={draw} idle />
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.7 }}
+              className="mt-10 flex flex-col items-center text-center"
+            >
+              <h1 className="text-balance text-4xl leading-tight sm:text-5xl">
+                One hundred strangers,
+                <br />
+                one notebook.
+              </h1>
+              <p className="mt-4 max-w-md text-pretty text-base text-muted-foreground">
+                I'm asking a hundred strangers to write one message to the world in my notebook,
+                and to say it out loud. Tap the jar to pull one out.
+              </p>
+              <p className="mt-8 font-display text-2xl text-foreground">
+                <span className="text-accent-foreground">{notes.length}</span>
+                <span className="text-muted-foreground"> of {TOTAL_GOAL} collected</span>
+              </p>
+              <div className="mt-3 h-1 w-56 overflow-hidden rounded-full bg-border">
+                <motion.div
+                  className="h-full rounded-full bg-ink"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(notes.length / TOTAL_GOAL) * 100}%` }}
+                  transition={{ delay: 1.2, duration: 1 }}
+                />
+              </div>
+              <Link
+                to="/notes"
+                className="mt-8 text-sm underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
+              >
+                See every note so far
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 }
