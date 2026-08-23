@@ -74,7 +74,7 @@ export function NoteReveal({
             playsInline
             preload="metadata"
             onEnded={autoplay ? onNext : undefined}
-            className="aspect-[9/16] w-full bg-ink/90 object-cover"
+            className="max-h-[70vh] w-full bg-ink/90 object-contain"
           />
           <p className="px-4 py-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
             {autoplay ? "Playing, the next note follows on its own" : "Hear them say it"}

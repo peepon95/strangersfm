@@ -79,7 +79,7 @@ function Index() {
               </h1>
               <p className="mt-4 max-w-md text-pretty text-base text-muted-foreground">
                 I am asking a hundred strangers to write one message to the world in my notebook,
-                and to say it out loud. Tap the jar and one of them lands in your hands.
+                and to say it out loud. Tap the jar once and the notes play themselves, one stranger after another.
               </p>
               <p className="mt-8 font-display text-2xl text-foreground">
                 <span className="text-accent-foreground">{notes.length}</span>
