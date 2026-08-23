@@ -53,8 +53,8 @@ function NotesWall() {
             />
             <figcaption className="mt-3 text-center text-xs uppercase tracking-[0.18em] text-muted-foreground">
               no. {note.id}
-              {note.name ? ` · ${note.name}` : ""}
             </figcaption>
+
           </figure>
         ))}
       </div>
