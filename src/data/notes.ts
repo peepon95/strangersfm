@@ -1,12 +1,9 @@
 import noteRoslan from "@/assets/note-roslan.png.asset.json";
 import noteLady from "@/assets/note-lady.png.asset.json";
 import noteKappi from "@/assets/note-kappi.png.asset.json";
-import videoRoslan from "@/assets/video-roslan.mp4.asset.json";
-import videoLady from "@/assets/video-lady.mp4.asset.json";
-import videoKappi from "@/assets/video-kappi.mp4.asset.json";
-import posterRoslan from "@/assets/poster-roslan.jpg.asset.json";
-import posterLady from "@/assets/poster-lady.jpg.asset.json";
-import posterKappi from "@/assets/poster-kappi.jpg.asset.json";
+import audioRoslan from "@/assets/audio-roslan.mp3.asset.json";
+import audioLady from "@/assets/audio-lady.mp3.asset.json";
+import audioKappi from "@/assets/audio-kappi.mp3.asset.json";
 
 export type Note = {
   id: string;
@@ -19,9 +16,8 @@ export type Note = {
   /** First name (or blank to stay anonymous). */
   name?: string;
   place?: string;
-  /** Video of them saying the words. */
-  videoUrl?: string;
-  posterUrl?: string;
+  /** Their voice saying the words. */
+  audioUrl?: string;
 };
 
 export const TOTAL_GOAL = 100;
@@ -33,8 +29,7 @@ export const notes: Note[] = [
     transcript: "Cari kekuatan diri, dan usahakan kekuatan itu hingga berjaya.",
     translation: "Find your own strength, and work at that strength until you succeed.",
     name: "Uncle Roslan",
-    videoUrl: videoRoslan.url,
-    posterUrl: posterRoslan.url,
+    audioUrl: audioRoslan.url,
   },
   {
     id: "002",
@@ -42,15 +37,13 @@ export const notes: Note[] = [
     transcript: "Tetap berlaku jujur dan semangat untuk majukan diri anda.",
     translation: "Stay honest, and keep the fire to better yourself.",
     name: "The Lady Picker",
-    videoUrl: videoLady.url,
-    posterUrl: posterLady.url,
+    audioUrl: audioLady.url,
   },
   {
     id: "003",
     image: noteKappi.url,
     transcript: "Don't worry, drink coffee.",
     name: "Kappidays",
-    videoUrl: videoKappi.url,
-    posterUrl: posterKappi.url,
+    audioUrl: audioKappi.url,
   },
 ];

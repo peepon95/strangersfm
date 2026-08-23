@@ -17,7 +17,7 @@ export function NoteReveal({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     duckMusic(true);
@@ -26,18 +26,16 @@ export function NoteReveal({
 
   useEffect(() => {
     if (!autoplay) return;
-    const el = videoRef.current;
+    const el = audioRef.current;
     if (el) {
       el.currentTime = 0;
-      el.play().catch(() => {
-        el.muted = true;
-        el.play().catch(() => undefined);
-      });
+      el.play().catch(() => undefined);
       return;
     }
     const t = setTimeout(onNext, READ_MS);
     return () => clearTimeout(t);
   }, [note.id, autoplay, onNext]);
+
 
   return (
     <motion.div
@@ -64,23 +62,22 @@ export function NoteReveal({
         </p>
       ) : null}
 
-      {note.videoUrl ? (
-        <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-[0_14px_30px_var(--paper-shadow)]">
-          <video
-            ref={videoRef}
-            src={note.videoUrl}
-            poster={note.posterUrl}
+      {note.audioUrl ? (
+        <div className="w-full max-w-sm rounded-2xl border border-border bg-card px-4 py-4 shadow-[0_14px_30px_var(--paper-shadow)]">
+          <audio
+            ref={audioRef}
+            src={note.audioUrl}
             controls
-            playsInline
             preload="metadata"
             onEnded={autoplay ? onNext : undefined}
-            className="max-h-[70vh] w-full bg-ink/90 object-contain"
+            className="w-full"
           />
-          <p className="px-4 py-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            {autoplay ? "Playing, the next note follows on its own" : "Hear them say it"}
+          <p className="pt-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {autoplay ? "Their voice, the next note follows on its own" : "Hear them say it"}
           </p>
         </div>
       ) : null}
+
 
       <p className="max-w-md text-center text-sm text-muted-foreground">
         {note.name ? `${note.name}` : "Anonymous"}
