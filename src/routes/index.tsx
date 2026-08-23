@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
+import { PaperPlanes } from "@/components/PaperPlanes";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes, TOTAL_GOAL } from "@/data/notes";
 
