@@ -5,6 +5,7 @@ import { Jar } from "@/components/Jar";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
+import { NotePile } from "@/components/NotePile";
 import { notes, TOTAL_GOAL } from "@/data/notes";
 
 
@@ -107,6 +108,8 @@ function Index() {
                   See every note so far
                 </Link>
               </nav>
+
+              <NotePile notes={notes} onSelect={(i) => setCurrent(i)} />
             </motion.div>
           </motion.div>
         )}
