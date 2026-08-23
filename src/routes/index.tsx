@@ -49,11 +49,13 @@ function Index() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
-      <PaperPlanes />
+      <PaperPlanes count={notes.length} />
+      <BackgroundMusic />
       <div className="relative z-10 flex w-full flex-col items-center">
       <AnimatePresence mode="wait">
         {note ? (
-          <NoteReveal key={note.id} note={note} onNext={draw} onBack={() => setCurrent(null)} />
+          <NoteReveal key={note.id} note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
+
         ) : (
           <motion.div
             key="jar"
