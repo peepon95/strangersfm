@@ -8,16 +8,26 @@ export function Jar({ onPull, idle }: { onPull: () => void; idle: boolean }) {
       onClick={onPull}
       aria-label="Pull a note out of the jar"
       className="group relative block cursor-pointer select-none focus-visible:outline-none"
-      initial={{ y: "-115vh", rotate: -18 }}
+      initial={{ y: "-125vh", rotate: -14 }}
       animate={{
-        y: [null, 0, -90, 0, -28, 0, -8, 0],
-        rotate: [null, 6, 2, -3, 1, -1, 0, 0],
+        y: [null, 0, -132, 0, -46, 0, -14, 0, -4, 0],
+        rotate: [null, 5, 1.5, -2.5, 1, -1, 0.4, 0, 0, 0],
       }}
       transition={{
-        duration: 2.1,
-        delay: 0.2,
-        times: [0, 0.34, 0.5, 0.63, 0.75, 0.85, 0.93, 1],
-        ease: ["easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn"],
+        duration: 2.4,
+        delay: 0.15,
+        times: [0, 0.26, 0.42, 0.56, 0.67, 0.76, 0.84, 0.9, 0.95, 1],
+        ease: [
+          "easeIn",
+          "easeOut",
+          "easeIn",
+          "easeOut",
+          "easeIn",
+          "easeOut",
+          "easeIn",
+          "easeOut",
+          "easeIn",
+        ],
       }}
       whileHover={{ rotate: -2, y: -6 }}
       whileTap={{ scale: 0.96, rotate: 3 }}
@@ -26,23 +36,24 @@ export function Jar({ onPull, idle }: { onPull: () => void; idle: boolean }) {
       {/* squash & stretch on landing */}
       <motion.span
         className="block origin-bottom"
-        initial={{ scaleY: 1.12, scaleX: 0.92 }}
+        initial={{ scaleY: 1.16, scaleX: 0.89 }}
         animate={{
-          scaleY: [1.12, 0.82, 1.06, 0.93, 1.02, 0.98, 1],
-          scaleX: [0.92, 1.16, 0.96, 1.05, 0.99, 1.01, 1],
+          scaleY: [1.16, 0.74, 1.09, 0.9, 1.04, 0.97, 1.01, 1],
+          scaleX: [0.89, 1.24, 0.95, 1.07, 0.98, 1.02, 0.99, 1],
         }}
         transition={{
-          duration: 1.5,
-          delay: 0.74,
-          times: [0, 0.06, 0.2, 0.42, 0.6, 0.8, 1],
+          duration: 1.75,
+          delay: 0.77,
+          times: [0, 0.05, 0.18, 0.36, 0.53, 0.7, 0.86, 1],
           ease: "easeOut",
         }}
       >
         <motion.span
           className="block"
           animate={idle ? { rotate: [0, -1.6, 0, 1.6, 0] } : { rotate: 0 }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2.4 }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2.6 }}
         >
+
           <img
             src={jar}
             alt="A hand-drawn jar full of folded handwritten notes"
@@ -56,14 +67,20 @@ export function Jar({ onPull, idle }: { onPull: () => void; idle: boolean }) {
       {/* contact shadow that reacts to the drop */}
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-3 mx-auto h-3 rounded-[100%] bg-ink/15 blur-[6px]"
-        initial={{ width: "18%", opacity: 0 }}
+        className="pointer-events-none absolute inset-x-0 -bottom-3 mx-auto h-3 rounded-[100%] bg-ink/15 blur-[7px]"
+        initial={{ width: "14%", opacity: 0 }}
         animate={{
-          width: ["18%", "72%", "48%", "66%", "58%", "64%"],
-          opacity: [0, 1, 0.75, 0.95, 0.85, 0.9],
+          width: ["14%", "84%", "40%", "74%", "52%", "70%", "62%", "68%"],
+          opacity: [0, 1, 0.6, 0.92, 0.74, 0.9, 0.84, 0.88],
         }}
-        transition={{ duration: 1.6, delay: 0.68, ease: "easeOut" }}
+        transition={{
+          duration: 1.7,
+          delay: 0.72,
+          times: [0, 0.05, 0.18, 0.36, 0.53, 0.7, 0.86, 1],
+          ease: "easeOut",
+        }}
       />
+
     </motion.button>
   );
 }

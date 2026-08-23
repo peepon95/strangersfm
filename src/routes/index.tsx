@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
+import { PaperPlanes } from "@/components/PaperPlanes";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes, TOTAL_GOAL } from "@/data/notes";
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "One hundred strangers, one notebook. Pull a note from the jar and read a handwritten message to the world — in their own hand, in their own voice.",
+          "One hundred strangers, one notebook. Pull a note from the jar and read a handwritten message to the world, in their own hand, in their own voice.",
       },
       { property: "og:title", content: "100 Strangers · A jar of handwritten notes" },
       {
@@ -46,6 +47,8 @@ function Index() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
+      <PaperPlanes />
+      <div className="relative z-10 flex w-full flex-col items-center">
       <AnimatePresence mode="wait">
         {note ? (
           <NoteReveal key={note.id} note={note} onNext={draw} onBack={() => setCurrent(null)} />
@@ -71,8 +74,8 @@ function Index() {
                 one notebook.
               </h1>
               <p className="mt-4 max-w-md text-pretty text-base text-muted-foreground">
-                I'm asking a hundred strangers to write one message to the world in my notebook,
-                and to say it out loud. Tap the jar to pull one out.
+                I am asking a hundred strangers to write one message to the world in my notebook,
+                and to say it out loud. Tap the jar and one of them lands in your hands.
               </p>
               <p className="mt-8 font-display text-2xl text-foreground">
                 <span className="text-accent-foreground">{notes.length}</span>
@@ -86,16 +89,26 @@ function Index() {
                   transition={{ delay: 1.2, duration: 1 }}
                 />
               </div>
-              <Link
-                to="/notes"
-                className="mt-8 text-sm underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
-              >
-                See every note so far
-              </Link>
+              <nav className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm">
+                <Link
+                  to="/about"
+                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
+                >
+                  Why I am doing this
+                </Link>
+                <Link
+                  to="/notes"
+                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
+                >
+                  See every note so far
+                </Link>
+              </nav>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </main>
+
   );
 }

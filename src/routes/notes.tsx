@@ -8,7 +8,7 @@ export const Route = createFileRoute("/notes")({
       {
         name: "description",
         content:
-          "The full wall of handwritten notes collected so far — advice, hope and one message to the world from strangers.",
+          "The full wall of handwritten notes collected so far: advice, hope and one message to the world, written by strangers.",
       },
       { property: "og:title", content: "Every note so far · 100 Strangers" },
       {
