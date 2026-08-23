@@ -1,15 +1,44 @@
 import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import type { Note } from "@/data/notes";
+import { duckMusic } from "@/components/BackgroundMusic";
+
+/** How long a note without a video stays on screen before the next one. */
+const READ_MS = 9000;
 
 export function NoteReveal({
   note,
+  autoplay,
   onNext,
   onBack,
 }: {
   note: Note;
+  autoplay: boolean;
   onNext: () => void;
   onBack: () => void;
 }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    duckMusic(true);
+    return () => duckMusic(false);
+  }, [note.id]);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    const el = videoRef.current;
+    if (el) {
+      el.currentTime = 0;
+      el.play().catch(() => {
+        el.muted = true;
+        el.play().catch(() => undefined);
+      });
+      return;
+    }
+    const t = setTimeout(onNext, READ_MS);
+    return () => clearTimeout(t);
+  }, [note.id, autoplay, onNext]);
+
   return (
     <motion.div
       key={note.id}
@@ -20,7 +49,6 @@ export function NoteReveal({
       className="flex w-full max-w-2xl flex-col items-center gap-8"
     >
       <figure className="relative">
-
         <img
           src={note.image}
           alt={note.transcript}
@@ -30,18 +58,26 @@ export function NoteReveal({
         <figcaption className="sr-only">{note.transcript}</figcaption>
       </figure>
 
+      {note.translation ? (
+        <p className="-mt-4 max-w-md text-center text-sm italic text-muted-foreground">
+          {note.translation}
+        </p>
+      ) : null}
+
       {note.videoUrl ? (
         <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-[0_14px_30px_var(--paper-shadow)]">
           <video
+            ref={videoRef}
             src={note.videoUrl}
             poster={note.posterUrl}
             controls
             playsInline
-            preload="none"
+            preload="metadata"
+            onEnded={autoplay ? onNext : undefined}
             className="aspect-[9/16] w-full bg-ink/90 object-cover"
           />
           <p className="px-4 py-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Hear them say it
+            {autoplay ? "Playing, the next note follows on its own" : "Hear them say it"}
           </p>
         </div>
       ) : null}
@@ -57,7 +93,7 @@ export function NoteReveal({
           onClick={onNext}
           className="rounded-full bg-ink px-7 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
         >
-          Pull another
+          Skip to the next note
         </button>
         <button
           type="button"
