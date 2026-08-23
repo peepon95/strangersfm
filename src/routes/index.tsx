@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
 import { PaperPlanes } from "@/components/PaperPlanes";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes, TOTAL_GOAL } from "@/data/notes";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
