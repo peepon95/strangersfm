@@ -28,7 +28,6 @@ export const notes: Note[] = [
     image: noteRoslan.url,
     transcript: "Cari kekuatan diri, dan usahakan kekuatan itu hingga berjaya.",
     translation: "Find your own strength, and work at that strength until you succeed.",
-    name: "Uncle Roslan",
     audioUrl: audioRoslan.url,
   },
   {
@@ -36,14 +35,12 @@ export const notes: Note[] = [
     image: noteLady.url,
     transcript: "Tetap berlaku jujur dan semangat untuk majukan diri anda.",
     translation: "Stay honest, and keep the fire to better yourself.",
-    name: "The Lady Picker",
     audioUrl: audioLady.url,
   },
   {
     id: "003",
     image: noteKappi.url,
     transcript: "Don't worry, drink coffee.",
-    name: "Kappidays",
     audioUrl: audioKappi.url,
   },
 ];

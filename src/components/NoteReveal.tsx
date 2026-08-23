@@ -80,9 +80,9 @@ export function NoteReveal({
 
 
       <p className="max-w-md text-center text-sm text-muted-foreground">
-        {note.name ? `${note.name}` : "Anonymous"}
-        {note.place ? ` · ${note.place}` : ""} · stranger no. {note.id}
+        a stranger, no. {note.id}
       </p>
+
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <button
