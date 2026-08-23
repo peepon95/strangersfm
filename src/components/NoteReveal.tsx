@@ -20,10 +20,7 @@ export function NoteReveal({
       className="flex w-full max-w-2xl flex-col items-center gap-8"
     >
       <figure className="relative">
-        <span
-          aria-hidden
-          className="absolute -top-4 left-1/2 h-7 w-24 -translate-x-1/2 -rotate-2 rounded-[2px] bg-tape shadow-sm"
-        />
+
         <img
           src={note.image}
           alt={note.transcript}
