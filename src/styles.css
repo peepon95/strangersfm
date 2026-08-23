@@ -153,3 +153,23 @@
     color: var(--color-foreground);
   }
 }
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-image: radial-gradient(
+      circle at 50% 0%,
+      oklch(0.99 0.012 88) 0%,
+      var(--paper) 60%
+    );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
