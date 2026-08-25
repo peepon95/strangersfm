@@ -19,11 +19,11 @@ type Row = {
   drive_folder_id: string | null;
 };
 
-/** "1:33" or "93" both mean ninety three seconds. */
+/** "1:33", "1.33" and "93" all mean one minute thirty three. */
 function parseTime(value: string): number | null {
   const clean = value.trim();
   if (!clean) return null;
-  const parts = clean.split(":").map((p) => Number(p));
+  const parts = clean.split(/[:.]/).map((p) => Number(p));
   if (parts.some((p) => Number.isNaN(p))) return null;
   return parts.reduce((total, p) => total * 60 + p, 0);
 }
