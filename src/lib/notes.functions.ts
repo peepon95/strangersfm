@@ -22,10 +22,10 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
 
     return (data ?? []).map((row) => {
       const extractedHandwriting: Record<number, string> = {
-        4: "/handwriting/note-004.jpg",
-        5: "/handwriting/note-005.jpg",
-        7: "/handwriting/note-007.jpg",
-        9: "/handwriting/note-009.jpg",
+        4: "/handwriting/note-004.png",
+        5: "/handwriting/note-005.png",
+        7: "/handwriting/note-007.png",
+        9: "/handwriting/note-009.png",
       };
 
       return {
