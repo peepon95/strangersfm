@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
-import { Jar } from "@/components/Jar";
 import { Envelope } from "@/components/Envelope";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
@@ -18,13 +17,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "One hundred strangers, one notebook. Pull a note from the jar and read a handwritten message to the world, in their own hand, in their own voice.",
+          "100 strangers, one notebook. Open a letter and read a handwritten message to the world, in their own hand, in their own voice.",
       },
       { property: "og:title", content: "stranger fm · a jar of handwritten notes" },
       {
         property: "og:description",
         content:
-          "Pull a note from the jar and read a handwritten message to the world, in a stranger's own hand and voice.",
+          "Open a letter and read a handwritten message to the world, in a stranger's own hand and voice.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -33,7 +32,7 @@ export const Route = createFileRoute("/")({
   loader: () => listPublishedNotes(),
   errorComponent: () => (
     <main className="flex min-h-screen items-center justify-center px-6 text-center">
-      <p className="text-muted-foreground">The jar is resting, please refresh in a moment.</p>
+      <p className="text-muted-foreground">The notes are resting, please refresh in a moment.</p>
     </main>
   ),
   notFoundComponent: () => (
