@@ -72,6 +72,7 @@ function Admin() {
   const [busy, setBusy] = useState(false);
 
   const [syncing, setSyncing] = useState(false);
+  const [filter, setFilter] = useState<"todo" | "published" | "all">("todo");
 
   async function load() {
     const { data } = await supabase
@@ -126,6 +127,11 @@ function Admin() {
 
   const nextNumber =
     Math.max(builtInNotes.length, ...rows.map((r) => r.number), 0) + 1;
+
+  /** A note still needs you if it is hidden or has nothing typed out yet. */
+  const todo = rows.filter((r) => !r.published || !r.transcript?.trim());
+  const done = rows.filter((r) => r.published && !!r.transcript?.trim());
+  const visible = filter === "todo" ? todo : filter === "published" ? done : rows;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -260,14 +266,40 @@ function Admin() {
       </section>
 
       <section className="mt-14">
-        <h2 className="text-2xl">All notes</h2>
-        {rows.length === 0 ? (
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 className="text-2xl">All notes</h2>
+          <div className="flex gap-3 text-xs">
+            {(
+              [
+                ["todo", `Needs work (${todo.length})`],
+                ["published", `Done (${done.length})`],
+                ["all", `All (${rows.length})`],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setFilter(key)}
+                className={`rounded-full border px-3 py-1.5 transition-colors ${
+                  filter === key
+                    ? "border-ink bg-ink text-paper"
+                    : "border-border hover:bg-accent"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {visible.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
-            Nothing here yet, the first three strangers are built into the site.
+            {rows.length === 0
+              ? "Nothing here yet, the first three strangers are built into the site."
+              : "Nothing in this list, everything here is already taken care of."}
           </p>
         ) : (
           <ul className="mt-6 flex flex-col gap-5">
-            {rows.map((row) => (
+            {visible.map((row) => (
               <li key={row.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-start gap-4">
                   <img
