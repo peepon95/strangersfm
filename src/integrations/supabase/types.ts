@@ -17,34 +17,52 @@ export type Database = {
       stranger_notes: {
         Row: {
           audio_url: string | null
+          clip_end: number | null
+          clip_start: number | null
           created_at: string
           created_by: string | null
+          drive_folder_id: string | null
+          drive_image_file_id: string | null
+          drive_media_file_id: string | null
           id: string
           image_url: string
           number: number
           published: boolean
+          sort_order: number | null
           transcript: string
           translation: string | null
         }
         Insert: {
           audio_url?: string | null
+          clip_end?: number | null
+          clip_start?: number | null
           created_at?: string
           created_by?: string | null
+          drive_folder_id?: string | null
+          drive_image_file_id?: string | null
+          drive_media_file_id?: string | null
           id?: string
           image_url: string
           number: number
           published?: boolean
+          sort_order?: number | null
           transcript?: string
           translation?: string | null
         }
         Update: {
           audio_url?: string | null
+          clip_end?: number | null
+          clip_start?: number | null
           created_at?: string
           created_by?: string | null
+          drive_folder_id?: string | null
+          drive_image_file_id?: string | null
+          drive_media_file_id?: string | null
           id?: string
           image_url?: string
           number?: number
           published?: boolean
+          sort_order?: number | null
           transcript?: string
           translation?: string | null
         }
