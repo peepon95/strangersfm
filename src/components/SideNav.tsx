@@ -26,11 +26,9 @@ export function SideNav() {
       </button>
 
       {/* Desktop menu bar — anchored bottom-left */}
-      <nav className="fixed bottom-6 left-6 z-50 hidden flex-col gap-2 rounded-2xl bg-background/80 p-5 shadow-sm backdrop-blur md:flex">
+      <nav className="fixed bottom-6 left-6 z-50 hidden flex-col gap-2 rounded-2xl border border-border bg-background/80 p-5 shadow-sm backdrop-blur md:flex">
         <Link to="/" className="font-display text-xl leading-none">
-          stranger
-          <br />
-          fm
+          stranger fm
         </Link>
         <div className="mt-4 flex flex-col gap-2">
           {navItems.map((item) => (
