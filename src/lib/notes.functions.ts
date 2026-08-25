@@ -2,10 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { Note } from "@/data/notes";
-import note004 from "@/assets/note-004-handwriting.jpg.asset.json";
-import note005 from "@/assets/note-005-handwriting.jpg.asset.json";
-import note007 from "@/assets/note-007-handwriting.jpg.asset.json";
-import note009 from "@/assets/note-009-handwriting.jpg.asset.json";
 
 /** Notes uploaded through the admin page, readable by everyone. */
 export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
@@ -26,10 +22,10 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
 
     return (data ?? []).map((row) => {
       const extractedHandwriting: Record<number, string> = {
-        4: note004.url,
-        5: note005.url,
-        7: note007.url,
-        9: note009.url,
+        4: "/handwriting/note-004.jpg",
+        5: "/handwriting/note-005.jpg",
+        7: "/handwriting/note-007.jpg",
+        9: "/handwriting/note-009.jpg",
       };
 
       return {
