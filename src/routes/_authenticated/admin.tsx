@@ -243,50 +243,103 @@ function Admin() {
         {status ? <p className="text-sm text-muted-foreground">{status}</p> : null}
       </form>
 
+      <section className="mt-14 rounded-2xl border border-border bg-card p-5">
+        <h2 className="text-2xl">From your Google Drive</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Make a subfolder per person in your <em>100 Strangers</em> folder, drop the photo and
+          the video inside, and it lands here. This also runs by itself every 15 minutes.
+        </p>
+        <button
+          type="button"
+          onClick={syncDrive}
+          disabled={syncing}
+          className="mt-4 rounded-full border border-border px-6 py-2.5 text-sm transition-colors hover:bg-accent disabled:opacity-60"
+        >
+          {syncing ? "Syncing" : "Sync now"}
+        </button>
+      </section>
+
       <section className="mt-14">
-        <h2 className="text-2xl">Uploaded notes</h2>
+        <h2 className="text-2xl">All notes</h2>
         {rows.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
-            Nothing uploaded yet, the first three strangers are built into the site.
+            Nothing here yet, the first three strangers are built into the site.
           </p>
         ) : (
-          <ul className="mt-6 flex flex-col gap-4">
+          <ul className="mt-6 flex flex-col gap-5">
             {rows.map((row) => (
-              <li
-                key={row.id}
-                className="flex items-center gap-4 rounded-xl border border-border bg-card p-3"
-              >
-                <img
-                  src={row.image_url}
-                  alt={row.transcript || `Note ${row.number}`}
-                  className="h-14 w-20 object-contain"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm">{row.transcript || "no transcript"}</p>
-                  <p className="text-xs text-muted-foreground">
-                    no. {String(row.number).padStart(3, "0")}
-                    {row.published ? "" : " · hidden"}
-                  </p>
+              <li key={row.id} className="rounded-xl border border-border bg-card p-4">
+                <div className="flex items-start gap-4">
+                  <img
+                    src={row.image_url}
+                    alt={row.transcript || `Note ${row.number}`}
+                    className="h-16 w-24 shrink-0 object-contain"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground">
+                      no. {String(row.number).padStart(3, "0")}
+                      {row.published ? "" : " · hidden"}
+                      {row.drive_folder_id ? " · from Drive" : ""}
+                    </p>
+                    <textarea
+                      defaultValue={row.transcript ?? ""}
+                      rows={2}
+                      placeholder="what the note says"
+                      onBlur={(e) => patch(row, { transcript: e.target.value })}
+                      className="mt-2 w-full rounded-lg border border-border bg-paper px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ink"
+                    />
+                    <textarea
+                      defaultValue={row.translation ?? ""}
+                      rows={1}
+                      placeholder="english reading (optional)"
+                      onBlur={(e) => patch(row, { translation: e.target.value || null })}
+                      className="mt-2 w-full rounded-lg border border-border bg-paper px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ink"
+                    />
+                    {row.audio_url ? (
+                      <>
+                        <audio src={row.audio_url} controls preload="metadata" className="mt-3 w-full" />
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                          play only from
+                          <input
+                            defaultValue={formatTime(row.clip_start)}
+                            placeholder="0:00"
+                            onBlur={(e) => patch(row, { clip_start: parseTime(e.target.value) })}
+                            className="w-20 rounded-lg border border-border bg-paper px-2 py-1 text-center outline-none focus:ring-2 focus:ring-ink"
+                          />
+                          to
+                          <input
+                            defaultValue={formatTime(row.clip_end)}
+                            placeholder="end"
+                            onBlur={(e) => patch(row, { clip_end: parseTime(e.target.value) })}
+                            className="w-20 rounded-lg border border-border bg-paper px-2 py-1 text-center outline-none focus:ring-2 focus:ring-ink"
+                          />
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => togglePublished(row)}
-                  className="text-xs underline decoration-border underline-offset-4"
-                >
-                  {row.published ? "Hide" : "Show"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => remove(row)}
-                  className="text-xs underline decoration-border underline-offset-4 text-muted-foreground"
-                >
-                  Delete
-                </button>
+                <div className="mt-3 flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => togglePublished(row)}
+                    className="text-xs underline decoration-border underline-offset-4"
+                  >
+                    {row.published ? "Hide" : "Show"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => remove(row)}
+                    className="text-xs underline decoration-border underline-offset-4 text-muted-foreground"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </section>
+
     </main>
   );
 }
