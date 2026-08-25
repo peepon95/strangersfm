@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useState } from "react";
-import envelope from "@/assets/envelope.png.asset.json";
+import envelope from "@/assets/envelope-cut.png.asset.json";
 
 /**
  * The hand-drawn air mail envelope. Tap it and a little letter
@@ -28,15 +28,15 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
       whileTap={{ scale: 0.97 }}
     >
       <span className="relative block">
-        {/* the little letter that pops out of the envelope */}
+        {/* the little letter that pops out from inside the envelope */}
         <motion.span
           aria-hidden
-          className="absolute inset-x-[16%] top-[6%] bottom-[30%] z-20 rounded-sm bg-card shadow-[0_10px_24px_-10px_hsl(var(--ink)/0.4)] ring-1 ring-border/70"
+          className="absolute inset-x-[18%] top-[9%] bottom-[16%] z-0 rounded-sm bg-card shadow-[0_10px_24px_-10px_hsl(var(--ink)/0.4)] ring-1 ring-border/70"
           initial={false}
           animate={
             opening
-              ? { y: "-72%", opacity: 1, rotate: 3, scale: 1.04 }
-              : { y: "30%", opacity: 0, rotate: 0, scale: 0.96 }
+              ? { y: "-64%", rotate: 3, scale: 1.03 }
+              : { y: "4%", rotate: 0, scale: 1 }
           }
           transition={{ type: "spring", stiffness: 110, damping: 13 }}
         >
@@ -50,7 +50,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           className="relative z-10 block"
           animate={
             opening
-              ? { y: 22, rotate: -4, scale: 0.99 }
+              ? { y: 20, rotate: -4, scale: 0.99 }
               : { y: [0, -5, 0], rotate: [0, -0.8, 0] }
           }
           transition={
@@ -62,9 +62,9 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           <img
             src={envelope.url}
             alt="A hand-drawn air mail envelope. To: a stranger. Open when you need it. From: someone you've never met."
-            width={1536}
-            height={1024}
-            className="w-full max-w-lg mix-blend-multiply"
+            width={915}
+            height={591}
+            className="w-full max-w-md"
           />
         </motion.span>
       </span>
