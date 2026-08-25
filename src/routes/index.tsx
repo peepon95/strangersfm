@@ -127,7 +127,7 @@ function Index() {
                   to="/submit"
                   className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
                 >
-                  Add your own note
+                  Write a note
                 </Link>
               </nav>
 
