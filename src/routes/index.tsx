@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
+import { Envelope } from "@/components/Envelope";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
-import { NotePile } from "@/components/NotePile";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
