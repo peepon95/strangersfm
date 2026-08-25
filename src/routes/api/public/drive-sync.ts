@@ -8,7 +8,13 @@ const LINK_LIFETIME = 60 * 60 * 24 * 365 * 10;
 /** Anything bigger than this is skipped rather than pulled into memory. */
 const MAX_BYTES = 45 * 1024 * 1024;
 
-type DriveFile = { id: string; name: string; mimeType: string; size?: string };
+type DriveFile = {
+  id: string;
+  name: string;
+  mimeType: string;
+  size?: string;
+  thumbnailLink?: string;
+};
 
 function driveHeaders() {
   return {
