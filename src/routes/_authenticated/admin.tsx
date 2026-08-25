@@ -14,7 +14,27 @@ type Row = {
   transcript: string;
   translation: string | null;
   published: boolean;
+  clip_start: number | null;
+  clip_end: number | null;
+  drive_folder_id: string | null;
 };
+
+/** "1:33" or "93" both mean ninety three seconds. */
+function parseTime(value: string): number | null {
+  const clean = value.trim();
+  if (!clean) return null;
+  const parts = clean.split(":").map((p) => Number(p));
+  if (parts.some((p) => Number.isNaN(p))) return null;
+  return parts.reduce((total, p) => total * 60 + p, 0);
+}
+
+function formatTime(seconds: number | null): string {
+  if (seconds === null) return "";
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
