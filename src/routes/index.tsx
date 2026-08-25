@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Jar } from "@/components/Jar";
+import { Envelope } from "@/components/Envelope";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
-import { NotePile } from "@/components/NotePile";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
@@ -87,17 +87,20 @@ function Index() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.7 }}
-              className="mt-10 flex flex-col items-center text-center"
+              className="mt-6 flex flex-col items-center text-center"
             >
-              <h1 className="text-balance text-4xl leading-tight sm:text-5xl">
-                One hundred strangers,
-                <br />
-                one notebook.
-              </h1>
-              <p className="mt-4 max-w-md text-pretty text-base text-muted-foreground">
-                I am asking a hundred strangers to write one message to the world in my notebook,
-                and to say it out loud. Tap the jar once and the notes play themselves, one stranger after another.
+              <Envelope onOpen={draw} />
+              <p className="mt-6 max-w-md text-pretty text-base text-muted-foreground">
+                I am asking 100 strangers to write one message to the world in my notebook,
+                and to say it out loud. Open the letter and the notes play themselves, one stranger after another.
               </p>
+              <button
+                type="button"
+                onClick={draw}
+                className="mt-8 rounded-full bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
+              >
+                Open notes
+              </button>
               <p className="mt-8 font-display text-2xl text-foreground">
                 <span className="text-accent-foreground">{notes.length}</span>
                 <span className="text-muted-foreground"> of {TOTAL_GOAL} collected</span>
@@ -110,8 +113,6 @@ function Index() {
                   transition={{ delay: 1.2, duration: 1 }}
                 />
               </div>
-
-              <NotePile notes={notes} onSelect={(i) => setCurrent(i)} />
             </motion.div>
           </motion.div>
         )}
