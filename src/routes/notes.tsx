@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { notes, TOTAL_GOAL } from "@/data/notes";
+import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
+import { listPublishedNotes } from "@/lib/notes.functions";
+
 
 export const Route = createFileRoute("/notes")({
   head: () => ({
