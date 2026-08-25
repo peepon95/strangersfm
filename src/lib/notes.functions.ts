@@ -24,9 +24,11 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
       const extractedHandwriting: Record<number, string> = {
         4: "/handwriting/note-004.png",
         5: "/handwriting/note-005.png",
+        6: "/handwriting/note-006.png",
         7: "/handwriting/note-007.png",
-        9: "/handwriting/note-009.png",
+        8: "/handwriting/note-008.png",
       };
+
 
       return {
         id: String(row.number).padStart(3, "0"),
