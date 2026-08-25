@@ -26,7 +26,7 @@ function driveHeaders() {
 async function driveList(query: string): Promise<DriveFile[]> {
   const url =
     `${GATEWAY}/files?q=${encodeURIComponent(query)}` +
-    `&fields=${encodeURIComponent("files(id,name,mimeType,size)")}` +
+    `&fields=${encodeURIComponent("files(id,name,mimeType,size,thumbnailLink)")}` +
     `&pageSize=200&orderBy=name`;
   const res = await fetch(url, { headers: driveHeaders() });
   if (!res.ok) {
@@ -44,6 +44,23 @@ async function driveDownload(fileId: string): Promise<ArrayBuffer> {
     throw new Error(`Drive download failed [${res.status}]: ${await res.text()}`);
   }
   return res.arrayBuffer();
+}
+
+/** Drive renders a JPEG preview of every HEIC, ask it for the biggest one. */
+async function driveJpeg(file: DriveFile): Promise<ArrayBuffer | null> {
+  let link = file.thumbnailLink;
+  if (!link) {
+    const res = await fetch(`${GATEWAY}/files/${file.id}?fields=thumbnailLink`, {
+      headers: driveHeaders(),
+    });
+    if (!res.ok) return null;
+    link = ((await res.json()) as { thumbnailLink?: string }).thumbnailLink;
+  }
+  if (!link) return null;
+  const big = link.replace(/=s\d+(-[a-z]+)?$/i, "=s2048");
+  const img = await fetch(big);
+  if (!img.ok) return null;
+  return img.arrayBuffer();
 }
 
 /** Formats the transcription model can actually open. */
@@ -108,24 +125,35 @@ async function runSync() {
       skipped.push(`${folder.name}: no handwriting photo yet`);
       continue;
     }
-    /** Browsers cannot show HEIC, so a note made from one would be blank. */
-    if (/hei[cf]/i.test(image.mimeType) || /\.hei[cf]$/i.test(image.name)) {
-      skipped.push(
-        `${folder.name}: the photo is HEIC, export it as JPEG from your phone and it will come in`,
-      );
-      continue;
-    }
-    if (Number(image.size ?? 0) > MAX_BYTES) {
+    const isHeic = /hei[cf]/i.test(image.mimeType) || /\.hei[cf]$/i.test(image.name);
+    if (Number(image.size ?? 0) > MAX_BYTES && !isHeic) {
       skipped.push(`${folder.name}: photo is too large`);
       continue;
     }
 
+    /** Browsers cannot show HEIC, so use the JPEG Drive already renders for it. */
+    let imageBytes: ArrayBuffer;
+    let imageType = image.mimeType;
+    let imageExt = extensionFor(image.name, "jpg");
+    if (isHeic) {
+      const jpeg = await driveJpeg(image);
+      if (!jpeg) {
+        skipped.push(
+          `${folder.name}: the photo is HEIC and Drive has no preview for it yet, export it as JPEG`,
+        );
+        continue;
+      }
+      imageBytes = jpeg;
+      imageType = "image/jpeg";
+      imageExt = "jpg";
+    } else {
+      imageBytes = await driveDownload(image.id);
+    }
 
-    const imageBytes = await driveDownload(image.id);
-    const imagePath = `drive/${folder.id}/photo.${extensionFor(image.name, "jpg")}`;
+    const imagePath = `drive/${folder.id}/photo.${imageExt}`;
     const imageUpload = await supabaseAdmin.storage
       .from("note-media")
-      .upload(imagePath, imageBytes, { contentType: image.mimeType, upsert: true });
+      .upload(imagePath, imageBytes, { contentType: imageType, upsert: true });
     if (imageUpload.error) throw imageUpload.error;
     const imageSigned = await supabaseAdmin.storage
       .from("note-media")
