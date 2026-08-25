@@ -47,25 +47,29 @@ async function driveDownload(fileId: string): Promise<ArrayBuffer> {
 }
 
 /** Copy a big file across without ever holding all of it in memory. */
-async function streamToStorage(fileId: string, path: string, contentType: string) {
+async function streamToStorage(
+  admin: { storage: { from: (b: string) => any } },
+  fileId: string,
+  path: string,
+  contentType: string,
+) {
   const src = await fetch(`${GATEWAY}/files/${fileId}?alt=media`, { headers: driveHeaders() });
   if (!src.ok || !src.body) {
     throw new Error(`Drive download failed [${src.status}]`);
   }
-  const res = await fetch(
-    `${process.env["SUPABASE_URL"]}/storage/v1/object/note-media/${path}`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env["SUPABASE_SERVICE_ROLE_KEY"]}`,
-        "Content-Type": contentType,
-        "x-upsert": "true",
-      },
-      body: src.body,
-      // @ts-expect-error streamed request bodies need this flag at runtime
-      duplex: "half",
-    },
-  );
+  const signed = await admin.storage
+    .from("note-media")
+    .createSignedUploadUrl(path, { upsert: true });
+  if (signed.error || !signed.data) {
+    throw signed.error ?? new Error("Could not open an upload for the voice");
+  }
+  const res = await fetch(signed.data.signedUrl, {
+    method: "PUT",
+    headers: { "Content-Type": contentType, "x-upsert": "true" },
+    body: src.body,
+    // @ts-expect-error streamed request bodies need this flag at runtime
+    duplex: "half",
+  });
   if (!res.ok) {
     throw new Error(`Storage upload failed [${res.status}]: ${await res.text()}`);
   }
@@ -206,7 +210,7 @@ async function runSync() {
       /** Long recordings are poured straight through so nothing has to be trimmed first. */
       let mediaBytes: ArrayBuffer | null = null;
       if (big) {
-        await streamToStorage(media.id, mediaPath, mediaType);
+        await streamToStorage(supabaseAdmin, media.id, mediaPath, mediaType);
         skipped.push(
           `${folder.name}: the recording is long, so the words were not typed out for you`,
         );
