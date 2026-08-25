@@ -46,6 +46,31 @@ async function driveDownload(fileId: string): Promise<ArrayBuffer> {
   return res.arrayBuffer();
 }
 
+/** Copy a big file across without ever holding all of it in memory. */
+async function streamToStorage(fileId: string, path: string, contentType: string) {
+  const src = await fetch(`${GATEWAY}/files/${fileId}?alt=media`, { headers: driveHeaders() });
+  if (!src.ok || !src.body) {
+    throw new Error(`Drive download failed [${src.status}]`);
+  }
+  const res = await fetch(
+    `${process.env["SUPABASE_URL"]}/storage/v1/object/note-media/${path}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env["SUPABASE_SERVICE_ROLE_KEY"]}`,
+        "Content-Type": contentType,
+        "x-upsert": "true",
+      },
+      body: src.body,
+      // @ts-expect-error streamed request bodies need this flag at runtime
+      duplex: "half",
+    },
+  );
+  if (!res.ok) {
+    throw new Error(`Storage upload failed [${res.status}]: ${await res.text()}`);
+  }
+}
+
 /** Drive renders a JPEG preview of every HEIC, ask it for the biggest one. */
 async function driveJpeg(file: DriveFile): Promise<ArrayBuffer | null> {
   let link = file.thumbnailLink;
@@ -200,10 +225,12 @@ async function runSync() {
         throw mediaSigned.error ?? new Error("Could not link the voice");
       }
       mediaUrl = mediaSigned.data.signedUrl;
-      try {
-        transcript = await transcribe(mediaBytes, mediaName, mediaType);
-      } catch (err) {
-        console.error("Transcription error", err);
+      if (mediaBytes) {
+        try {
+          transcript = await transcribe(mediaBytes, mediaName, mediaType);
+        } catch (err) {
+          console.error("Transcription error", err);
+        }
       }
     }
 
