@@ -14,7 +14,7 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
 
     const { data, error } = await supabase
       .from("stranger_notes")
-      .select("number, image_url, audio_url, transcript, translation")
+      .select("number, image_url, audio_url, transcript, translation, clip_start, clip_end")
       .eq("published", true)
       .order("number", { ascending: true });
 
@@ -26,6 +26,9 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
       transcript: row.transcript ?? "",
       ...(row.translation ? { translation: row.translation } : {}),
       ...(row.audio_url ? { audioUrl: row.audio_url } : {}),
+      ...(row.clip_start !== null ? { clipStart: Number(row.clip_start) } : {}),
+      ...(row.clip_end !== null ? { clipEnd: Number(row.clip_end) } : {}),
     }));
+
   },
 );
