@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { PaperPlanes } from "@/components/PaperPlanes";
-import { notes, TOTAL_GOAL } from "@/data/notes";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -47,12 +46,6 @@ function About() {
           This too shall pass and go out there and make magic.
         </p>
         <p className="mt-5 text-lg leading-relaxed">Always, Ee Von</p>
-
-        <hr className="my-10 border-border" />
-
-        <p className="leading-relaxed text-muted-foreground">
-          {notes.length} of {TOTAL_GOAL} collected so far. The jar keeps filling.
-        </p>
 
         <div className="mt-10 flex flex-wrap gap-3">
           <Link
