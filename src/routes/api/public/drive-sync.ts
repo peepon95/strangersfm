@@ -102,10 +102,18 @@ async function runSync() {
       skipped.push(`${folder.name}: no handwriting photo yet`);
       continue;
     }
+    /** Browsers cannot show HEIC, so a note made from one would be blank. */
+    if (/hei[cf]/i.test(image.mimeType) || /\.hei[cf]$/i.test(image.name)) {
+      skipped.push(
+        `${folder.name}: the photo is HEIC, export it as JPEG from your phone and it will come in`,
+      );
+      continue;
+    }
     if (Number(image.size ?? 0) > MAX_BYTES) {
       skipped.push(`${folder.name}: photo is too large`);
       continue;
     }
+
 
     const imageBytes = await driveDownload(image.id);
     const imagePath = `drive/${folder.id}/photo.${extensionFor(image.name, "jpg")}`;
