@@ -19,7 +19,7 @@ export function SideNav() {
       <button
         type="button"
         onClick={() => setMobileOpen((o) => !o)}
-        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/90 shadow-sm backdrop-blur md:hidden"
+        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-background/90 shadow-sm backdrop-blur md:hidden"
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
       >
         {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
