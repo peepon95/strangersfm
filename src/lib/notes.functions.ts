@@ -20,15 +20,24 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
 
     if (error) throw error;
 
-    return (data ?? []).map((row) => ({
-      id: String(row.number).padStart(3, "0"),
-      image: row.image_url,
-      transcript: row.transcript ?? "",
-      ...(row.translation ? { translation: row.translation } : {}),
-      ...(row.audio_url ? { audioUrl: row.audio_url } : {}),
-      ...(row.clip_start !== null ? { clipStart: Number(row.clip_start) } : {}),
-      ...(row.clip_end !== null ? { clipEnd: Number(row.clip_end) } : {}),
-    }));
+    return (data ?? []).map((row) => {
+      const extractedHandwriting: Record<number, string> = {
+        4: "/handwriting/note-004.jpg",
+        5: "/handwriting/note-005.jpg",
+        7: "/handwriting/note-007.jpg",
+        9: "/handwriting/note-009.jpg",
+      };
+
+      return {
+        id: String(row.number).padStart(3, "0"),
+        image: extractedHandwriting[row.number] ?? row.image_url,
+        transcript: row.transcript ?? "",
+        ...(row.translation ? { translation: row.translation } : {}),
+        ...(row.audio_url ? { audioUrl: row.audio_url } : {}),
+        ...(row.clip_start !== null ? { clipStart: Number(row.clip_start) } : {}),
+        ...(row.clip_end !== null ? { clipEnd: Number(row.clip_end) } : {}),
+      };
+    });
 
   },
 );

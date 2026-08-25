@@ -93,9 +93,6 @@ export function NoteReveal({
             className="w-full"
           />
 
-          <p className="pt-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            {autoplay ? "Their voice, the next note follows on its own" : "Hear them say it"}
-          </p>
         </div>
       ) : null}
 
