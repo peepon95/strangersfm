@@ -28,13 +28,31 @@ export function NoteReveal({
     if (!autoplay) return;
     const el = audioRef.current;
     if (el) {
-      el.currentTime = 0;
+      el.currentTime = note.clipStart ?? 0;
       el.play().catch(() => undefined);
       return;
     }
     const t = setTimeout(onNext, READ_MS);
     return () => clearTimeout(t);
-  }, [note.id, autoplay, onNext]);
+  }, [note.id, note.clipStart, autoplay, onNext]);
+
+  /** Honour the trim: stop at the end of the chosen stretch. */
+  function onTimeUpdate() {
+    const el = audioRef.current;
+    if (!el || note.clipEnd === undefined) return;
+    if (el.currentTime >= note.clipEnd) {
+      el.pause();
+      if (autoplay) onNext();
+    }
+  }
+
+  function onLoaded() {
+    const el = audioRef.current;
+    if (el && note.clipStart !== undefined && el.currentTime < note.clipStart) {
+      el.currentTime = note.clipStart;
+    }
+  }
+
 
 
   return (
