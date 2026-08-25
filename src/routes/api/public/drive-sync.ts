@@ -165,11 +165,12 @@ async function runSync() {
     let mediaUrl: string | null = null;
     let transcript = "";
 
-    const playable = media ? !/quicktime|x-msvideo/i.test(media.mimeType) : false;
+    /** iPhone .MOV is an MP4 box underneath, so relabel it and everything can play it. */
+    const isMov = media ? /quicktime/i.test(media.mimeType) || /\.mov$/i.test(media.name) : false;
 
-    if (media && !playable) {
+    if (media && /x-msvideo/i.test(media.mimeType)) {
       skipped.push(
-        `${folder.name}: the recording is a .MOV, save it as MP4 or M4A and it will come in`,
+        `${folder.name}: the recording is an .AVI, save it as MP4 or M4A and it will come in`,
       );
     } else if (media && Number(media.size ?? 0) > MAX_BYTES) {
       skipped.push(
@@ -177,10 +178,12 @@ async function runSync() {
       );
     } else if (media) {
       const mediaBytes = await driveDownload(media.id);
-      const mediaPath = `drive/${folder.id}/voice.${extensionFor(media.name, "mp4")}`;
+      const mediaType = isMov ? "video/mp4" : media.mimeType;
+      const mediaName = isMov ? media.name.replace(/\.mov$/i, ".mp4") : media.name;
+      const mediaPath = `drive/${folder.id}/voice.${extensionFor(mediaName, "mp4")}`;
       const mediaUpload = await supabaseAdmin.storage
         .from("note-media")
-        .upload(mediaPath, mediaBytes, { contentType: media.mimeType, upsert: true });
+        .upload(mediaPath, mediaBytes, { contentType: mediaType, upsert: true });
       if (mediaUpload.error) throw mediaUpload.error;
       const mediaSigned = await supabaseAdmin.storage
         .from("note-media")
@@ -190,7 +193,7 @@ async function runSync() {
       }
       mediaUrl = mediaSigned.data.signedUrl;
       try {
-        transcript = await transcribe(mediaBytes, media.name, media.mimeType);
+        transcript = await transcribe(mediaBytes, mediaName, mediaType);
       } catch (err) {
         console.error("Transcription error", err);
       }
