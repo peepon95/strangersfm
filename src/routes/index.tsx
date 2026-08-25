@@ -6,7 +6,9 @@ import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { NotePile } from "@/components/NotePile";
-import { notes, TOTAL_GOAL } from "@/data/notes";
+import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
+import { listPublishedNotes } from "@/lib/notes.functions";
+
 
 
 export const Route = createFileRoute("/")({
