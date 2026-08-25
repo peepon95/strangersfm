@@ -21,11 +21,24 @@ export const Route = createFileRoute("/notes")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: () => listPublishedNotes(),
+  errorComponent: () => (
+    <main className="mx-auto max-w-5xl px-6 py-16 text-center text-muted-foreground">
+      The wall is resting, please refresh in a moment.
+    </main>
+  ),
+  notFoundComponent: () => (
+    <main className="mx-auto max-w-5xl px-6 py-16 text-center text-muted-foreground">
+      Nothing here.
+    </main>
+  ),
   component: NotesWall,
 });
 
 function NotesWall() {
+  const notes = [...builtInNotes, ...Route.useLoaderData()];
   return (
+
     <main className="mx-auto max-w-5xl px-6 py-16">
       <header className="text-center">
         <h1 className="text-4xl">Every note so far</h1>
