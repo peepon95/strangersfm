@@ -40,8 +40,12 @@ async function driveDownload(fileId: string): Promise<ArrayBuffer> {
   return res.arrayBuffer();
 }
 
+/** Formats the transcription model can actually open. */
+const TRANSCRIBABLE = ["mp3", "mp4", "m4a", "wav", "webm", "mpga", "mpeg"];
+
 /** Send the voice through Lovable AI so the typed version fills itself in. */
 async function transcribe(bytes: ArrayBuffer, filename: string, mimeType: string) {
+  if (!TRANSCRIBABLE.includes(extensionFor(filename, ""))) return "";
   const form = new FormData();
   form.append("model", "openai/gpt-4o-mini-transcribe");
   form.append("file", new Blob([bytes], { type: mimeType }), filename);
@@ -57,6 +61,7 @@ async function transcribe(bytes: ArrayBuffer, filename: string, mimeType: string
   const body = (await res.json()) as { text?: string };
   return body.text ?? "";
 }
+
 
 function extensionFor(name: string, fallback: string) {
   const dot = name.lastIndexOf(".");
