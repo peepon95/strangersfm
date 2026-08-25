@@ -81,10 +81,6 @@ function Index() {
             className="flex flex-col items-center text-center"
           >
             <Envelope onOpen={draw} />
-            <p className="mt-8 max-w-md text-pretty text-base text-muted-foreground">
-              I am asking 100 strangers to write one message to the world in my notebook,
-              and to say it out loud. Open the letter and the notes play themselves, one stranger after another.
-            </p>
             <button
               type="button"
               onClick={draw}
