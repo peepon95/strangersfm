@@ -6,12 +6,12 @@ import { lovable } from "@/integrations/lovable/index";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in · 100 Strangers" },
+      { title: "Sign in · stranger fm" },
       {
         name: "description",
         content: "Private sign in for adding new handwritten notes to the jar.",
       },
-      { property: "og:title", content: "Sign in · 100 Strangers" },
+      { property: "og:title", content: "Sign in · stranger fm" },
       { property: "og:description", content: "Private sign in for the notes uploader." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

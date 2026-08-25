@@ -5,13 +5,13 @@ import { PaperPlanes } from "@/components/PaperPlanes";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About · 100 Strangers, one notebook" },
+      { title: "About · stranger fm" },
       {
         name: "description",
         content:
           "Hi, I am Ee Von. I am asking 100 strangers to write down one message to the world, so that on a heavy day you can read a note from someone who is rooting for you.",
       },
-      { property: "og:title", content: "About · 100 Strangers, one notebook" },
+      { property: "og:title", content: "About · stranger fm" },
       {
         property: "og:description",
         content:
@@ -37,7 +37,7 @@ function About() {
         <h1 className="text-5xl leading-none">hi.</h1>
         <p className="mt-6 text-lg leading-relaxed">
           hi I am Ee Von and 2026 has been a rough year with a lot of unexpected changes. But I guess
-          that is life? So I started strangers jar where I ask strangers to write down any advice or
+          that is life? So I started stranger fm where I ask strangers to write down any advice or
           message onto my notebook and on a mission to get 100 strangers. So if you are feeling down,
           sad or demotivated, I hope these notes from strangers make your day, and remind you that
           we are all rooting for you.

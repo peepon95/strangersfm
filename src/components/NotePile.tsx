@@ -25,7 +25,7 @@ export function NotePile({
             key={note.id}
             type="button"
             onClick={() => onSelect(i)}
-            aria-label={`Read the note from stranger no. ${note.id}`}
+            aria-label="Read this note"
             className="group relative block cursor-pointer rounded-sm bg-card p-1 shadow-[0_2px_10px_-4px_hsl(var(--ink)/0.35)] ring-1 ring-border/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
             style={{ marginBottom: lift, transformOrigin: "50% 100%" }}
             initial={{ y: -220, rotate: tilt - 18, opacity: 0 }}
@@ -45,13 +45,10 @@ export function NotePile({
           >
             <img
               src={note.image}
-              alt={`Handwriting from stranger no. ${note.id}`}
+              alt="Handwriting preview"
               loading="lazy"
               className="h-14 w-20 object-contain sm:h-16 sm:w-24"
             />
-            <span className="pointer-events-none absolute inset-x-0 -bottom-4 text-center font-display text-[0.65rem] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-              no. {note.id}
-            </span>
           </motion.button>
         );
       })}
