@@ -71,13 +71,54 @@ function Admin() {
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [syncing, setSyncing] = useState(false);
+
   async function load() {
     const { data } = await supabase
       .from("stranger_notes")
-      .select("id, number, image_url, audio_url, transcript, translation, published")
+      .select(
+        "id, number, image_url, audio_url, transcript, translation, published, clip_start, clip_end, drive_folder_id",
+      )
       .order("number", { ascending: true });
     setRows((data ?? []) as Row[]);
   }
+
+  async function syncDrive() {
+    setSyncing(true);
+    setStatus("Looking in your Drive folder, this can take a while for video.");
+    try {
+      const res = await fetch("/api/public/drive-sync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string,
+        },
+        body: "{}",
+      });
+      const body = (await res.json()) as {
+        added?: string[];
+        skipped?: string[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(body.error ?? `Sync failed [${res.status}]`);
+      const parts: string[] = [];
+      parts.push(body.added?.length ? `Added ${body.added.join(", ")}.` : "Nothing new.");
+      if (body.skipped?.length) parts.push(`Skipped: ${body.skipped.join("; ")}.`);
+      parts.push("New notes arrive hidden, press Show when you are happy with them.");
+      setStatus(parts.join(" "));
+      await load();
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Sync failed.");
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  async function patch(row: Row, changes: Partial<Row>) {
+    setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, ...changes } : r)));
+    await supabase.from("stranger_notes").update(changes).eq("id", row.id);
+  }
+
 
   useEffect(() => {
     void load();
