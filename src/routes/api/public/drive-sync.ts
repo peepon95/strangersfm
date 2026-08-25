@@ -8,7 +8,13 @@ const LINK_LIFETIME = 60 * 60 * 24 * 365 * 10;
 /** Anything bigger than this is skipped rather than pulled into memory. */
 const MAX_BYTES = 45 * 1024 * 1024;
 
-type DriveFile = { id: string; name: string; mimeType: string; size?: string };
+type DriveFile = {
+  id: string;
+  name: string;
+  mimeType: string;
+  size?: string;
+  thumbnailLink?: string;
+};
 
 function driveHeaders() {
   return {
@@ -20,7 +26,7 @@ function driveHeaders() {
 async function driveList(query: string): Promise<DriveFile[]> {
   const url =
     `${GATEWAY}/files?q=${encodeURIComponent(query)}` +
-    `&fields=${encodeURIComponent("files(id,name,mimeType,size)")}` +
+    `&fields=${encodeURIComponent("files(id,name,mimeType,size,thumbnailLink)")}` +
     `&pageSize=200&orderBy=name`;
   const res = await fetch(url, { headers: driveHeaders() });
   if (!res.ok) {
@@ -38,6 +44,40 @@ async function driveDownload(fileId: string): Promise<ArrayBuffer> {
     throw new Error(`Drive download failed [${res.status}]: ${await res.text()}`);
   }
   return res.arrayBuffer();
+}
+
+/** Copy a big file across without ever holding all of it in memory. */
+async function streamToStorage(
+  admin: { storage: { from: (b: string) => any } },
+  fileId: string,
+  path: string,
+  contentType: string,
+) {
+  const src = await fetch(`${GATEWAY}/files/${fileId}?alt=media`, { headers: driveHeaders() });
+  if (!src.ok || !src.body) {
+    throw new Error(`Drive download failed [${src.status}]`);
+  }
+  const up = await admin.storage
+    .from("note-media")
+    .upload(path, src.body, { contentType, upsert: true, duplex: "half" });
+  if (up.error) throw up.error;
+}
+
+/** Drive renders a JPEG preview of every HEIC, ask it for the biggest one. */
+async function driveJpeg(file: DriveFile): Promise<ArrayBuffer | null> {
+  let link = file.thumbnailLink;
+  if (!link) {
+    const res = await fetch(`${GATEWAY}/files/${file.id}?fields=thumbnailLink`, {
+      headers: driveHeaders(),
+    });
+    if (!res.ok) return null;
+    link = ((await res.json()) as { thumbnailLink?: string }).thumbnailLink;
+  }
+  if (!link) return null;
+  const big = link.replace(/=s\d+(-[a-z]+)?$/i, "=s2048");
+  const img = await fetch(big);
+  if (!img.ok) return null;
+  return img.arrayBuffer();
 }
 
 /** Formats the transcription model can actually open. */
@@ -102,24 +142,35 @@ async function runSync() {
       skipped.push(`${folder.name}: no handwriting photo yet`);
       continue;
     }
-    /** Browsers cannot show HEIC, so a note made from one would be blank. */
-    if (/hei[cf]/i.test(image.mimeType) || /\.hei[cf]$/i.test(image.name)) {
-      skipped.push(
-        `${folder.name}: the photo is HEIC, export it as JPEG from your phone and it will come in`,
-      );
-      continue;
-    }
-    if (Number(image.size ?? 0) > MAX_BYTES) {
+    const isHeic = /hei[cf]/i.test(image.mimeType) || /\.hei[cf]$/i.test(image.name);
+    if (Number(image.size ?? 0) > MAX_BYTES && !isHeic) {
       skipped.push(`${folder.name}: photo is too large`);
       continue;
     }
 
+    /** Browsers cannot show HEIC, so use the JPEG Drive already renders for it. */
+    let imageBytes: ArrayBuffer;
+    let imageType = image.mimeType;
+    let imageExt = extensionFor(image.name, "jpg");
+    if (isHeic) {
+      const jpeg = await driveJpeg(image);
+      if (!jpeg) {
+        skipped.push(
+          `${folder.name}: the photo is HEIC and Drive has no preview for it yet, export it as JPEG`,
+        );
+        continue;
+      }
+      imageBytes = jpeg;
+      imageType = "image/jpeg";
+      imageExt = "jpg";
+    } else {
+      imageBytes = await driveDownload(image.id);
+    }
 
-    const imageBytes = await driveDownload(image.id);
-    const imagePath = `drive/${folder.id}/photo.${extensionFor(image.name, "jpg")}`;
+    const imagePath = `drive/${folder.id}/photo.${imageExt}`;
     const imageUpload = await supabaseAdmin.storage
       .from("note-media")
-      .upload(imagePath, imageBytes, { contentType: image.mimeType, upsert: true });
+      .upload(imagePath, imageBytes, { contentType: imageType, upsert: true });
     if (imageUpload.error) throw imageUpload.error;
     const imageSigned = await supabaseAdmin.storage
       .from("note-media")
@@ -131,23 +182,34 @@ async function runSync() {
     let mediaUrl: string | null = null;
     let transcript = "";
 
-    const playable = media ? !/quicktime|x-msvideo/i.test(media.mimeType) : false;
+    /** iPhone .MOV is an MP4 box underneath, so relabel it and everything can play it. */
+    const isMov = media ? /quicktime/i.test(media.mimeType) || /\.mov$/i.test(media.name) : false;
 
-    if (media && !playable) {
+    if (media && /x-msvideo/i.test(media.mimeType)) {
       skipped.push(
-        `${folder.name}: the recording is a .MOV, save it as MP4 or M4A and it will come in`,
-      );
-    } else if (media && Number(media.size ?? 0) > MAX_BYTES) {
-      skipped.push(
-        `${folder.name}: the recording is over 45MB, trim it to the part you want, photo added on its own`,
+        `${folder.name}: the recording is an .AVI, save it as MP4 or M4A and it will come in`,
       );
     } else if (media) {
-      const mediaBytes = await driveDownload(media.id);
-      const mediaPath = `drive/${folder.id}/voice.${extensionFor(media.name, "mp4")}`;
-      const mediaUpload = await supabaseAdmin.storage
-        .from("note-media")
-        .upload(mediaPath, mediaBytes, { contentType: media.mimeType, upsert: true });
-      if (mediaUpload.error) throw mediaUpload.error;
+      const mediaType = isMov ? "video/mp4" : media.mimeType;
+      const mediaName = isMov ? media.name.replace(/\.mov$/i, ".mp4") : media.name;
+      const mediaPath = `drive/${folder.id}/voice.${extensionFor(mediaName, "mp4")}`;
+      const big = Number(media.size ?? 0) > MAX_BYTES;
+
+      /** Long recordings are poured straight through so nothing has to be trimmed first. */
+      let mediaBytes: ArrayBuffer | null = null;
+      if (big) {
+        await streamToStorage(supabaseAdmin, media.id, mediaPath, mediaType);
+        skipped.push(
+          `${folder.name}: the recording is long, so the words were not typed out for you`,
+        );
+      } else {
+        mediaBytes = await driveDownload(media.id);
+        const mediaUpload = await supabaseAdmin.storage
+          .from("note-media")
+          .upload(mediaPath, mediaBytes, { contentType: mediaType, upsert: true });
+        if (mediaUpload.error) throw mediaUpload.error;
+      }
+
       const mediaSigned = await supabaseAdmin.storage
         .from("note-media")
         .createSignedUrl(mediaPath, LINK_LIFETIME);
@@ -155,10 +217,12 @@ async function runSync() {
         throw mediaSigned.error ?? new Error("Could not link the voice");
       }
       mediaUrl = mediaSigned.data.signedUrl;
-      try {
-        transcript = await transcribe(mediaBytes, media.name, media.mimeType);
-      } catch (err) {
-        console.error("Transcription error", err);
+      if (mediaBytes) {
+        try {
+          transcript = await transcribe(mediaBytes, mediaName, mediaType);
+        } catch (err) {
+          console.error("Transcription error", err);
+        }
       }
     }
 
