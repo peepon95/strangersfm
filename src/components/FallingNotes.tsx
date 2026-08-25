@@ -36,7 +36,8 @@ export function FallingNotes({ count }: { count: number }) {
         const rnd = seeded(i * 97 + 13);
         const row = Math.floor(i / 9); // stack a new layer every 9 notes
         return {
-          left: 2 + rnd() * 88,
+          // keep the pile clear of the bottom-left menu and bottom-right music toggle
+          left: 15 + rnd() * 66,
           bottom: row * 26 + rnd() * 18,
           size: 64 + rnd() * 64,
           rotate: -24 + rnd() * 48,
