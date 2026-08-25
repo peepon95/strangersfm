@@ -172,19 +172,27 @@ async function runSync() {
       skipped.push(
         `${folder.name}: the recording is an .AVI, save it as MP4 or M4A and it will come in`,
       );
-    } else if (media && Number(media.size ?? 0) > MAX_BYTES) {
-      skipped.push(
-        `${folder.name}: the recording is over 45MB, trim it to the part you want, photo added on its own`,
-      );
     } else if (media) {
-      const mediaBytes = await driveDownload(media.id);
       const mediaType = isMov ? "video/mp4" : media.mimeType;
       const mediaName = isMov ? media.name.replace(/\.mov$/i, ".mp4") : media.name;
       const mediaPath = `drive/${folder.id}/voice.${extensionFor(mediaName, "mp4")}`;
-      const mediaUpload = await supabaseAdmin.storage
-        .from("note-media")
-        .upload(mediaPath, mediaBytes, { contentType: mediaType, upsert: true });
-      if (mediaUpload.error) throw mediaUpload.error;
+      const big = Number(media.size ?? 0) > MAX_BYTES;
+
+      /** Long recordings are poured straight through so nothing has to be trimmed first. */
+      let mediaBytes: ArrayBuffer | null = null;
+      if (big) {
+        await streamToStorage(media.id, mediaPath, mediaType);
+        skipped.push(
+          `${folder.name}: the recording is long, so the words were not typed out for you`,
+        );
+      } else {
+        mediaBytes = await driveDownload(media.id);
+        const mediaUpload = await supabaseAdmin.storage
+          .from("note-media")
+          .upload(mediaPath, mediaBytes, { contentType: mediaType, upsert: true });
+        if (mediaUpload.error) throw mediaUpload.error;
+      }
+
       const mediaSigned = await supabaseAdmin.storage
         .from("note-media")
         .createSignedUrl(mediaPath, LINK_LIFETIME);
