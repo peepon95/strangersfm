@@ -24,7 +24,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
       initial={{ opacity: 0, y: 34, rotate: -6 }}
       animate={{ opacity: 1, y: 0, rotate: -2 }}
       transition={{ delay: 1.05, duration: 0.7, ease: "easeOut" }}
-      whileHover={opening ? undefined : { rotate: 0.5, scale: 1.03, y: -5 }}
+      whileHover={opening ? { scale: 1 } : { rotate: 0.5, scale: 1.03, y: -5 }}
       whileTap={{ scale: 0.97 }}
     >
       <span className="relative block">
