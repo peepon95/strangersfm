@@ -15,7 +15,7 @@ export const Route = createFileRoute("/about")({
       {
         property: "og:description",
         content:
-          "Why I am collecting one handwritten message from 100 strangers, and what I hope you find here.",
+          "Why I am collecting 100 handwritten messages from 100 strangers, and what I hope you find here.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
