@@ -60,6 +60,12 @@ function About() {
           >
             See every note
           </Link>
+          <Link
+            to="/submit"
+            className="rounded-full border border-border px-7 py-3 text-sm tracking-wide transition-colors hover:bg-accent"
+          >
+            Add your own note
+          </Link>
         </div>
       </motion.article>
     </main>
