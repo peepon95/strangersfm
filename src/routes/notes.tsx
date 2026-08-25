@@ -66,9 +66,8 @@ function NotesWall() {
               loading="lazy"
               className="w-full drop-shadow-[0_14px_22px_var(--paper-shadow)]"
             />
-            <figcaption className="mt-3 text-center text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              no. {note.id}
-            </figcaption>
+
+
 
           </figure>
         ))}
