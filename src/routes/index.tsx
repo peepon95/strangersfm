@@ -71,48 +71,39 @@ function Index() {
       <AnimatePresence mode="wait">
         {note ? (
           <NoteReveal key={note.id} note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
-
         ) : (
           <motion.div
-            key="jar"
-            initial={{ opacity: 1 }}
+            key="intro"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.94 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center text-center"
           >
-            <Jar onPull={draw} idle />
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 0.7 }}
-              className="mt-6 flex flex-col items-center text-center"
+            <Envelope onOpen={draw} />
+            <p className="mt-8 max-w-md text-pretty text-base text-muted-foreground">
+              I am asking 100 strangers to write one message to the world in my notebook,
+              and to say it out loud. Open the letter and the notes play themselves, one stranger after another.
+            </p>
+            <button
+              type="button"
+              onClick={draw}
+              className="mt-8 rounded-full bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
             >
-              <Envelope onOpen={draw} />
-              <p className="mt-6 max-w-md text-pretty text-base text-muted-foreground">
-                I am asking 100 strangers to write one message to the world in my notebook,
-                and to say it out loud. Open the letter and the notes play themselves, one stranger after another.
-              </p>
-              <button
-                type="button"
-                onClick={draw}
-                className="mt-8 rounded-full bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
-              >
-                Open notes
-              </button>
-              <p className="mt-8 font-display text-2xl text-foreground">
-                <span className="text-accent-foreground">{notes.length}</span>
-                <span className="text-muted-foreground"> of {TOTAL_GOAL} collected</span>
-              </p>
-              <div className="mt-3 h-1 w-56 overflow-hidden rounded-full bg-border">
-                <motion.div
-                  className="h-full rounded-full bg-ink"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(notes.length / TOTAL_GOAL) * 100}%` }}
-                  transition={{ delay: 1.2, duration: 1 }}
-                />
-              </div>
-            </motion.div>
+              Open notes
+            </button>
+            <p className="mt-8 font-display text-2xl text-foreground">
+              <span className="text-accent-foreground">{notes.length}</span>
+              <span className="text-muted-foreground"> of {TOTAL_GOAL} collected</span>
+            </p>
+            <div className="mt-3 h-1 w-56 overflow-hidden rounded-full bg-border">
+              <motion.div
+                className="h-full rounded-full bg-ink"
+                initial={{ width: 0 }}
+                animate={{ width: `${(notes.length / TOTAL_GOAL) * 100}%` }}
+                transition={{ delay: 1.2, duration: 1 }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
