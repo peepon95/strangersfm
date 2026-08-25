@@ -57,22 +57,10 @@ async function streamToStorage(
   if (!src.ok || !src.body) {
     throw new Error(`Drive download failed [${src.status}]`);
   }
-  const signed = await admin.storage
+  const up = await admin.storage
     .from("note-media")
-    .createSignedUploadUrl(path, { upsert: true });
-  if (signed.error || !signed.data) {
-    throw signed.error ?? new Error("Could not open an upload for the voice");
-  }
-  const res = await fetch(signed.data.signedUrl, {
-    method: "PUT",
-    headers: { "Content-Type": contentType, "x-upsert": "true" },
-    body: src.body,
-    // @ts-expect-error streamed request bodies need this flag at runtime
-    duplex: "half",
-  });
-  if (!res.ok) {
-    throw new Error(`Storage upload failed [${res.status}]: ${await res.text()}`);
-  }
+    .upload(path, src.body, { contentType, upsert: true, duplex: "half" });
+  if (up.error) throw up.error;
 }
 
 /** Drive renders a JPEG preview of every HEIC, ask it for the biggest one. */
