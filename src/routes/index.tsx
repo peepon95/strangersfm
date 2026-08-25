@@ -30,10 +30,23 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: () => listPublishedNotes(),
+  errorComponent: () => (
+    <main className="flex min-h-screen items-center justify-center px-6 text-center">
+      <p className="text-muted-foreground">The jar is resting, please refresh in a moment.</p>
+    </main>
+  ),
+  notFoundComponent: () => (
+    <main className="flex min-h-screen items-center justify-center px-6 text-center">
+      <p className="text-muted-foreground">Nothing here.</p>
+    </main>
+  ),
   component: Index,
 });
 
 function Index() {
+  const uploaded = Route.useLoaderData();
+  const notes = [...builtInNotes, ...uploaded];
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
 
@@ -46,9 +59,10 @@ function Index() {
       if (bag.current.length === 0) bag.current = notes.map((_, i) => i);
     }
     setCurrent(bag.current.pop() ?? 0);
-  }, [current]);
+  }, [current, notes]);
 
   const note = current === null ? null : notes[current];
+
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
