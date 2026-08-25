@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { Envelope } from "@/components/Envelope";
+import { FallingNotes } from "@/components/FallingNotes";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
@@ -66,6 +67,7 @@ function Index() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
       <PaperPlanes count={notes.length} />
+      <FallingNotes count={notes.length} />
       <BackgroundMusic />
       <div className="relative z-10 flex w-full flex-col items-center">
       <AnimatePresence mode="wait">
