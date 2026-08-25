@@ -123,6 +123,12 @@ function Index() {
                 >
                   See every note so far
                 </Link>
+                <Link
+                  to="/submit"
+                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
+                >
+                  Add your own note
+                </Link>
               </nav>
 
               <NotePile notes={notes} onSelect={(i) => setCurrent(i)} />

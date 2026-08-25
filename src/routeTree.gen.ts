@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as NotesRouteImport } from './routes/notes'
+import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicDriveSyncRouteImport } from './routes/api/public/drive-sync'
 
@@ -41,6 +42,11 @@ const NotesRoute = NotesRouteImport.update({
   path: '/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubmitRoute = SubmitRouteImport.update({
+  id: '/submit',
+  path: '/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
+  '/submit': typeof SubmitRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
+  '/submit': typeof SubmitRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
@@ -75,15 +83,29 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
+  '/submit': typeof SubmitRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/auth' | '/notes' | '/admin' | '/api/public/drive-sync'
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/notes'
+    | '/submit'
+    | '/admin'
+    | '/api/public/drive-sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth' | '/notes' | '/admin' | '/api/public/drive-sync'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/notes'
+    | '/submit'
+    | '/admin'
+    | '/api/public/drive-sync'
   id:
     | '__root__'
     | '/'
@@ -91,6 +113,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/notes'
+    | '/submit'
     | '/_authenticated/admin'
     | '/api/public/drive-sync'
   fileRoutesById: FileRoutesById
@@ -101,6 +124,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   NotesRoute: typeof NotesRoute
+  SubmitRoute: typeof SubmitRoute
   ApiPublicDriveSyncRoute: typeof ApiPublicDriveSyncRoute
 }
 
@@ -141,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/submit': {
+      id: '/submit'
+      path: '/submit'
+      fullPath: '/submit'
+      preLoaderRoute: typeof SubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -175,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   NotesRoute: NotesRoute,
+  SubmitRoute: SubmitRoute,
   ApiPublicDriveSyncRoute: ApiPublicDriveSyncRoute,
 }
 export const routeTree = rootRouteImport
