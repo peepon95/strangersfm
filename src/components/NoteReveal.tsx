@@ -97,9 +97,6 @@ export function NoteReveal({
       ) : null}
 
 
-      <p className="max-w-md text-center text-sm text-muted-foreground">
-        a stranger, no. {note.id}
-      </p>
 
 
       <div className="flex flex-wrap items-center justify-center gap-3">

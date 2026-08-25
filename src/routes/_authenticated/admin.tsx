@@ -39,9 +39,9 @@ function formatTime(seconds: number | null): string {
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Add a note · 100 Strangers" },
+      { title: "Add a note · stranger fm" },
       { name: "description", content: "Private page for adding new handwritten notes." },
-      { property: "og:title", content: "Add a note · 100 Strangers" },
+      { property: "og:title", content: "Add a note · stranger fm" },
       { property: "og:description", content: "Private page for adding new handwritten notes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -154,7 +154,7 @@ function Admin() {
       setMedia(null);
       setTranscript("");
       setTranslation("");
-      setStatus(`Added as stranger no. ${String(nextNumber).padStart(3, "0")}.`);
+      setStatus("Added.");
       await load();
     } catch (err) {
       setStatus(err instanceof Error ? err.message : "Something went wrong.");
@@ -244,7 +244,7 @@ function Admin() {
           disabled={busy}
           className="self-start rounded-full bg-ink px-7 py-3 text-sm font-medium text-paper disabled:opacity-60"
         >
-          {busy ? "Uploading" : `Add as no. ${String(nextNumber).padStart(3, "0")}`}
+          {busy ? "Uploading" : "Add note"}
         </button>
         {status ? <p className="text-sm text-muted-foreground">{status}</p> : null}
       </form>
@@ -252,7 +252,7 @@ function Admin() {
       <section className="mt-14 rounded-2xl border border-border bg-card p-5">
         <h2 className="text-2xl">From your Google Drive</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Make a subfolder per person in your <em>100 Strangers</em> folder, drop the photo and
+          Make a subfolder per person in your <em>stranger fm</em> folder, drop the photo and
           the video inside, and it lands here. This also runs by itself every 15 minutes.
         </p>
         <button
@@ -294,7 +294,7 @@ function Admin() {
         {visible.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
             {rows.length === 0
-              ? "Nothing here yet, the first three strangers are built into the site."
+              ? "Nothing here yet, the first three notes are built into the site."
               : "Nothing in this list, everything here is already taken care of."}
           </p>
         ) : (
@@ -309,8 +309,7 @@ function Admin() {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs text-muted-foreground">
-                      no. {String(row.number).padStart(3, "0")}
-                      {row.published ? "" : " · hidden"}
+                      {row.published ? "" : "Hidden"}
                       {row.drive_folder_id ? " · from Drive" : ""}
                     </p>
                     <textarea

@@ -6,13 +6,13 @@ import { listPublishedNotes } from "@/lib/notes.functions";
 export const Route = createFileRoute("/notes")({
   head: () => ({
     meta: [
-      { title: "Every note so far · 100 Strangers" },
+      { title: "Every note so far · stranger fm" },
       {
         name: "description",
         content:
           "The full wall of handwritten notes collected so far: advice, hope and one message to the world, written by strangers.",
       },
-      { property: "og:title", content: "Every note so far · 100 Strangers" },
+      { property: "og:title", content: "Every note so far · stranger fm" },
       {
         property: "og:description",
         content: "The full wall of handwritten notes collected from strangers so far.",

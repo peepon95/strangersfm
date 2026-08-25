@@ -7,13 +7,13 @@ const TALLY_FORM_ID = "jaAQvE";
 export const Route = createFileRoute("/submit")({
   head: () => ({
     meta: [
-      { title: "Add your note · Strangers Jar" },
+      { title: "Add your note · stranger fm" },
       {
         name: "description",
         content:
           "Write one message to the world, snap your handwriting, say it out loud, and send it in. Your note joins the jar of 100 strangers.",
       },
-      { property: "og:title", content: "Add your note · Strangers Jar" },
+      { property: "og:title", content: "Add your note · stranger fm" },
       {
         property: "og:description",
         content:
