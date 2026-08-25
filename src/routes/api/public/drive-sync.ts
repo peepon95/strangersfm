@@ -240,7 +240,7 @@ async function runSync() {
     });
     if (insertError) throw insertError;
 
-    added.push(`${folder.name} as no. ${String(nextNumber).padStart(3, "0")}`);
+    added.push(folder.name);
     nextNumber += 1;
   }
 
