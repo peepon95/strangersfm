@@ -44,15 +44,13 @@ export function SideNav() {
             className="absolute inset-0 bg-background/60 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="absolute left-0 top-0 h-full w-56 bg-background px-6 py-10">
+          <aside className="absolute left-0 top-0 h-full w-56 border-r border-border bg-background px-6 py-10">
             <Link
               to="/"
               className="font-display text-2xl leading-none"
               onClick={() => setMobileOpen(false)}
             >
-              stranger
-              <br />
-              fm
+              stranger fm
             </Link>
             <nav className="mt-12 flex flex-col gap-3">
               {navItems.map((item) => (
