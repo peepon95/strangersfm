@@ -110,26 +110,6 @@ function Index() {
                   transition={{ delay: 1.2, duration: 1 }}
                 />
               </div>
-              <nav className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm">
-                <Link
-                  to="/about"
-                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
-                >
-                  Why I am doing this
-                </Link>
-                <Link
-                  to="/notes"
-                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
-                >
-                  See every note so far
-                </Link>
-                <Link
-                  to="/submit"
-                  className="underline decoration-border underline-offset-4 transition-colors hover:text-accent-foreground"
-                >
-                  Write a note
-                </Link>
-              </nav>
 
               <NotePile notes={notes} onSelect={(i) => setCurrent(i)} />
             </motion.div>
