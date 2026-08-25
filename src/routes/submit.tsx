@@ -37,7 +37,7 @@ const steps = [
   },
   {
     title: "step three.",
-    body: "Send it in below. Drop in the photo, the video, and your Instagram handle so I can tag you when your note goes up. Tell me where in the world you are writing from too.",
+    body: "Send it in below. Upload the photo and the short video, then tell me where in the world you are writing from. Add your Instagram handle if you want me to tag you when it goes up, or just your name if you want to be credited. Stay anonymous? No worries, both are totally optional.",
   },
 ];
 
@@ -64,7 +64,7 @@ function Submit() {
         </div>
 
         <p className="mt-8 border-t border-border pt-6 text-sm text-muted-foreground">
-          No names on the site. Every note stays anonymous unless you ask me otherwise.
+          No names or handles will appear on the site unless you want them to. Otherwise your note stays anonymous and we are all good.
         </p>
 
         <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-background">
