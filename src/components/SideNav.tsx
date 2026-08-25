@@ -25,8 +25,8 @@ export function SideNav() {
         {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </button>
 
-      {/* Desktop menu bar — anchored bottom-left */}
-      <nav className="fixed bottom-6 left-6 z-50 hidden flex-col gap-2 rounded-2xl border border-border bg-background/80 p-5 shadow-sm backdrop-blur md:flex">
+      {/* Desktop menu — anchored directly to the bottom-left side */}
+      <nav className="fixed bottom-8 left-6 z-50 hidden flex-col gap-2 md:flex">
         <Link to="/" className="font-display text-xl leading-none">
           stranger fm
         </Link>
