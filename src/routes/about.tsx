@@ -37,23 +37,20 @@ function About() {
       >
         <h1 className="text-5xl leading-none">hi.</h1>
         <p className="mt-6 text-lg leading-relaxed">
-          I am Ee Von, and I am asking 100 strangers to write down one message in my notebook.
-          One line each. Whatever they would say to a person they will never meet.
+          hi I am Ee Von and 2026 has been a rough year with a lot of unexpected changes. But I guess
+          that is life? So I started strangers jar where I ask strangers to write down any advice or
+          message onto my notebook and on a mission to get 100 strangers. So if you are feeling down,
+          sad or demotivated, I hope these notes from strangers make your day, and remind you that
+          we are all rooting for you.
         </p>
         <p className="mt-5 text-lg leading-relaxed">
-          So if you are feeling down, sad or demotivated, I hope these notes from strangers make
-          your day, and remind you that we are all rooting for you. Go make magic out there.
+          This too shall pass and go out there and make magic.
         </p>
+        <p className="mt-5 text-lg leading-relaxed">Always, Ee Von</p>
 
         <hr className="my-10 border-border" />
 
-        <h2 className="text-2xl">How it works</h2>
-        <p className="mt-4 leading-relaxed text-muted-foreground">
-          I hand someone my notebook. They write one message and then say it out loud while I
-          record. Their handwriting goes on this page exactly as they wrote it, in their own ink,
-          with their own voice underneath.
-        </p>
-        <p className="mt-4 leading-relaxed text-muted-foreground">
+        <p className="leading-relaxed text-muted-foreground">
           {notes.length} of {TOTAL_GOAL} collected so far. The jar keeps filling.
         </p>
 
