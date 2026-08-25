@@ -19,14 +19,14 @@ export function SideNav() {
       <button
         type="button"
         onClick={() => setMobileOpen((o) => !o)}
-        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/90 shadow-sm backdrop-blur md:hidden"
+        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-background/90 shadow-sm backdrop-blur md:hidden"
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
       >
         {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </button>
 
       {/* Desktop menu bar — anchored bottom-left */}
-      <nav className="fixed bottom-6 left-6 z-50 hidden flex-col gap-2 rounded-2xl border border-border bg-background/80 p-5 shadow-sm backdrop-blur md:flex">
+      <nav className="fixed bottom-6 left-6 z-50 hidden flex-col gap-2 rounded-2xl bg-background/80 p-5 shadow-sm backdrop-blur md:flex">
         <Link to="/" className="font-display text-xl leading-none">
           stranger
           <br />
@@ -46,7 +46,7 @@ export function SideNav() {
             className="absolute inset-0 bg-background/60 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="absolute left-0 top-0 h-full w-56 border-r border-border bg-background px-6 py-10">
+          <aside className="absolute left-0 top-0 h-full w-56 bg-background px-6 py-10">
             <Link
               to="/"
               className="font-display text-2xl leading-none"
