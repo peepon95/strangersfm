@@ -128,6 +128,11 @@ function Admin() {
   const nextNumber =
     Math.max(builtInNotes.length, ...rows.map((r) => r.number), 0) + 1;
 
+  /** A note still needs you if it is hidden or has nothing typed out yet. */
+  const todo = rows.filter((r) => !r.published || !r.transcript?.trim());
+  const done = rows.filter((r) => r.published && !!r.transcript?.trim());
+  const visible = filter === "todo" ? todo : filter === "published" ? done : rows;
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!image) return;
