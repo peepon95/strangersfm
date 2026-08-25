@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as NotesRouteImport } from './routes/notes'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicDriveSyncRouteImport } from './routes/api/public/drive-sync'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,6 +46,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicDriveSyncRoute = ApiPublicDriveSyncRouteImport.update({
+  id: '/api/public/drive-sync',
+  path: '/api/public/drive-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +76,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/notes': typeof NotesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth' | '/notes' | '/admin'
+  fullPaths:
+    '/' | '/about' | '/auth' | '/notes' | '/admin' | '/api/public/drive-sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth' | '/notes' | '/admin'
+  to: '/' | '/about' | '/auth' | '/notes' | '/admin' | '/api/public/drive-sync'
   id:
     | '__root__'
     | '/'
@@ -82,6 +92,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/notes'
     | '/_authenticated/admin'
+    | '/api/public/drive-sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,6 +101,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   NotesRoute: typeof NotesRoute
+  ApiPublicDriveSyncRoute: typeof ApiPublicDriveSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -136,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/drive-sync': {
+      id: '/api/public/drive-sync'
+      path: '/api/public/drive-sync'
+      fullPath: '/api/public/drive-sync'
+      preLoaderRoute: typeof ApiPublicDriveSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -156,6 +175,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   NotesRoute: NotesRoute,
+  ApiPublicDriveSyncRoute: ApiPublicDriveSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

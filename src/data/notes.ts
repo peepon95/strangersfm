@@ -18,7 +18,11 @@ export type Note = {
   place?: string;
   /** Their voice saying the words. */
   audioUrl?: string;
+  /** Play only this stretch of the recording, in seconds. */
+  clipStart?: number;
+  clipEnd?: number;
 };
+
 
 export const TOTAL_GOAL = 100;
 
