@@ -87,9 +87,12 @@ export function NoteReveal({
             src={note.audioUrl}
             controls
             preload="metadata"
+            onLoadedMetadata={onLoaded}
+            onTimeUpdate={onTimeUpdate}
             onEnded={autoplay ? onNext : undefined}
             className="w-full"
           />
+
           <p className="pt-3 text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
             {autoplay ? "Their voice, the next note follows on its own" : "Hear them say it"}
           </p>
