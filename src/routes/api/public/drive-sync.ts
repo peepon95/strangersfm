@@ -131,7 +131,17 @@ async function runSync() {
     let mediaUrl: string | null = null;
     let transcript = "";
 
-    if (media && Number(media.size ?? 0) <= MAX_BYTES) {
+    const playable = media ? !/quicktime|x-msvideo/i.test(media.mimeType) : false;
+
+    if (media && !playable) {
+      skipped.push(
+        `${folder.name}: the recording is a .MOV, save it as MP4 or M4A and it will come in`,
+      );
+    } else if (media && Number(media.size ?? 0) > MAX_BYTES) {
+      skipped.push(
+        `${folder.name}: the recording is over 45MB, trim it to the part you want, photo added on its own`,
+      );
+    } else if (media) {
       const mediaBytes = await driveDownload(media.id);
       const mediaPath = `drive/${folder.id}/voice.${extensionFor(media.name, "mp4")}`;
       const mediaUpload = await supabaseAdmin.storage
@@ -150,9 +160,8 @@ async function runSync() {
       } catch (err) {
         console.error("Transcription error", err);
       }
-    } else if (media) {
-      skipped.push(`${folder.name}: voice recording is too large, photo added on its own`);
     }
+
 
     const { error: insertError } = await supabaseAdmin.from("stranger_notes").insert({
       number: nextNumber,
