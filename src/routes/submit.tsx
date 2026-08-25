@@ -64,7 +64,7 @@ function Submit() {
         </div>
 
         <p className="mt-8 border-t border-border pt-6 text-sm text-muted-foreground">
-          No names on the site. Every note stays anonymous unless you ask me otherwise.
+          No names or handles will appear on the site unless you want them to. Otherwise your note stays anonymous and we are all good.
         </p>
 
         <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-background">
