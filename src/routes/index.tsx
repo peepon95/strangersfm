@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
-import { Envelope } from "@/components/Envelope";
 import { FallingNotes } from "@/components/FallingNotes";
 import { PaperPlanes } from "@/components/PaperPlanes";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
+import { JournalTabs } from "@/components/JournalTabs";
+import journalPage from "@/assets/journal-page.png.asset.json";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
