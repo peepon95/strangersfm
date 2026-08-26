@@ -65,11 +65,20 @@ function Index() {
   const note = current === null ? null : notes[current];
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#14180f] px-3 py-6 sm:px-8 sm:py-10">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#e9e2d2] px-3 py-6 sm:px-8 sm:py-10">
+      {/* soft paper grain vignette */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(120% 90% at 50% 40%, transparent 55%, hsl(35 30% 20% / 0.18) 100%)",
+        }}
+      />
       <BackgroundMusic />
 
       <motion.div
-        className="relative w-full max-w-[720px]"
+        className="relative w-[min(92vw,calc((100dvh-190px)*0.72))] max-w-[720px] drop-shadow-[0_24px_40px_hsl(30_25%_20%/0.35)]"
         initial={{ opacity: 0, y: 22 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
@@ -101,17 +110,17 @@ function Index() {
           <button
             type="button"
             onClick={draw}
-            className="rounded-full bg-paper px-8 py-3 text-sm font-medium tracking-wide text-ink transition-transform hover:-translate-y-0.5"
+            className="rounded-full bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
           >
             Open notes
           </button>
-          <p className="font-display text-xl text-paper/90">
+          <p className="font-display text-xl text-ink/90">
             {notes.length}
-            <span className="text-paper/55"> of {TOTAL_GOAL} collected</span>
+            <span className="text-ink/55"> of {TOTAL_GOAL} collected</span>
           </p>
-          <div className="h-1 w-56 overflow-hidden rounded-full bg-paper/20">
+          <div className="h-1 w-56 overflow-hidden rounded-full bg-ink/15">
             <motion.div
-              className="h-full rounded-full bg-paper"
+              className="h-full rounded-full bg-ink"
               initial={{ width: 0 }}
               animate={{ width: `${(notes.length / TOTAL_GOAL) * 100}%` }}
               transition={{ delay: 0.9, duration: 1 }}
@@ -124,7 +133,7 @@ function Index() {
         {note && (
           <motion.div
             key={note.id}
-            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#14180f]/92 px-5 py-10 backdrop-blur-sm"
+            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#e9e2d2]/92 px-5 py-10 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
