@@ -65,11 +65,20 @@ function Index() {
   const note = current === null ? null : notes[current];
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#14180f] px-3 py-6 sm:px-8 sm:py-10">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#e9e2d2] px-3 py-6 sm:px-8 sm:py-10">
+      {/* soft paper grain vignette */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(120% 90% at 50% 40%, transparent 55%, hsl(35 30% 20% / 0.18) 100%)",
+        }}
+      />
       <BackgroundMusic />
 
       <motion.div
-        className="relative w-full max-w-[720px]"
+        className="relative w-[min(92vw,calc((100dvh-190px)*0.72))] max-w-[720px] drop-shadow-[0_24px_40px_hsl(30_25%_20%/0.35)]"
         initial={{ opacity: 0, y: 22 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
