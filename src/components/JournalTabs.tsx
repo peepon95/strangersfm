@@ -6,10 +6,10 @@ import { Link } from "@tanstack/react-router";
  * image so they stay glued to the paper at every size.
  */
 const tabs = [
-  { label: "100 strangers", to: "/", top: 3.5 },
+  { label: "100 strangers", to: "/", top: 2.5 },
   { label: "letters", to: "/notes", top: 26 },
-  { label: "write a note", to: "/submit", top: 48.5 },
-  { label: "about", to: "/about", top: 71 },
+  { label: "write a note", to: "/submit", top: 49.5 },
+  { label: "about", to: "/about", top: 73 },
 ] as const;
 
 export function JournalTabs({ active }: { active?: string }) {
