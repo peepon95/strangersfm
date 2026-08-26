@@ -133,7 +133,7 @@ function Index() {
         {note && (
           <motion.div
             key={note.id}
-            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#14180f]/92 px-5 py-10 backdrop-blur-sm"
+            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#e9e2d2]/92 px-5 py-10 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
