@@ -110,17 +110,17 @@ function Index() {
           <button
             type="button"
             onClick={draw}
-            className="rounded-full bg-paper px-8 py-3 text-sm font-medium tracking-wide text-ink transition-transform hover:-translate-y-0.5"
+            className="rounded-full bg-ink px-8 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
           >
             Open notes
           </button>
-          <p className="font-display text-xl text-paper/90">
+          <p className="font-display text-xl text-ink/90">
             {notes.length}
-            <span className="text-paper/55"> of {TOTAL_GOAL} collected</span>
+            <span className="text-ink/55"> of {TOTAL_GOAL} collected</span>
           </p>
-          <div className="h-1 w-56 overflow-hidden rounded-full bg-paper/20">
+          <div className="h-1 w-56 overflow-hidden rounded-full bg-ink/15">
             <motion.div
-              className="h-full rounded-full bg-paper"
+              className="h-full rounded-full bg-ink"
               initial={{ width: 0 }}
               animate={{ width: `${(notes.length / TOTAL_GOAL) * 100}%` }}
               transition={{ delay: 0.9, duration: 1 }}
