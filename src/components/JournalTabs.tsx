@@ -20,7 +20,7 @@ export function JournalTabs({ active }: { active?: string }) {
           key={tab.to}
           to={tab.to}
           className="group absolute right-0 flex w-full items-center justify-center rounded-r-md bg-paper shadow-[2px_2px_6px_-2px_var(--paper-shadow)] ring-1 ring-ink/10 transition-transform hover:translate-x-[3px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
-          style={{ top: `${tab.top}%`, height: "21.5%" }}
+          style={{ top: `${tab.top}%`, height: "24%" }}
         >
           <span
             className={`text-[clamp(9px,1.15vw,15px)] uppercase tracking-[0.22em] ${
