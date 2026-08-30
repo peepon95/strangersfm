@@ -1,10 +1,3 @@
-import noteRoslan from "@/assets/note-roslan.png.asset.json";
-import noteLady from "@/assets/note-lady.png.asset.json";
-import noteKappi from "@/assets/note-kappi.png.asset.json";
-import audioRoslan from "@/assets/audio-roslan.mp3.asset.json";
-import audioLady from "@/assets/audio-lady.mp3.asset.json";
-import audioKappi from "@/assets/audio-kappi.mp3.asset.json";
-
 export type Note = {
   id: string;
   /** Snapshot of the handwriting, background removed. */
@@ -23,28 +16,27 @@ export type Note = {
   clipEnd?: number;
 };
 
-
 export const TOTAL_GOAL = 100;
 
 export const notes: Note[] = [
   {
     id: "001",
-    image: noteRoslan.url,
+    image: "/handwriting/note-001.png",
     transcript: "Cari kekuatan diri, dan usahakan kekuatan itu hingga berjaya.",
     translation: "Find your own strength, and work at that strength until you succeed.",
-    audioUrl: audioRoslan.url,
+    audioUrl: "/audio/note-001.m4a",
   },
   {
     id: "002",
-    image: noteLady.url,
+    image: "/handwriting/note-002.png",
     transcript: "Tetap berlaku jujur dan semangat untuk majukan diri anda.",
     translation: "Stay honest, and keep the fire to better yourself.",
-    audioUrl: audioLady.url,
+    audioUrl: "/audio/note-002.m4a",
   },
   {
     id: "003",
-    image: noteKappi.url,
+    image: "/handwriting/note-003.png",
     transcript: "Don't worry, drink coffee.",
-    audioUrl: audioKappi.url,
+    audioUrl: "/audio/note-003.m4a",
   },
 ];

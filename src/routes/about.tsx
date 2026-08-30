@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { PaperPlanes } from "@/components/PaperPlanes";
+import { ArchivePageShell } from "@/components/ArchivePageShell";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -26,48 +26,57 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   return (
-    <main className="relative min-h-screen px-6 py-20">
-      <PaperPlanes />
+    <ArchivePageShell tabLabel="why I am doing this" tabColor="#d7dde0">
       <motion.article
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 mx-auto max-w-xl"
+        transition={{ duration: 0.45 }}
+        className="mx-auto max-w-2xl font-type text-ink"
       >
-        <h1 className="text-5xl leading-none">hi.</h1>
-        <p className="mt-6 text-lg leading-relaxed">
-          hi I am Ee Von and 2026 has been a rough year with a lot of unexpected changes. But I guess
-          that is life? So I started stranger fm where I ask strangers to write down any advice or
-          message onto my notebook and on a mission to get 100 strangers. So if you are feeling down,
-          sad or demotivated, I hope these notes from strangers make your day, and remind you that
-          we are all rooting for you.
-        </p>
-        <p className="mt-5 text-lg leading-relaxed">
-          This too shall pass and go out there and make magic.
-        </p>
-        <p className="mt-5 text-lg leading-relaxed">Always, Ee Von</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-ink/45">personal file / 2026</p>
+        <h1 className="mt-5 font-type text-3xl leading-tight tracking-[-0.05em] sm:text-5xl">
+          why this archive exists
+        </h1>
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="archive-rule my-8" />
+
+        <div className="space-y-6 text-sm leading-7 text-ink/70 sm:text-base sm:leading-8">
+          <p>
+            Hi, I am Ee Von. 2026 has been a rough year with a lot of unexpected changes. But I
+            guess that is life. So I started stranger fm, where I ask strangers to write one piece
+            of advice or one message in my notebook. I am on a mission to meet 100 strangers.
+          </p>
+          <p>
+            If you are feeling down, sad or demotivated, I hope these notes make your day and remind
+            you that we are all rooting for you.
+          </p>
+          <p>This too shall pass. Go out there and make magic.</p>
+          <p className="pt-2">Always, Ee Von</p>
+        </div>
+
+        <div className="archive-rule my-8" />
+
+        <div className="flex flex-wrap gap-3">
           <Link
             to="/"
-            className="rounded-full bg-ink px-7 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
+            className="archive-button px-6 py-3 text-[10px] uppercase tracking-[0.14em] sm:text-xs"
           >
-            Pull a note
+            pull a note
           </Link>
           <Link
             to="/notes"
-            className="rounded-full border border-border px-7 py-3 text-sm tracking-wide transition-colors hover:bg-accent"
+            className="border border-ink/30 bg-transparent px-6 py-3 text-[10px] uppercase tracking-[0.14em] transition-colors hover:bg-ink/5 sm:text-xs"
           >
-            See every note
+            see every note
           </Link>
           <Link
             to="/submit"
-            className="rounded-full border border-border px-7 py-3 text-sm tracking-wide transition-colors hover:bg-accent"
+            className="border border-ink/30 bg-transparent px-6 py-3 text-[10px] uppercase tracking-[0.14em] transition-colors hover:bg-ink/5 sm:text-xs"
           >
-            Write a note
+            write a note
           </Link>
         </div>
       </motion.article>
-    </main>
+    </ArchivePageShell>
   );
 }

@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { PaperPlanes } from "@/components/PaperPlanes";
+import { ArchivePageShell } from "@/components/ArchivePageShell";
 
 const TALLY_FORM_ID = "jaAQvE";
 
@@ -11,13 +11,13 @@ export const Route = createFileRoute("/submit")({
       {
         name: "description",
         content:
-          "Write one message to the world, snap your handwriting, say it out loud, and send it in. Your note joins the jar of 100 strangers.",
+          "Write one message to the world, snap your handwriting, say it out loud, and send it in. Your note joins the archive of 100 strangers.",
       },
       { property: "og:title", content: "Add your note · stranger fm" },
       {
         property: "og:description",
         content:
-          "Three easy steps: write it, film it, send it. Your handwriting and your voice join the jar.",
+          "Three easy steps: write it, film it, send it. Your handwriting and your voice join the archive.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -28,69 +28,82 @@ export const Route = createFileRoute("/submit")({
 
 const steps = [
   {
-    title: "step one.",
-    body: "Write it by hand. One message, a piece of advice, or the thing you needed to hear on your worst day. Any paper, any language, any handwriting. Messy is good, messy is human. Then take a photo of it.",
+    number: "01",
+    title: "write it by hand",
+    body: "One message, a piece of advice, or the thing you needed to hear on your worst day. Any paper, language or handwriting is welcome. Then take a clear photo.",
   },
   {
-    title: "step two.",
-    body: "Say it out loud. Turn on your phone camera and read your note to whoever needs it. A few seconds is plenty. I will pull just the audio so your voice sits under your handwriting on the site.",
+    number: "02",
+    title: "say it out loud",
+    body: "Turn on your phone camera and read your note to whoever needs it. A few seconds is plenty. I will keep only the voice beneath your handwriting.",
   },
   {
-    title: "step three.",
-    body: "Send it in below. Upload the photo and the short video, then tell me where in the world you are writing from. Add your Instagram handle if you want me to tag you when it goes up, or just your name if you want to be credited. Stay anonymous? No worries, both are totally optional.",
+    number: "03",
+    title: "send it in",
+    body: "Upload the photo and short recording below. Your name, location and Instagram handle are optional. Staying anonymous is completely fine.",
   },
-];
+] as const;
 
 function Submit() {
   return (
-    <main className="relative min-h-screen px-6 py-20">
-      <PaperPlanes />
+    <ArchivePageShell tabLabel="write a note" tabColor="#b9cbd3">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 mx-auto max-w-xl"
+        transition={{ duration: 0.45 }}
+        className="font-type text-ink"
       >
-        <h1 className="text-5xl leading-none">bring it in.</h1>
-        <p className="mt-3 font-display text-xl text-muted-foreground">three easy steps</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-ink/45">new submission</p>
+        <h1 className="mt-5 font-type text-3xl tracking-[-0.05em] sm:text-5xl">bring it in</h1>
+        <p className="mt-3 text-xs uppercase tracking-[0.12em] text-ink/50">
+          three steps before filing
+        </p>
 
-        <div className="mt-8 space-y-7 border-t border-border pt-8">
+        <div className="archive-rule my-8" />
+
+        <div className="space-y-7">
           {steps.map((step) => (
-            <section key={step.title}>
-              <h2 className="text-lg font-medium">{step.title}</h2>
-              <p className="mt-2 leading-relaxed text-muted-foreground">{step.body}</p>
+            <section key={step.number} className="grid gap-3 sm:grid-cols-[52px_1fr]">
+              <span className="text-xs text-ink/35">{step.number}</span>
+              <div>
+                <h2 className="font-type text-sm font-bold uppercase tracking-[0.08em]">
+                  {step.title}
+                </h2>
+                <p className="mt-2 text-sm leading-7 text-ink/65">{step.body}</p>
+              </div>
             </section>
           ))}
         </div>
 
-        <p className="mt-8 border-t border-border pt-6 text-sm text-muted-foreground">
-          No names or handles will appear on the site unless you want them to. Otherwise your note stays anonymous and we are all good.
+        <p className="mt-8 border-y border-dashed border-ink/20 py-5 text-xs leading-6 text-ink/55">
+          Unless you ask to be credited, your note stays anonymous. Every submission is reviewed
+          before it appears in the public archive.
         </p>
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-background">
+        <div className="mt-10 overflow-hidden border border-ink/15 bg-[#f7f3ea]">
           <iframe
-            title="Add your note to the jar"
+            title="Add your note to the archive"
             src={`https://tally.so/embed/${TALLY_FORM_ID}?alignLeft=1&transparentBackground=1`}
             className="h-[1100px] w-full"
             loading="lazy"
           />
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link
             to="/"
-            className="rounded-full bg-ink px-7 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
+            className="archive-button px-6 py-3 text-[10px] uppercase tracking-[0.14em] sm:text-xs"
           >
-            Pull a note
+            pull a note
           </Link>
           <Link
             to="/notes"
-            className="rounded-full border border-border px-7 py-3 text-sm tracking-wide transition-colors hover:bg-accent"
+            className="border border-ink/30 px-6 py-3 text-[10px] uppercase tracking-[0.14em] transition-colors hover:bg-ink/5 sm:text-xs"
           >
-            See every note
+            see every note
           </Link>
         </div>
       </motion.div>
-    </main>
+    </ArchivePageShell>
   );
 }

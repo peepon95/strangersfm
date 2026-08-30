@@ -1,94 +1,47 @@
-import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
 
 const navItems = [
-  { label: "Pull a note", to: "/" },
-  { label: "Why I am doing this", to: "/about" },
-  { label: "See every note", to: "/notes" },
-  { label: "Write a note", to: "/submit" },
-];
+  { label: "Pull a note", to: "/", color: "#c4d5dd" },
+  { label: "Why I am doing this", to: "/about", color: "#d7dde0" },
+  { label: "See every note", to: "/notes", color: "#e4e1d8" },
+  { label: "Write a note", to: "/submit", color: "#b9cbd3" },
+] as const;
 
 export function SideNav() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   return (
-    <>
-      {/* Mobile toggle — bottom-left */}
-      <button
-        type="button"
-        onClick={() => setMobileOpen((o) => !o)}
-        className="fixed bottom-4 left-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-background/90 shadow-sm backdrop-blur md:hidden"
-        aria-label={mobileOpen ? "Close menu" : "Open menu"}
-      >
-        {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-      </button>
-
-      {/* Desktop menu — anchored directly to the bottom-left side */}
-      <nav className="fixed bottom-8 left-6 z-50 hidden flex-col gap-2 md:flex">
-        <Link to="/" className="font-display text-xl leading-none">
-          stranger fm
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-[#e7ecee]/95 px-4 pt-3 backdrop-blur-sm sm:px-8 sm:pt-4">
+      <div className="mx-auto flex max-w-6xl items-end gap-4 sm:gap-8">
+        <Link
+          to="/"
+          className="shrink-0 pb-3 font-type text-sm tracking-[-0.04em] text-ink sm:pb-4 sm:text-lg"
+        >
+          stranger.fm
         </Link>
-        <div className="mt-4 flex flex-col gap-2">
-          {navItems.map((item) => (
-            <NavLink key={item.to} item={item} active={pathname === item.to} />
-          ))}
-        </div>
-      </nav>
 
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div
-            className="absolute inset-0 bg-background/60 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="absolute left-0 top-0 h-full w-56 border-r border-border bg-background px-6 py-10">
-            <Link
-              to="/"
-              className="font-display text-2xl leading-none"
-              onClick={() => setMobileOpen(false)}
-            >
-              stranger fm
-            </Link>
-            <nav className="mt-12 flex flex-col gap-3">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  item={item}
-                  active={pathname === item.to}
-                  onClick={() => setMobileOpen(false)}
-                />
-              ))}
-            </nav>
-          </aside>
-        </div>
-      )}
-    </>
-  );
-}
-
-function NavLink({
-  item,
-  active,
-  onClick,
-}: {
-  item: { label: string; to: string };
-  active: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <Link
-      to={item.to}
-      onClick={onClick}
-      className={`text-sm leading-snug transition-colors ${
-        active
-          ? "text-foreground"
-          : "text-muted-foreground hover:text-foreground"
-      }`}
-    >
-      {item.label}
-    </Link>
+        <nav
+          aria-label="Archive sections"
+          className="flex min-w-0 flex-1 items-end gap-1 overflow-x-auto pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {navItems.map((item) => {
+            const active = pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                aria-current={active ? "page" : undefined}
+                className={`archive-nav-tab shrink-0 px-4 py-3 font-type text-[9px] uppercase tracking-[0.08em] text-ink transition-transform sm:px-6 sm:text-[11px] ${
+                  active ? "-translate-y-1 font-bold" : "hover:-translate-y-0.5"
+                }`}
+                style={{ backgroundColor: item.color }}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    </header>
   );
 }

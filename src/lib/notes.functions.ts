@@ -3,6 +3,22 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { Note } from "@/data/notes";
 
+const extractedHandwriting: Record<number, string> = {
+  4: "/handwriting/note-004.png",
+  5: "/handwriting/note-005.png",
+  6: "/handwriting/note-006.png",
+  7: "/handwriting/note-007.png",
+  8: "/handwriting/note-008.png",
+};
+
+const cleanedAudio: Record<number, string> = {
+  4: "/audio/note-004.m4a",
+  5: "/audio/note-005.m4a",
+  6: "/audio/note-006.m4a",
+  7: "/audio/note-007.m4a",
+  8: "/audio/note-008.m4a",
+};
+
 /** Notes uploaded through the admin page, readable by everyone. */
 export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
   async (): Promise<Note[]> => {
@@ -21,25 +37,20 @@ export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
     if (error) throw error;
 
     return (data ?? []).map((row) => {
-      const extractedHandwriting: Record<number, string> = {
-        4: "/handwriting/note-004.png",
-        5: "/handwriting/note-005.png",
-        6: "/handwriting/note-006.png",
-        7: "/handwriting/note-007.png",
-        8: "/handwriting/note-008.png",
-      };
-
-
+      const audioUrl = cleanedAudio[row.number] ?? row.audio_url;
       return {
         id: String(row.number).padStart(3, "0"),
         image: extractedHandwriting[row.number] ?? row.image_url,
         transcript: row.transcript ?? "",
         ...(row.translation ? { translation: row.translation } : {}),
-        ...(row.audio_url ? { audioUrl: row.audio_url } : {}),
-        ...(row.clip_start !== null ? { clipStart: Number(row.clip_start) } : {}),
-        ...(row.clip_end !== null ? { clipEnd: Number(row.clip_end) } : {}),
+        ...(audioUrl ? { audioUrl } : {}),
+        ...(!cleanedAudio[row.number] && row.clip_start !== null
+          ? { clipStart: Number(row.clip_start) }
+          : {}),
+        ...(!cleanedAudio[row.number] && row.clip_end !== null
+          ? { clipEnd: Number(row.clip_end) }
+          : {}),
       };
     });
-
   },
 );

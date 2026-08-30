@@ -1,10 +1,11 @@
-import { motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import type { Note } from "@/data/notes";
 import { duckMusic } from "@/components/BackgroundMusic";
 
 /** How long a note without a video stays on screen before the next one. */
 const READ_MS = 9000;
+const TYPE_INTERVAL_MS = 42;
 
 export function NoteReveal({
   note,
@@ -18,6 +19,10 @@ export function NoteReveal({
   onBack: () => void;
 }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const reduceMotion = useReducedMotion();
+  const intro = `a message from stranger no. ${note.id}`;
+  const [typedIntro, setTypedIntro] = useState(intro);
+  const typeDuration = reduceMotion ? 0 : intro.length * TYPE_INTERVAL_MS;
 
   useEffect(() => {
     duckMusic(true);
@@ -25,16 +30,40 @@ export function NoteReveal({
   }, [note.id]);
 
   useEffect(() => {
-    if (!autoplay) return;
-    const el = audioRef.current;
-    if (el) {
-      el.currentTime = note.clipStart ?? 0;
-      el.play().catch(() => undefined);
+    if (reduceMotion) {
+      setTypedIntro(intro);
       return;
     }
-    const t = setTimeout(onNext, READ_MS);
-    return () => clearTimeout(t);
-  }, [note.id, note.clipStart, autoplay, onNext]);
+
+    let character = 0;
+    setTypedIntro("");
+    const timer = window.setInterval(() => {
+      character += 1;
+      setTypedIntro(intro.slice(0, character));
+      if (character >= intro.length) window.clearInterval(timer);
+    }, TYPE_INTERVAL_MS);
+
+    return () => window.clearInterval(timer);
+  }, [intro, reduceMotion]);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    let readTimer: number | undefined;
+    const startTimer = window.setTimeout(() => {
+      const el = audioRef.current;
+      if (el) {
+        el.currentTime = note.clipStart ?? 0;
+        el.play().catch(() => undefined);
+        return;
+      }
+      readTimer = window.setTimeout(onNext, READ_MS);
+    }, typeDuration + 180);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      if (readTimer !== undefined) window.clearTimeout(readTimer);
+    };
+  }, [note.id, note.clipStart, autoplay, onNext, typeDuration]);
 
   /** Honour the trim: stop at the end of the chosen stretch. */
   function onTimeUpdate() {
@@ -53,26 +82,40 @@ export function NoteReveal({
     }
   }
 
-
-
   return (
     <motion.div
       key={note.id}
-      initial={{ opacity: 0, y: 60, rotate: -8, scale: 0.82 }}
-      animate={{ opacity: 1, y: 0, rotate: -1.4, scale: 1 }}
-      exit={{ opacity: 0, y: -40, rotate: 6, scale: 0.9 }}
-      transition={{ type: "spring", stiffness: 90, damping: 14 }}
-      className="flex w-full max-w-2xl flex-col items-center gap-8"
+      initial={{ opacity: 0, y: 50, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -30, scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 110, damping: 18 }}
+      className="flex w-full max-w-2xl flex-col items-center gap-6 sm:gap-8"
     >
-      <figure className="relative">
+      <p
+        aria-label={intro}
+        className="min-h-6 self-start font-type text-xs uppercase tracking-[0.14em] text-ink/65 sm:text-sm"
+      >
+        <span aria-hidden>{typedIntro}</span>
+        <span
+          aria-hidden
+          className="typewriter-cursor ml-0.5 inline-block h-[1em] w-[2px] bg-ink/70"
+        />
+      </p>
+
+      <motion.figure
+        className="relative"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: typeDuration / 1000 + 0.12, duration: 0.55 }}
+      >
         <img
           src={note.image}
           alt={note.transcript}
           loading="lazy"
-          className="w-full max-w-xl drop-shadow-[0_18px_28px_var(--paper-shadow)]"
+          className="max-h-[46dvh] w-full max-w-xl object-contain drop-shadow-[0_18px_28px_var(--paper-shadow)]"
         />
         <figcaption className="sr-only">{note.transcript}</figcaption>
-      </figure>
+      </motion.figure>
 
       {note.translation ? (
         <p className="-mt-4 max-w-md text-center text-sm italic text-muted-foreground">
@@ -81,7 +124,15 @@ export function NoteReveal({
       ) : null}
 
       {note.audioUrl ? (
-        <div className="w-full max-w-sm rounded-2xl border border-border bg-card px-4 py-4 shadow-[0_14px_30px_var(--paper-shadow)]">
+        <motion.div
+          className="w-full max-w-sm border-y border-dashed border-ink/25 px-1 py-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: typeDuration / 1000 + 0.35 }}
+        >
+          <p className="mb-2 font-type text-[10px] uppercase tracking-[0.13em] text-ink/55">
+            voice recording / play
+          </p>
           <audio
             ref={audioRef}
             src={note.audioUrl}
@@ -92,27 +143,23 @@ export function NoteReveal({
             onEnded={autoplay ? onNext : undefined}
             className="w-full"
           />
-
-        </div>
+        </motion.div>
       ) : null}
-
-
-
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
           onClick={onNext}
-          className="rounded-full bg-ink px-7 py-3 text-sm font-medium tracking-wide text-paper transition-transform hover:-translate-y-0.5"
+          className="archive-button px-6 py-3 font-type text-[10px] uppercase tracking-[0.14em] sm:text-xs"
         >
-          Skip to the next note
+          another note
         </button>
         <button
           type="button"
           onClick={onBack}
-          className="rounded-full border border-border px-7 py-3 text-sm tracking-wide text-foreground transition-colors hover:bg-accent"
+          className="border border-ink/35 bg-transparent px-6 py-3 font-type text-[10px] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-ink/5 sm:text-xs"
         >
-          Back to the jar
+          close file
         </button>
       </div>
     </motion.div>
