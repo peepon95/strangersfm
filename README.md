@@ -10,7 +10,7 @@ help me brainstorm and plan it first as i want to be able to capture their handw
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://strangersfm.lovable.app
+**Live app**: https://strangerfm.eevontan95.workers.dev
 
 ## Build with Lovable
 
