@@ -173,6 +173,58 @@
     box-shadow: inset 0 1px rgb(255 255 255 / 38%);
   }
 
+  .letter-site-nav {
+    border-bottom: 1px solid rgb(45 55 58 / 12%);
+    background: rgb(231 236 238 / 88%);
+  }
+
+  .letter-nav-link {
+    border-bottom: 1px solid transparent;
+    opacity: 0.56;
+    transition:
+      opacity 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .letter-nav-link:hover,
+  .letter-nav-link:focus-visible,
+  .letter-nav-link--active {
+    border-bottom-color: var(--ink);
+    opacity: 1;
+    outline: none;
+  }
+
+  .letter-page-sheet {
+    background-color: #f5f0e5;
+    background-image:
+      radial-gradient(circle at 36% 12%, rgb(255 255 255 / 68%), transparent 42%),
+      repeating-linear-gradient(92deg, transparent 0 6px, rgb(70 62 50 / 1.2%) 6px 7px);
+    border: 1px solid rgb(57 55 49 / 15%);
+    border-top-width: 4px;
+    box-shadow: 0 28px 65px rgb(43 52 55 / 14%);
+  }
+
+  .letter-page-sheet::after {
+    content: "";
+    position: absolute;
+    inset: 11px;
+    pointer-events: none;
+    border: 1px solid rgb(45 55 58 / 6%);
+  }
+
+  .letter-page-label {
+    position: absolute;
+    left: 22px;
+    top: 17px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 9px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgb(45 55 58 / 48%);
+  }
+
   .archive-page-sheet {
     background-color: #f2eee4;
     background-image:
@@ -214,6 +266,222 @@
 
   .folder-stack {
     height: clamp(520px, calc(100dvh - 185px), 720px);
+  }
+
+  .mail-stack {
+    min-height: clamp(570px, calc(100dvh - 165px), 760px);
+    padding-top: clamp(38px, 7vh, 76px);
+  }
+
+  .floating-letter-field {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .floating-letter {
+    position: absolute;
+    display: flex;
+    width: clamp(78px, 9vw, 132px);
+    min-height: 76px;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgb(248 244 235 / 82%);
+    border: 1px solid rgb(57 55 49 / 10%);
+    box-shadow: 0 12px 26px rgb(43 52 55 / 8%);
+    filter: saturate(0.72);
+  }
+
+  .floating-letter img {
+    max-height: 70px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .floating-letter--1 {
+    left: 4%;
+    top: 29%;
+    rotate: -8deg;
+  }
+
+  .floating-letter--2 {
+    right: 5%;
+    top: 24%;
+    rotate: 7deg;
+  }
+
+  .floating-letter--3 {
+    left: 9%;
+    bottom: 11%;
+    rotate: 6deg;
+  }
+
+  .floating-letter--4 {
+    right: 10%;
+    bottom: 12%;
+    rotate: -6deg;
+  }
+
+  .floating-letter--5 {
+    left: 23%;
+    top: 18%;
+    rotate: 4deg;
+  }
+
+  .floating-letter--6 {
+    right: 23%;
+    top: 15%;
+    rotate: -4deg;
+  }
+
+  .mail-stack-instruction {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .mail-card-fan {
+    position: relative;
+    width: min(760px, 100%);
+    height: clamp(470px, 65vh, 620px);
+    margin-inline: auto;
+  }
+
+  .mail-card {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(132px, 19vh, 178px);
+    z-index: 10;
+    width: clamp(158px, 21vw, 210px);
+    height: clamp(218px, 30vw, 292px);
+    transform-origin: 50% 100%;
+    background-color: #f7f3e9;
+    background-image:
+      radial-gradient(circle at 30% 12%, rgb(255 255 255 / 72%), transparent 43%),
+      repeating-linear-gradient(94deg, transparent 0 7px, rgb(80 67 50 / 1.4%) 7px 8px);
+    border: 1px solid rgb(57 55 49 / 17%);
+    box-shadow: 0 16px 30px rgb(43 52 55 / 14%);
+    transition:
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .mail-card:hover,
+  .mail-card:focus-within {
+    z-index: 30;
+    box-shadow: 0 25px 42px rgb(43 52 55 / 20%);
+  }
+
+  .mail-card--about {
+    transform: translateX(-145%) rotate(-13deg);
+  }
+
+  .mail-card--about:hover,
+  .mail-card--about:focus-within {
+    transform: translateX(-145%) translateY(-22px) rotate(-10deg);
+  }
+
+  .mail-card--notes {
+    transform: translateX(-87%) translateY(-34px) rotate(-5deg);
+  }
+
+  .mail-card--notes:hover,
+  .mail-card--notes:focus-within {
+    transform: translateX(-87%) translateY(-58px) rotate(-3deg);
+  }
+
+  .mail-card--write {
+    transform: translateX(-29%) translateY(-30px) rotate(6deg);
+  }
+
+  .mail-card--write:hover,
+  .mail-card--write:focus-within {
+    transform: translateX(-29%) translateY(-55px) rotate(4deg);
+  }
+
+  .mail-card--pull {
+    z-index: 14;
+    transform: translateX(29%) rotate(13deg);
+    background-color: #ece5d6;
+  }
+
+  .mail-card--pull:hover,
+  .mail-card--pull:focus-within {
+    transform: translateX(29%) translateY(-24px) rotate(10deg);
+  }
+
+  .mail-card-action {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(16px, 2.5vw, 26px);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .mail-card-action:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 5px;
+  }
+
+  .mail-card-number {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    opacity: 0.45;
+  }
+
+  .mail-card-copy {
+    display: block;
+    margin-block: auto;
+  }
+
+  .mail-card-mark {
+    align-self: flex-end;
+    font-size: 20px;
+    opacity: 0.45;
+    transition: transform 180ms ease;
+  }
+
+  .mail-card:hover .mail-card-mark,
+  .mail-card:focus-within .mail-card-mark {
+    transform: translate(2px, -2px);
+  }
+
+  .mail-envelope {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 22px;
+    width: min(590px, 88%);
+    margin-inline: auto;
+    pointer-events: none;
+  }
+
+  .mail-envelope--back {
+    z-index: 5;
+    filter: drop-shadow(0 22px 25px rgb(43 52 55 / 18%));
+  }
+
+  .mail-envelope--front {
+    z-index: 20;
+    clip-path: inset(38% 0 0);
+  }
+
+  .mail-envelope img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .mail-stack-caption {
+    margin-top: -8px;
   }
 
   .folder-layer {
@@ -270,6 +538,56 @@
     box-shadow: 0 28px 65px rgb(43 52 55 / 28%);
   }
 
+  .letter-reveal-overlay {
+    background-color: rgb(199 213 219 / 92%);
+    background-image:
+      radial-gradient(circle at 50% 12%, rgb(255 255 255 / 78%), transparent 48%),
+      repeating-linear-gradient(96deg, transparent 0 7px, rgb(38 49 54 / 1.3%) 7px 8px);
+  }
+
+  .letter-close {
+    border-bottom: 1px solid rgb(45 55 58 / 35%);
+    padding-block: 5px;
+    color: var(--ink);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .letter-close:hover,
+  .letter-close:focus-visible {
+    transform: translateX(-3px);
+    border-color: var(--ink);
+    outline: none;
+  }
+
+  .letter-reveal-paper {
+    min-height: min(560px, calc(100dvh - 145px));
+    transform-origin: 50% 100%;
+  }
+
+  .letter-reveal-paper::before {
+    content: "stranger.fm / private correspondence";
+    position: absolute;
+    right: 18px;
+    top: 16px;
+    font-family: var(--font-type);
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(45 55 58 / 38%);
+  }
+
+  .letter-reveal-envelope {
+    max-height: 285px;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .letter-reveal-envelope--front {
+    clip-path: inset(38% 0 0);
+  }
+
   .typewriter-cursor {
     animation: cursor-blink 0.8s steps(1) infinite;
   }
@@ -293,6 +611,99 @@
   }
 
   @media (max-width: 639px) {
+    .floating-letter {
+      width: 72px;
+      min-height: 62px;
+      padding: 9px;
+      opacity: 0.3;
+    }
+
+    .floating-letter--3,
+    .floating-letter--4,
+    .floating-letter--5,
+    .floating-letter--6 {
+      display: none;
+    }
+
+    .mail-stack {
+      min-height: calc(100dvh - 165px);
+      padding-top: 46px;
+    }
+
+    .mail-card-fan {
+      width: min(430px, 100%);
+      height: min(520px, 64dvh);
+      min-height: 450px;
+    }
+
+    .mail-card {
+      bottom: 112px;
+      width: clamp(124px, 37vw, 150px);
+      height: clamp(190px, 53vw, 226px);
+    }
+
+    .mail-card-copy > span:first-child {
+      display: block;
+      max-width: 76px;
+      font-size: 17px;
+      line-height: 0.95;
+    }
+
+    .mail-card--about {
+      transform: translateX(-103%) rotate(-12deg);
+    }
+
+    .mail-card--about:hover,
+    .mail-card--about:focus-within {
+      transform: translateX(-103%) translateY(-16px) rotate(-9deg);
+    }
+
+    .mail-card--notes {
+      transform: translateX(-70%) translateY(-42px) rotate(-4deg);
+    }
+
+    .mail-card--notes:hover,
+    .mail-card--notes:focus-within {
+      transform: translateX(-70%) translateY(-58px) rotate(-2deg);
+    }
+
+    .mail-card--write {
+      transform: translateX(-29%) translateY(-38px) rotate(5deg);
+    }
+
+    .mail-card--write:hover,
+    .mail-card--write:focus-within {
+      transform: translateX(-29%) translateY(-54px) rotate(3deg);
+    }
+
+    .mail-card--pull {
+      transform: translateX(3%) rotate(12deg);
+    }
+
+    .mail-card--pull:hover,
+    .mail-card--pull:focus-within {
+      transform: translateX(3%) translateY(-16px) rotate(9deg);
+    }
+
+    .mail-envelope {
+      bottom: 30px;
+      width: min(420px, 102%);
+    }
+
+    .mail-stack-caption {
+      margin-top: -16px;
+      padding-inline: 24px;
+    }
+
+    .letter-reveal-paper {
+      min-height: 520px;
+      padding-bottom: 78px;
+    }
+
+    .letter-reveal-envelope {
+      max-height: 230px;
+    }
+
     .folder-stack {
       height: calc(100dvh - 172px);
       min-height: 500px;

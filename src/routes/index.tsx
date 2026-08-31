@@ -1,16 +1,38 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
-const folders = [
-  { label: "why I am doing this", to: "/about", tabLeft: "5%", color: "#d7dde0" },
-  { label: "write a note", to: "/submit", tabLeft: "58%", color: "#b9cbd3" },
-  { label: "see every note", to: "/notes", tabLeft: "13%", color: "#e4e1d8" },
-  { label: "pull a note", to: null, tabLeft: "58%", color: "#c4d5dd" },
+const envelopeImage = "/images/open-envelope.png";
+
+const letters = [
+  {
+    label: "why this exists",
+    note: "the story behind the notebook",
+    to: "/about",
+    className: "mail-card--about",
+  },
+  {
+    label: "every note",
+    note: "browse the handwritten letters",
+    to: "/notes",
+    className: "mail-card--notes",
+  },
+  {
+    label: "write a note",
+    note: "leave a message for a stranger",
+    to: "/submit",
+    className: "mail-card--write",
+  },
+  {
+    label: "pull a note",
+    note: "a message chosen for today",
+    to: null,
+    className: "mail-card--pull",
+  },
 ] as const;
 
 export const Route = createFileRoute("/")({
@@ -49,6 +71,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
+  const reduceMotion = useReducedMotion();
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
 
@@ -88,87 +111,177 @@ function Index() {
           <span className="block text-base text-ink sm:text-xl">
             {String(notes.length).padStart(2, "0")} / {TOTAL_GOAL}
           </span>
-          voices filed
+          letters found
         </div>
       </header>
 
-      <section
-        aria-label="Stranger FM sections"
-        className="folder-stack relative z-10 mx-auto mt-14 w-full max-w-6xl sm:mt-16"
-      >
-        {folders.map((folder, index) => {
-          const tabClass =
-            "folder-tab flex items-center justify-center px-4 font-type text-[10px] uppercase tracking-[0.1em] text-ink transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink sm:px-7 sm:text-xs";
+      <div aria-hidden className="floating-letter-field">
+        {notes.slice(0, 6).map((floatingNote, index) => (
+          <motion.div
+            key={`floating-${floatingNote.id}`}
+            className={`floating-letter floating-letter--${index + 1}`}
+            initial={{ opacity: 0, y: 22 }}
+            animate={
+              reduceMotion
+                ? { opacity: 0.42, y: 0 }
+                : { opacity: [0.24, 0.47, 0.24], y: [0, -12, 0], rotate: [0, 1.5, 0] }
+            }
+            transition={{
+              opacity: { delay: 0.7 + index * 0.08, duration: 7 + index, repeat: Infinity },
+              y: { delay: index * 0.2, duration: 7 + index, repeat: Infinity, ease: "easeInOut" },
+              rotate: {
+                delay: index * 0.2,
+                duration: 7 + index,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
+          >
+            <img src={floatingNote.image} alt="" />
+          </motion.div>
+        ))}
+      </div>
 
-          return (
-            <motion.div
-              key={folder.label}
-              className="folder-layer absolute inset-x-0 bottom-0"
-              style={{
-                top: `calc(${index} * clamp(72px, 9.5vw, 102px))`,
-                zIndex: index + 1,
-                backgroundColor: folder.color,
-              }}
-              initial={{ y: 32, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.08 * index, duration: 0.5, ease: "easeOut" }}
-            >
-              {folder.to ? (
-                <Link
-                  to={folder.to}
-                  className={tabClass}
-                  style={{ left: folder.tabLeft, backgroundColor: folder.color }}
-                >
-                  {folder.label}
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={draw}
-                  className={tabClass}
-                  style={{ left: folder.tabLeft, backgroundColor: folder.color }}
-                >
-                  {folder.label}
-                </button>
-              )}
+      <section aria-label="Choose a letter" className="mail-stack relative z-10 mx-auto max-w-5xl">
+        <p className="mail-stack-instruction font-type text-[10px] uppercase tracking-[0.18em] text-ink/50 sm:text-xs">
+          choose a letter
+        </p>
 
-              {index === folders.length - 1 ? (
-                <div className="flex h-full flex-col items-center justify-center px-6 pb-10 pt-12 text-center sm:px-12">
-                  <p className="font-type text-[10px] uppercase tracking-[0.2em] text-ink/45 sm:text-xs">
-                    file selected
-                  </p>
-                  <h2 className="mt-4 max-w-2xl font-type text-2xl leading-snug tracking-[-0.04em] text-ink sm:text-4xl lg:text-5xl">
-                    a message from someone you have never met
-                  </h2>
-                  <p className="mt-5 max-w-lg font-type text-xs leading-relaxed text-ink/55 sm:text-sm">
-                    pull one at random. read their handwriting. listen to the words exactly as they
-                    said them.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={draw}
-                    className="archive-button mt-8 px-7 py-3 font-type text-xs uppercase tracking-[0.16em] sm:px-9 sm:py-4"
-                  >
-                    open this file
+        <div className="mail-card-fan">
+          <motion.div
+            aria-hidden
+            className="mail-envelope mail-envelope--back"
+            initial={reduceMotion ? false : { opacity: 0, y: 70, rotate: -2 }}
+            animate={{ opacity: 1, y: 0, rotate: -1 }}
+            transition={{ delay: 0.45, type: "spring", stiffness: 95, damping: 16 }}
+          >
+            <img src={envelopeImage} alt="" width={1200} height={800} />
+          </motion.div>
+
+          {letters.map((letter, index) => {
+            const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
+            const contents = (
+              <>
+                <span className="mail-card-number font-type">0{index + 1}</span>
+                <span className="mail-card-copy">
+                  <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
+                    {letter.label}
+                  </span>
+                  <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
+                    {letter.note}
+                  </span>
+                </span>
+                <span aria-hidden className="mail-card-mark font-display">
+                  ↗
+                </span>
+              </>
+            );
+
+            return (
+              <motion.div
+                key={letter.label}
+                className={cardClass}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  delay: 0.12 + index * 0.1,
+                  duration: 0.65,
+                  ease: "easeOut",
+                }}
+              >
+                {letter.to ? (
+                  <Link to={letter.to} className="mail-card-action">
+                    {contents}
+                  </Link>
+                ) : (
+                  <button type="button" onClick={draw} className="mail-card-action text-left">
+                    {contents}
                   </button>
-                </div>
-              ) : null}
-            </motion.div>
-          );
-        })}
+                )}
+              </motion.div>
+            );
+          })}
+
+          <motion.div
+            aria-hidden
+            className="mail-envelope mail-envelope--front"
+            initial={reduceMotion ? false : { opacity: 0, y: 70, rotate: -2 }}
+            animate={{ opacity: 1, y: 0, rotate: -1 }}
+            transition={{ delay: 0.45, type: "spring", stiffness: 95, damping: 16 }}
+          >
+            <img src={envelopeImage} alt="" width={1200} height={800} />
+          </motion.div>
+        </div>
+
+        <p className="mail-stack-caption mx-auto max-w-md text-center font-type text-[10px] leading-relaxed text-ink/55 sm:text-xs">
+          Every letter holds a stranger&apos;s handwriting and the sound of their voice.
+        </p>
       </section>
 
       <AnimatePresence>
         {note ? (
           <motion.div
             key={note.id}
-            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#aebdc4]/88 px-4 py-6 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`A letter from stranger number ${note.id}`}
+            className="letter-reveal-overlay fixed inset-0 z-40 overflow-y-auto px-4 py-5 backdrop-blur-sm sm:px-8 sm:py-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="typewriter-sheet relative w-full max-w-2xl px-5 py-8 sm:px-10 sm:py-12">
-              <NoteReveal note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
+            <button
+              type="button"
+              onClick={() => setCurrent(null)}
+              className="letter-close fixed left-4 top-4 z-[70] font-type text-[10px] uppercase tracking-[0.12em] sm:left-8 sm:top-7 sm:text-xs"
+            >
+              ← back to the letters
+            </button>
+
+            <div className="letter-reveal-stage mx-auto flex min-h-full w-full max-w-4xl items-center justify-center">
+              <div className="relative w-full pb-20 pt-14 sm:pt-8">
+                <motion.img
+                  src={envelopeImage}
+                  alt=""
+                  aria-hidden
+                  width={1200}
+                  height={800}
+                  className="letter-reveal-envelope letter-reveal-envelope--back pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-auto w-[min(660px,96%)] drop-shadow-[0_24px_32px_rgb(43_52_55/0.24)]"
+                  initial={reduceMotion ? false : { y: 100, opacity: 0, rotate: 2 }}
+                  animate={{ y: 0, opacity: 1, rotate: -1 }}
+                  exit={{ y: 70, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 95, damping: 17 }}
+                />
+
+                <motion.div
+                  className="letter-reveal-paper typewriter-sheet relative z-20 mx-auto w-full max-w-2xl px-5 pb-20 pt-8 sm:px-10 sm:pb-24 sm:pt-10"
+                  initial={reduceMotion ? false : { y: 210, opacity: 0, rotate: -1.5, scale: 0.95 }}
+                  animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ y: 130, opacity: 0, scale: 0.97 }}
+                  transition={{ delay: 0.08, type: "spring", stiffness: 82, damping: 18 }}
+                >
+                  <NoteReveal
+                    note={note}
+                    autoplay
+                    onNext={draw}
+                    onBack={() => setCurrent(null)}
+                    presentation="letter"
+                  />
+                </motion.div>
+
+                <motion.img
+                  src={envelopeImage}
+                  alt=""
+                  aria-hidden
+                  width={1200}
+                  height={800}
+                  className="letter-reveal-envelope letter-reveal-envelope--front pointer-events-none absolute inset-x-0 bottom-0 z-30 mx-auto h-auto w-[min(660px,96%)]"
+                  initial={reduceMotion ? false : { y: 100, opacity: 0, rotate: 2 }}
+                  animate={{ y: 0, opacity: 1, rotate: -1 }}
+                  exit={{ y: 70, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 95, damping: 17 }}
+                />
+              </div>
             </div>
           </motion.div>
         ) : null}
