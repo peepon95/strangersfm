@@ -505,71 +505,6 @@
     height: auto;
   }
 
-  .mail-envelope-toggle {
-    position: absolute;
-    left: 50%;
-    bottom: 22px;
-    z-index: 28;
-    display: flex;
-    width: min(590px, 88%);
-    align-items: center;
-    justify-content: center;
-    transform: translateX(-50%);
-    background: transparent;
-    color: var(--ink);
-    cursor: pointer;
-  }
-
-  .mail-envelope-toggle--closed {
-    aspect-ratio: 3 / 2;
-  }
-
-  .mail-envelope-toggle--open {
-    height: min(190px, 31vw);
-  }
-
-  .mail-envelope-toggle-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    min-width: 148px;
-    padding: 10px 13px;
-    border: 1px solid rgb(57 55 49 / 28%);
-    background: rgb(247 243 233 / 82%);
-    box-shadow: 0 8px 20px rgb(43 52 55 / 10%);
-    font-size: 9px;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    backdrop-filter: blur(4px);
-    transition:
-      translate 180ms ease,
-      background-color 180ms ease;
-  }
-
-  .mail-envelope-toggle:hover .mail-envelope-toggle-label,
-  .mail-envelope-toggle:focus-visible .mail-envelope-toggle-label {
-    translate: 0 -3px;
-    background: rgb(250 247 240 / 96%);
-    outline: 2px solid rgb(45 55 58 / 34%);
-    outline-offset: 3px;
-  }
-
-  .mail-envelope-toggle:focus-visible {
-    outline: none;
-  }
-
-  .mail-envelope-toggle-mark {
-    display: inline-flex;
-    width: 24px;
-    height: 24px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgb(57 55 49 / 24%);
-    border-radius: 50%;
-    font-family: var(--font-display);
-    font-size: 14px;
-  }
-
   .mail-stack-caption {
     margin-top: -8px;
   }
@@ -782,15 +717,6 @@
     .mail-envelope {
       bottom: 30px;
       width: min(420px, 102%);
-    }
-
-    .mail-envelope-toggle {
-      bottom: 30px;
-      width: min(420px, 102%);
-    }
-
-    .mail-envelope-toggle--open {
-      height: 170px;
     }
 
     .mail-stack-caption {

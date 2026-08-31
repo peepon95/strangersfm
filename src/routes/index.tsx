@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
@@ -75,6 +75,11 @@ function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMenuOpen(true), reduceMotion ? 0 : 850);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
   const draw = useCallback(() => {
     setCurrent((previous) => {
@@ -224,29 +229,12 @@ function Index() {
           >
             <img src={envelopeImage} alt="" width={1200} height={800} />
           </motion.div>
-
-          <button
-            type="button"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-expanded={menuOpen}
-            aria-controls="letter-menu"
-            className={`mail-envelope-toggle font-type ${
-              menuOpen ? "mail-envelope-toggle--open" : "mail-envelope-toggle--closed"
-            }`}
-          >
-            <span className="mail-envelope-toggle-label">
-              <span aria-hidden className="mail-envelope-toggle-mark">
-                {menuOpen ? "×" : "✉"}
-              </span>
-              <span>{menuOpen ? "close envelope" : "open envelope"}</span>
-            </span>
-          </button>
         </div>
 
         <p className="mail-stack-caption mx-auto max-w-md text-center font-type text-[10px] leading-relaxed text-ink/55 sm:text-xs">
           {menuOpen
             ? "Choose where you would like to go."
-            : "Open the envelope to find the handwritten collection inside."}
+            : "The handwritten collection is opening for you."}
         </p>
       </section>
 
