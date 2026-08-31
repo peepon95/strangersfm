@@ -592,7 +592,7 @@
   }
 
   .envelope-note-scene {
-    height: clamp(520px, 66dvh, 620px);
+    height: clamp(610px, 72dvh, 740px);
   }
 
   .envelope-note-envelope {
@@ -609,9 +609,9 @@
 
   .envelope-note-paper {
     bottom: clamp(165px, 19vw, 190px);
-    width: min(440px, 69%);
-    height: clamp(300px, 38dvh, 360px);
-    padding: 24px 28px 26px;
+    width: min(470px, 72%);
+    height: clamp(405px, 50dvh, 485px);
+    padding: 24px 28px clamp(94px, 10vw, 112px);
     transform-origin: 50% 100%;
   }
 
@@ -639,7 +639,7 @@
   }
 
   .envelope-note-handwriting {
-    max-height: 235px;
+    max-height: 310px;
     filter: drop-shadow(0 7px 12px rgb(43 52 55 / 9%));
   }
 
@@ -835,7 +835,7 @@
     }
 
     .envelope-note-scene {
-      height: 455px;
+      height: 540px;
     }
 
     .envelope-note-envelope {
@@ -845,9 +845,9 @@
 
     .envelope-note-paper {
       bottom: 125px;
-      width: min(330px, 75%);
-      height: 275px;
-      padding: 21px 18px 20px;
+      width: min(340px, 78%);
+      height: 370px;
+      padding: 21px 18px 88px;
     }
 
     .envelope-note-paper::before {
@@ -855,7 +855,7 @@
     }
 
     .envelope-note-handwriting {
-      max-height: 190px;
+      max-height: 235px;
     }
 
     .envelope-note-translation {
