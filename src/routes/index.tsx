@@ -72,6 +72,7 @@ function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const reduceMotion = useReducedMotion();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
 
@@ -144,63 +145,75 @@ function Index() {
 
       <section aria-label="Choose a letter" className="mail-stack relative z-10 mx-auto max-w-5xl">
         <p className="mail-stack-instruction font-type text-[10px] uppercase tracking-[0.18em] text-ink/50 sm:text-xs">
-          choose a letter
+          {menuOpen ? "choose a letter" : "a letter is waiting"}
         </p>
 
-        <div className="mail-card-fan">
+        <div id="letter-menu" className={`mail-card-fan ${menuOpen ? "is-open" : "is-closed"}`}>
           <motion.div
             aria-hidden
-            className="mail-envelope mail-envelope--back"
-            initial={reduceMotion ? false : { opacity: 0, y: 70, rotate: -2 }}
-            animate={{ opacity: 1, y: 0, rotate: -1 }}
-            transition={{ delay: 0.45, type: "spring", stiffness: 95, damping: 16 }}
+            className={`mail-envelope mail-envelope--flap ${
+              menuOpen ? "mail-envelope--flap-open" : "mail-envelope--flap-closed"
+            }`}
+            initial={reduceMotion ? false : { opacity: 0, y: 70, rotate: -2, rotateX: 180 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              rotate: -1,
+              rotateX: menuOpen ? 0 : 180,
+            }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : {
+                    opacity: { delay: 0.2, duration: 0.35 },
+                    y: { delay: 0.2, type: "spring", stiffness: 95, damping: 16 },
+                    rotate: { delay: 0.2, type: "spring", stiffness: 95, damping: 16 },
+                    rotateX: { duration: 0.78, ease: [0.22, 0.72, 0.16, 1] },
+                  }
+            }
           >
             <img src={envelopeImage} alt="" width={1200} height={800} />
           </motion.div>
 
-          {letters.map((letter, index) => {
-            const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
-            const contents = (
-              <>
-                <span className="mail-card-number font-type">0{index + 1}</span>
-                <span className="mail-card-copy">
-                  <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
-                    {letter.label}
-                  </span>
-                  <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
-                    {letter.note}
-                  </span>
-                </span>
-                <span aria-hidden className="mail-card-mark font-display">
-                  ↗
-                </span>
-              </>
-            );
+          {menuOpen
+            ? letters.map((letter, index) => {
+                const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
+                const contents = (
+                  <>
+                    <span className="mail-card-number font-type">0{index + 1}</span>
+                    <span className="mail-card-copy">
+                      <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
+                        {letter.label}
+                      </span>
+                      <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
+                        {letter.note}
+                      </span>
+                    </span>
+                    <span aria-hidden className="mail-card-mark font-display">
+                      ↗
+                    </span>
+                  </>
+                );
 
-            return (
-              <motion.div
-                key={letter.label}
-                className={cardClass}
-                initial={reduceMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  delay: 0.12 + index * 0.1,
-                  duration: 0.65,
-                  ease: "easeOut",
-                }}
-              >
-                {letter.to ? (
-                  <Link to={letter.to} className="mail-card-action">
-                    {contents}
-                  </Link>
-                ) : (
-                  <button type="button" onClick={draw} className="mail-card-action text-left">
-                    {contents}
-                  </button>
-                )}
-              </motion.div>
-            );
-          })}
+                return (
+                  <div
+                    key={letter.label}
+                    className={cardClass}
+                    style={{ animationDelay: reduceMotion ? "0ms" : `${240 + index * 105}ms` }}
+                  >
+                    {letter.to ? (
+                      <Link to={letter.to} className="mail-card-action">
+                        {contents}
+                      </Link>
+                    ) : (
+                      <button type="button" onClick={draw} className="mail-card-action text-left">
+                        {contents}
+                      </button>
+                    )}
+                  </div>
+                );
+              })
+            : null}
 
           <motion.div
             aria-hidden
@@ -211,10 +224,29 @@ function Index() {
           >
             <img src={envelopeImage} alt="" width={1200} height={800} />
           </motion.div>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-controls="letter-menu"
+            className={`mail-envelope-toggle font-type ${
+              menuOpen ? "mail-envelope-toggle--open" : "mail-envelope-toggle--closed"
+            }`}
+          >
+            <span className="mail-envelope-toggle-label">
+              <span aria-hidden className="mail-envelope-toggle-mark">
+                {menuOpen ? "×" : "✉"}
+              </span>
+              <span>{menuOpen ? "close envelope" : "open envelope"}</span>
+            </span>
+          </button>
         </div>
 
         <p className="mail-stack-caption mx-auto max-w-md text-center font-type text-[10px] leading-relaxed text-ink/55 sm:text-xs">
-          Every letter holds a stranger&apos;s handwriting and the sound of their voice.
+          {menuOpen
+            ? "Choose where you would like to go."
+            : "Open the envelope to find the handwritten collection inside."}
         </p>
       </section>
 
