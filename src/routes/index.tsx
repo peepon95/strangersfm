@@ -1,43 +1,32 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import {
-  Archive,
-  FileHeart,
-  FolderOpen,
-  Headphones,
-  Minus,
-  NotebookPen,
-  PhoneCall,
-  Radio,
-  Sparkles,
-  Volume2,
-  X,
-} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
-const desktopLinks = [
-  { label: "Every note", sublabel: "the full archive", to: "/notes", icon: Archive },
-  { label: "Why this exists", sublabel: "a note from Ee Von", to: "/about", icon: FolderOpen },
-  { label: "Write a note", sublabel: "add your handwriting", to: "/submit", icon: NotebookPen },
+const folders = [
+  { label: "why I am doing this", to: "/about", tabLeft: "5%", color: "#d7dde0" },
+  { label: "write a note", to: "/submit", tabLeft: "58%", color: "#b9cbd3" },
+  { label: "see every note", to: "/notes", tabLeft: "13%", color: "#e4e1d8" },
+  { label: "pull a note", to: null, tabLeft: "58%", color: "#c4d5dd" },
 ] as const;
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "stranger.fm · handwritten messages in their own voices" },
+      { title: "stranger fm · an archive of handwritten notes" },
       {
         name: "description",
         content:
-          "100 strangers, one notebook. Open a handwritten message and hear it in the stranger's own voice.",
+          "100 strangers, one notebook. Open a letter and read a handwritten message to the world, in their own hand, in their own voice.",
       },
-      { property: "og:title", content: "stranger.fm · an archive of human voices" },
+      { property: "og:title", content: "stranger fm · an archive of handwritten notes" },
       {
         property: "og:description",
-        content: "Open a handwritten message from someone you have never met.",
+        content:
+          "Open a letter and read a handwritten message to the world, in a stranger's own hand and voice.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -45,18 +34,13 @@ export const Route = createFileRoute("/")({
   }),
   loader: () => listPublishedNotes(),
   errorComponent: () => (
-    <main className="retro-desktop flex min-h-screen items-center justify-center px-6 text-center">
-      <div className="retro-window w-full max-w-md">
-        <div className="retro-titlebar">stranger.fm</div>
-        <p className="p-8 font-type text-sm text-ink/65">
-          The notes are resting. Please refresh in a moment.
-        </p>
-      </div>
+    <main className="flex min-h-screen items-center justify-center px-6 text-center">
+      <p className="text-muted-foreground">The notes are resting, please refresh in a moment.</p>
     </main>
   ),
   notFoundComponent: () => (
-    <main className="retro-desktop flex min-h-screen items-center justify-center px-6 text-center">
-      <p className="font-type text-sm text-ink/65">Nothing is filed here.</p>
+    <main className="flex min-h-screen items-center justify-center px-6 text-center">
+      <p className="text-muted-foreground">Nothing here.</p>
     </main>
   ),
   component: Index,
@@ -66,40 +50,9 @@ function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const [current, setCurrent] = useState<number | null>(null);
-  const [startOpen, setStartOpen] = useState(false);
-  const [hotlineOpen, setHotlineOpen] = useState(false);
-  const [time, setTime] = useState("MYT");
   const bag = useRef<number[]>([]);
 
-  useEffect(() => {
-    const update = () => {
-      setTime(
-        new Intl.DateTimeFormat("en-MY", {
-          timeZone: "Asia/Kuala_Lumpur",
-          hour: "numeric",
-          minute: "2-digit",
-        }).format(new Date()),
-      );
-    };
-    update();
-    const timer = window.setInterval(update, 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const closeTopLayer = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      if (current !== null) setCurrent(null);
-      else if (hotlineOpen) setHotlineOpen(false);
-      else setStartOpen(false);
-    };
-    window.addEventListener("keydown", closeTopLayer);
-    return () => window.removeEventListener("keydown", closeTopLayer);
-  }, [current, hotlineOpen]);
-
   const draw = useCallback(() => {
-    setStartOpen(false);
-    setHotlineOpen(false);
     setCurrent((previous) => {
       if (bag.current.length === 0) {
         bag.current = notes
@@ -115,253 +68,111 @@ function Index() {
   const note = current === null ? null : notes[current];
 
   return (
-    <main className="retro-desktop relative min-h-[100svh] overflow-hidden pb-[58px] text-ink">
+    <main className="archive-stage relative min-h-screen overflow-hidden px-4 pb-0 pt-7 sm:px-8 sm:pt-10">
       <BackgroundMusic />
 
-      <section
-        aria-label="Stranger FM desktop"
-        className="relative z-10 min-h-[calc(100svh-58px)] p-4 sm:p-7"
-      >
-        <div className="desktop-icon-grid">
-          <button type="button" onClick={draw} className="desktop-icon group">
-            <span className="desktop-icon-art bg-[#ffe48d]">
-              <Radio aria-hidden />
-            </span>
-            <span className="desktop-icon-label">Pull a note</span>
-            <span className="desktop-icon-detail">someone is rooting for you</span>
-          </button>
-
-          {desktopLinks.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.to} to={item.to} className="desktop-icon group">
-                <span className="desktop-icon-art bg-[#f1d875]">
-                  <Icon aria-hidden />
-                </span>
-                <span className="desktop-icon-label">{item.label}</span>
-                <span className="desktop-icon-detail">{item.sublabel}</span>
-              </Link>
-            );
-          })}
-
-          <button type="button" onClick={() => setHotlineOpen(true)} className="desktop-icon group">
-            <span className="desktop-icon-art bg-[#ef9e92]">
-              <PhoneCall aria-hidden />
-            </span>
-            <span className="desktop-icon-label">Call Stranger FM</span>
-            <span className="desktop-icon-detail">Malaysia line · soon</span>
-          </button>
+      <header className="relative z-20 mx-auto flex w-full max-w-6xl items-start justify-between gap-6">
+        <div>
+          <p className="font-type text-[10px] uppercase tracking-[0.28em] text-ink/55 sm:text-xs">
+            an archive of voices
+          </p>
+          <h1 className="mt-2 font-type text-2xl tracking-[-0.05em] text-ink sm:text-4xl">
+            stranger.fm
+          </h1>
+          <p className="mt-3 max-w-md font-type text-[11px] leading-relaxed text-ink/55 sm:text-sm">
+            100 strangers. one handwritten message each. preserved in their own voice.
+          </p>
         </div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 18, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="retro-window welcome-window"
-          aria-labelledby="welcome-title"
-        >
-          <div className="retro-titlebar">
-            <span className="flex min-w-0 items-center gap-2">
-              <FileHeart aria-hidden className="h-4 w-4 shrink-0" />
-              <span className="truncate">stranger.fm — welcome</span>
-            </span>
-            <span className="retro-window-controls" aria-hidden>
-              <span>
-                <Minus />
-              </span>
-              <span>
-                <Sparkles />
-              </span>
-              <span>
-                <X />
-              </span>
-            </span>
-          </div>
+        <div className="border-t border-ink/30 pt-2 text-right font-type text-[10px] uppercase leading-relaxed tracking-[0.15em] text-ink/55 sm:text-xs">
+          <span className="block text-base text-ink sm:text-xl">
+            {String(notes.length).padStart(2, "0")} / {TOTAL_GOAL}
+          </span>
+          voices filed
+        </div>
+      </header>
 
-          <div className="welcome-window-body">
-            <div className="relative z-10 max-w-xl">
-              <p className="font-type text-[10px] uppercase tracking-[0.22em] text-ink/50 sm:text-xs">
-                an archive of voices / Malaysia
-              </p>
-              <h1
-                id="welcome-title"
-                className="mt-4 font-type text-3xl leading-[1.05] tracking-[-0.06em] sm:text-5xl lg:text-6xl"
-              >
-                a message from someone you have never met
-              </h1>
-              <p className="mt-5 max-w-lg font-type text-xs leading-6 text-ink/65 sm:text-sm sm:leading-7">
-                100 strangers. One handwritten message each. Kept in their own hand and heard in
-                their own voice.
-              </p>
+      <section
+        aria-label="Stranger FM sections"
+        className="folder-stack relative z-10 mx-auto mt-14 w-full max-w-6xl sm:mt-16"
+      >
+        {folders.map((folder, index) => {
+          const tabClass =
+            "folder-tab flex items-center justify-center px-4 font-type text-[10px] uppercase tracking-[0.1em] text-ink transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink sm:px-7 sm:text-xs";
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <button type="button" onClick={draw} className="retro-primary-button">
-                  <Headphones aria-hidden className="h-4 w-4" />
-                  open a random note
-                </button>
-                <Link to="/notes" className="retro-secondary-button">
-                  browse {String(notes.length).padStart(2, "0")} notes
-                </Link>
-              </div>
-            </div>
-
-            <div className="welcome-note-preview" aria-hidden>
-              <div className="font-type text-[9px] uppercase tracking-[0.12em] text-ink/45">
-                stranger no. {notes[0]?.id ?? "001"}
-              </div>
-              {notes[0] ? <img src={notes[0].image} alt="" /> : null}
-            </div>
-
-            <div className="welcome-status font-type">
-              <span>
-                {String(notes.length).padStart(2, "0")} / {TOTAL_GOAL}
-              </span>
-              <span>voices safely filed</span>
-            </div>
-          </div>
-        </motion.section>
-      </section>
-
-      <AnimatePresence>
-        {hotlineOpen ? (
-          <motion.div
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-[#345777]/45 px-4 py-20 backdrop-blur-[2px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setHotlineOpen(false)}
-          >
-            <motion.section
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="hotline-title"
-              className="retro-window w-full max-w-lg"
-              initial={{ y: 24, scale: 0.97 }}
-              animate={{ y: 0, scale: 1 }}
-              exit={{ y: 16, scale: 0.98 }}
-              onClick={(event) => event.stopPropagation()}
+          return (
+            <motion.div
+              key={folder.label}
+              className="folder-layer absolute inset-x-0 bottom-0"
+              style={{
+                top: `calc(${index} * clamp(72px, 9.5vw, 102px))`,
+                zIndex: index + 1,
+                backgroundColor: folder.color,
+              }}
+              initial={{ y: 32, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.08 * index, duration: 0.5, ease: "easeOut" }}
             >
-              <div className="retro-titlebar">
-                <span>Call Stranger FM</span>
+              {folder.to ? (
+                <Link
+                  to={folder.to}
+                  className={tabClass}
+                  style={{ left: folder.tabLeft, backgroundColor: folder.color }}
+                >
+                  {folder.label}
+                </Link>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => setHotlineOpen(false)}
-                  aria-label="Close hotline window"
-                  className="retro-close-button"
+                  onClick={draw}
+                  className={tabClass}
+                  style={{ left: folder.tabLeft, backgroundColor: folder.color }}
                 >
-                  <X aria-hidden />
+                  {folder.label}
                 </button>
-              </div>
-              <div className="space-y-5 bg-[#f6f0df] p-6 font-type sm:p-8">
-                <div className="flex h-12 w-12 items-center justify-center border-2 border-ink bg-[#ef9e92] shadow-[3px_3px_0_#263d55]">
-                  <PhoneCall aria-hidden className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-ink/45">
-                    Malaysia line / preparing
+              )}
+
+              {index === folders.length - 1 ? (
+                <div className="flex h-full flex-col items-center justify-center px-6 pb-10 pt-12 text-center sm:px-12">
+                  <p className="font-type text-[10px] uppercase tracking-[0.2em] text-ink/45 sm:text-xs">
+                    file selected
                   </p>
-                  <h2
-                    id="hotline-title"
-                    className="mt-2 font-type text-2xl tracking-[-0.04em] sm:text-3xl"
-                  >
-                    a little courage, one call away
+                  <h2 className="mt-4 max-w-2xl font-type text-2xl leading-snug tracking-[-0.04em] text-ink sm:text-4xl lg:text-5xl">
+                    a message from someone you have never met
                   </h2>
+                  <p className="mt-5 max-w-lg font-type text-xs leading-relaxed text-ink/55 sm:text-sm">
+                    pull one at random. read their handwriting. listen to the words exactly as they
+                    said them.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={draw}
+                    className="archive-button mt-8 px-7 py-3 font-type text-xs uppercase tracking-[0.16em] sm:px-9 sm:py-4"
+                  >
+                    open this file
+                  </button>
                 </div>
-                <p className="text-sm leading-7 text-ink/65">
-                  The first phone line will use a Malaysian number and play one short voice note per
-                  call. For now, you can hear the same voices here on the web.
-                </p>
-                <button type="button" onClick={draw} className="retro-primary-button">
-                  hear one now
-                </button>
-              </div>
-            </motion.section>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+              ) : null}
+            </motion.div>
+          );
+        })}
+      </section>
 
       <AnimatePresence>
         {note ? (
           <motion.div
             key={note.id}
-            className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-[#345777]/75 px-3 py-16 backdrop-blur-[3px] sm:px-6"
+            className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#aebdc4]/88 px-4 py-6 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="retro-window w-full max-w-3xl">
-              <div className="retro-titlebar">
-                <span className="flex min-w-0 items-center gap-2">
-                  <Volume2 aria-hidden className="h-4 w-4" />
-                  <span className="truncate">voice-note-{note.id}.fm</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setCurrent(null)}
-                  aria-label="Close note"
-                  className="retro-close-button"
-                >
-                  <X aria-hidden />
-                </button>
-              </div>
-              <div className="typewriter-sheet px-5 py-8 sm:px-10 sm:py-12">
-                <NoteReveal note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
-              </div>
+            <div className="typewriter-sheet relative w-full max-w-2xl px-5 py-8 sm:px-10 sm:py-12">
+              <NoteReveal note={note} autoplay onNext={draw} onBack={() => setCurrent(null)} />
             </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
-
-      <footer className="retro-taskbar">
-        <button
-          type="button"
-          className="retro-start-button"
-          aria-expanded={startOpen}
-          aria-controls="retro-start-menu"
-          onClick={() => setStartOpen((open) => !open)}
-        >
-          <Sparkles aria-hidden className="h-4 w-4" />
-          start here
-        </button>
-
-        <AnimatePresence>
-          {startOpen ? (
-            <motion.nav
-              id="retro-start-menu"
-              aria-label="Start menu"
-              className="retro-start-menu"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-            >
-              <div className="retro-start-menu-brand">stranger.fm</div>
-              <div className="min-w-0 flex-1 py-2">
-                <button type="button" onClick={draw}>
-                  <Radio aria-hidden />I need a note
-                </button>
-                <Link to="/notes">
-                  <Archive aria-hidden />
-                  Every note
-                </Link>
-                <Link to="/about">
-                  <FolderOpen aria-hidden />
-                  Why this exists
-                </Link>
-                <Link to="/submit">
-                  <NotebookPen aria-hidden />
-                  Write a note
-                </Link>
-              </div>
-            </motion.nav>
-          ) : null}
-        </AnimatePresence>
-
-        <div className="retro-taskbar-spacer" />
-        <div className="retro-taskbar-status">
-          <span className="hidden sm:inline">{String(notes.length).padStart(2, "0")} voices</span>
-          <span>{time}</span>
-        </div>
-      </footer>
     </main>
   );
 }

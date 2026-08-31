@@ -56,7 +56,7 @@ export function BackgroundMusic() {
         type="button"
         onClick={toggle}
         aria-label={on ? "Turn the music off" : "Turn the music on"}
-        className="fixed bottom-[72px] right-4 z-30 flex items-center gap-2 border-2 border-ink bg-[#f6f0df]/90 px-3 py-2 font-type text-[9px] uppercase tracking-[0.12em] text-ink/65 shadow-[3px_3px_0_#6a3c7e] backdrop-blur transition-colors hover:text-ink sm:right-6"
+        className="fixed bottom-5 right-5 z-30 flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-xs uppercase tracking-[0.18em] text-muted-foreground backdrop-blur transition-colors hover:text-foreground"
       >
         <span className="flex h-3 items-end gap-[2px]">
           {[0, 1, 2].map((i) => (
