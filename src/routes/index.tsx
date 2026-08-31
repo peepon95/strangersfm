@@ -246,60 +246,14 @@ function Index() {
               ← back to the letters
             </button>
 
-            <div className="letter-reveal-stage mx-auto flex min-h-full w-full max-w-4xl items-center justify-center">
-              <div className="letter-pocket-scene relative w-full pt-14 sm:pt-8">
-                <motion.img
-                  src={envelopeImage}
-                  alt=""
-                  aria-hidden
-                  width={1200}
-                  height={800}
-                  className="letter-reveal-envelope letter-reveal-envelope--back pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-auto w-[min(650px,96%)] drop-shadow-[0_24px_32px_rgb(43_52_55/0.24)]"
-                  initial={reduceMotion ? false : { opacity: 0, scale: 0.98, rotate: 1 }}
-                  animate={{ opacity: 1, scale: 1, rotate: -1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.38, ease: "easeOut" }}
-                />
-
-                <motion.div
-                  className="letter-reveal-paper typewriter-sheet relative z-20 mx-auto w-full max-w-xl px-5 pt-8 sm:px-10 sm:pt-10"
-                  initial={reduceMotion ? false : { y: 220, opacity: 0, rotate: -1.5, scale: 0.97 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ y: 150, opacity: 0, scale: 0.97 }}
-                  transition={{ delay: 0.16, type: "spring", stiffness: 76, damping: 18 }}
-                >
-                  <NoteReveal
-                    note={note}
-                    autoplay
-                    onNext={draw}
-                    onBack={() => setCurrent(null)}
-                    presentation="letter"
-                  />
-                </motion.div>
-
-                <motion.img
-                  src={envelopeImage}
-                  alt=""
-                  aria-hidden
-                  width={1200}
-                  height={800}
-                  className="letter-reveal-envelope letter-reveal-envelope--front pointer-events-none absolute inset-x-0 bottom-0 z-30 mx-auto h-auto w-[min(650px,96%)]"
-                  initial={reduceMotion ? false : { opacity: 0, scale: 0.98, rotate: 1 }}
-                  animate={{ opacity: 1, scale: 1, rotate: -1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.38, ease: "easeOut" }}
-                />
-
-                <motion.p
-                  aria-hidden
-                  className="letter-envelope-address absolute z-40 font-type"
-                  initial={reduceMotion ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: reduceMotion ? 0 : 0.62, duration: 0.35 }}
-                >
-                  to: whoever needs this today
-                </motion.p>
-              </div>
+            <div className="letter-reveal-stage mx-auto flex min-h-full w-full max-w-4xl items-center justify-center pt-12 sm:pt-6">
+              <NoteReveal
+                note={note}
+                autoplay
+                onNext={draw}
+                onBack={() => setCurrent(null)}
+                presentation="letter"
+              />
             </div>
           </motion.div>
         ) : null}

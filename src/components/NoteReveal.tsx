@@ -24,6 +24,7 @@ export function NoteReveal({
   const reduceMotion = useReducedMotion();
   const intro = `a message from stranger no. ${note.id}`;
   const [typedIntro, setTypedIntro] = useState(intro);
+  const [isPlaying, setIsPlaying] = useState(false);
   const typeDuration = reduceMotion ? 0 : intro.length * TYPE_INTERVAL_MS;
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export function NoteReveal({
     if (!el || note.clipEnd === undefined) return;
     if (el.currentTime >= note.clipEnd) {
       el.pause();
+      setIsPlaying(false);
       if (autoplay) onNext();
     }
   }
@@ -82,6 +84,164 @@ export function NoteReveal({
     if (el && note.clipStart !== undefined && el.currentTime < note.clipStart) {
       el.currentTime = note.clipStart;
     }
+  }
+
+  function toggleAudio() {
+    const el = audioRef.current;
+    if (!el) return;
+
+    if (el.paused) {
+      if (note.clipEnd !== undefined && el.currentTime >= note.clipEnd) {
+        el.currentTime = note.clipStart ?? 0;
+      }
+      el.play().catch(() => undefined);
+    } else {
+      el.pause();
+    }
+  }
+
+  function onAudioEnded() {
+    setIsPlaying(false);
+    if (autoplay) onNext();
+  }
+
+  const audio = note.audioUrl ? (
+    <audio
+      ref={audioRef}
+      src={note.audioUrl}
+      controls={presentation !== "letter"}
+      preload="metadata"
+      onLoadedMetadata={onLoaded}
+      onTimeUpdate={onTimeUpdate}
+      onPlay={() => setIsPlaying(true)}
+      onPause={() => setIsPlaying(false)}
+      onEnded={onAudioEnded}
+      className={presentation === "letter" ? "sr-only" : "w-full"}
+    />
+  ) : null;
+
+  if (presentation === "letter") {
+    return (
+      <motion.div
+        key={note.id}
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="envelope-note-reveal flex w-full flex-col items-center"
+      >
+        <div className="envelope-note-scene relative w-full">
+          <motion.img
+            src="/images/open-envelope.png"
+            alt=""
+            aria-hidden
+            width={1200}
+            height={800}
+            className="envelope-note-envelope envelope-note-envelope--back pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-auto"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1, rotate: -0.5 }}
+            transition={{ duration: reduceMotion ? 0 : 0.45, ease: "easeOut" }}
+          />
+
+          <motion.article
+            className="envelope-note-paper typewriter-sheet absolute left-1/2 z-20 flex -translate-x-1/2 flex-col items-center"
+            initial={reduceMotion ? false : { y: 190, opacity: 0, rotate: -1.5 }}
+            animate={{ y: 0, opacity: 1, rotate: 0 }}
+            exit={{ y: 150, opacity: 0 }}
+            transition={{ delay: 0.12, type: "spring", stiffness: 74, damping: 18 }}
+          >
+            <p
+              aria-label={intro}
+              className="envelope-note-intro min-h-5 self-start font-type uppercase text-ink/55"
+            >
+              <span aria-hidden>{typedIntro}</span>
+              <span
+                aria-hidden
+                className="typewriter-cursor ml-0.5 inline-block h-[1em] w-px bg-ink/60"
+              />
+            </p>
+
+            <motion.figure
+              className="envelope-note-figure flex min-h-0 flex-1 items-center justify-center"
+              initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: typeDuration / 1000 + 0.08, duration: 0.5 }}
+            >
+              <img
+                src={note.image}
+                alt={note.transcript}
+                loading="lazy"
+                className="envelope-note-handwriting h-full w-full object-contain"
+              />
+              <figcaption className="sr-only">{note.transcript}</figcaption>
+            </motion.figure>
+
+            {note.translation ? (
+              <p className="envelope-note-translation text-center italic text-muted-foreground">
+                {note.translation}
+              </p>
+            ) : null}
+          </motion.article>
+
+          <motion.img
+            src="/images/open-envelope.png"
+            alt=""
+            aria-hidden
+            width={1200}
+            height={800}
+            className="envelope-note-envelope envelope-note-envelope--front pointer-events-none absolute inset-x-0 bottom-0 z-30 mx-auto h-auto"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1, rotate: -0.5 }}
+            transition={{ duration: reduceMotion ? 0 : 0.45, ease: "easeOut" }}
+          />
+
+          <motion.p
+            aria-hidden
+            className="envelope-note-address absolute z-40 font-type"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: reduceMotion ? 0 : 0.55, duration: 0.35 }}
+          >
+            to: whoever needs this today
+          </motion.p>
+        </div>
+
+        <motion.div
+          className="envelope-note-controls flex flex-col items-center"
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: reduceMotion ? 0 : 0.48, duration: 0.35 }}
+        >
+          {note.audioUrl ? (
+            <div className="flex flex-col items-center">
+              {audio}
+              <button
+                type="button"
+                onClick={toggleAudio}
+                aria-label={
+                  isPlaying ? "Pause this stranger's voice" : "Play this stranger's voice"
+                }
+                className="envelope-voice-button flex items-center gap-3 font-type uppercase"
+              >
+                <span aria-hidden className="envelope-voice-icon">
+                  {isPlaying ? "Ⅱ" : "▶"}
+                </span>
+                {isPlaying ? "pause their voice" : "listen to their voice"}
+              </button>
+            </div>
+          ) : null}
+
+          <div className="envelope-note-actions flex items-center justify-center">
+            <button type="button" onClick={onNext} className="font-type uppercase">
+              another note
+            </button>
+            <span aria-hidden>·</span>
+            <button type="button" onClick={onBack} className="font-type uppercase">
+              back to the letters
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
   }
 
   return (
@@ -141,16 +301,7 @@ export function NoteReveal({
           <p className="mb-2 font-type text-[10px] uppercase tracking-[0.13em] text-ink/55">
             voice recording / play
           </p>
-          <audio
-            ref={audioRef}
-            src={note.audioUrl}
-            controls
-            preload="metadata"
-            onLoadedMetadata={onLoaded}
-            onTimeUpdate={onTimeUpdate}
-            onEnded={autoplay ? onNext : undefined}
-            className="w-full"
-          />
+          {audio}
         </motion.div>
       ) : null}
 

@@ -586,43 +586,137 @@
     outline: none;
   }
 
-  .letter-reveal-paper {
-    min-height: 0;
-    padding-bottom: clamp(180px, 25vw, 200px);
+  .envelope-note-reveal {
+    max-width: 720px;
+    padding-bottom: 24px;
+  }
+
+  .envelope-note-scene {
+    height: clamp(520px, 66dvh, 620px);
+  }
+
+  .envelope-note-envelope {
+    width: min(650px, 96%);
+    max-height: 430px;
+    object-fit: contain;
+    object-position: center bottom;
+    filter: drop-shadow(0 24px 28px rgb(43 52 55 / 22%));
+  }
+
+  .envelope-note-envelope--front {
+    clip-path: inset(37% 0 0);
+  }
+
+  .envelope-note-paper {
+    bottom: clamp(165px, 19vw, 190px);
+    width: min(440px, 69%);
+    height: clamp(300px, 38dvh, 360px);
+    padding: 24px 28px 26px;
     transform-origin: 50% 100%;
   }
 
-  .letter-reveal-paper::before {
+  .envelope-note-paper::before {
     content: "stranger.fm / private correspondence";
     position: absolute;
-    right: 18px;
-    top: 16px;
+    right: 14px;
+    top: 11px;
     font-family: var(--font-type);
+    font-size: 6px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(45 55 58 / 30%);
+  }
+
+  .envelope-note-intro {
     font-size: 8px;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgb(45 55 58 / 38%);
   }
 
-  .letter-reveal-envelope {
-    max-height: 295px;
-    object-fit: contain;
-    object-position: center bottom;
+  .envelope-note-figure {
+    width: 100%;
+    margin-top: 10px;
+    overflow: hidden;
   }
 
-  .letter-reveal-envelope--front {
-    clip-path: inset(38% 0 0);
+  .envelope-note-handwriting {
+    max-height: 235px;
+    filter: drop-shadow(0 7px 12px rgb(43 52 55 / 9%));
   }
 
-  .letter-envelope-address {
-    inset-inline: 0;
-    bottom: 48px;
-    width: fit-content;
-    margin-inline: auto;
+  .envelope-note-translation {
+    margin-top: 8px;
+    max-width: 340px;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .envelope-note-address {
+    left: 50%;
+    bottom: 62px;
+    transform: translateX(-50%) rotate(-0.5deg);
     color: rgb(58 54 47 / 48%);
     font-size: 9px;
     letter-spacing: 0.06em;
     text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .envelope-note-controls {
+    margin-top: 14px;
+  }
+
+  .envelope-voice-button {
+    border: 1px solid rgb(45 55 58 / 30%);
+    background: rgb(244 241 232 / 78%);
+    padding: 10px 16px;
+    color: var(--ink);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    box-shadow: 3px 4px 0 rgb(50 59 62 / 9%);
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .envelope-voice-button:hover,
+  .envelope-voice-button:focus-visible {
+    transform: translateY(-2px);
+    background: rgb(250 248 241 / 94%);
+    outline: none;
+  }
+
+  .envelope-voice-icon {
+    display: inline-grid;
+    width: 18px;
+    height: 18px;
+    place-items: center;
+    border: 1px solid rgb(45 55 58 / 28%);
+    border-radius: 999px;
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+
+  .envelope-note-actions {
+    gap: 10px;
+    margin-top: 11px;
+    color: rgb(45 55 58 / 58%);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .envelope-note-actions button {
+    border-bottom: 1px solid transparent;
+    padding-block: 3px;
+    transition:
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .envelope-note-actions button:hover,
+  .envelope-note-actions button:focus-visible {
+    border-color: currentColor;
+    color: var(--ink);
+    outline: none;
   }
 
   .typewriter-cursor {
@@ -736,18 +830,46 @@
       padding-inline: 24px;
     }
 
-    .letter-reveal-paper {
-      min-height: 0;
-      padding-bottom: 180px;
+    .envelope-note-reveal {
+      padding-bottom: 12px;
     }
 
-    .letter-reveal-envelope {
-      max-height: 230px;
+    .envelope-note-scene {
+      height: 455px;
     }
 
-    .letter-envelope-address {
-      bottom: 43px;
-      font-size: 8px;
+    .envelope-note-envelope {
+      width: min(470px, 104%);
+      max-height: 315px;
+    }
+
+    .envelope-note-paper {
+      bottom: 125px;
+      width: min(330px, 75%);
+      height: 275px;
+      padding: 21px 18px 20px;
+    }
+
+    .envelope-note-paper::before {
+      display: none;
+    }
+
+    .envelope-note-handwriting {
+      max-height: 190px;
+    }
+
+    .envelope-note-translation {
+      margin-top: 5px;
+      font-size: 9px;
+    }
+
+    .envelope-note-address {
+      bottom: 45px;
+      font-size: 7px;
+    }
+
+    .envelope-note-controls {
+      margin-top: 8px;
     }
 
     .folder-stack {
