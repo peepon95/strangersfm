@@ -587,7 +587,8 @@
   }
 
   .letter-reveal-paper {
-    min-height: min(560px, calc(100dvh - 145px));
+    min-height: 0;
+    padding-bottom: clamp(180px, 25vw, 200px);
     transform-origin: 50% 100%;
   }
 
@@ -604,13 +605,24 @@
   }
 
   .letter-reveal-envelope {
-    max-height: 285px;
+    max-height: 295px;
     object-fit: contain;
     object-position: center bottom;
   }
 
   .letter-reveal-envelope--front {
     clip-path: inset(38% 0 0);
+  }
+
+  .letter-envelope-address {
+    inset-inline: 0;
+    bottom: 48px;
+    width: fit-content;
+    margin-inline: auto;
+    color: rgb(58 54 47 / 48%);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
   }
 
   .typewriter-cursor {
@@ -725,12 +737,17 @@
     }
 
     .letter-reveal-paper {
-      min-height: 520px;
-      padding-bottom: 78px;
+      min-height: 0;
+      padding-bottom: 180px;
     }
 
     .letter-reveal-envelope {
       max-height: 230px;
+    }
+
+    .letter-envelope-address {
+      bottom: 43px;
+      font-size: 8px;
     }
 
     .folder-stack {

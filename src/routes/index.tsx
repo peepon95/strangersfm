@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
@@ -72,14 +72,8 @@ function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const reduceMotion = useReducedMotion();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setMenuOpen(true), reduceMotion ? 0 : 850);
-    return () => window.clearTimeout(timer);
-  }, [reduceMotion]);
 
   const draw = useCallback(() => {
     setCurrent((previous) => {
@@ -150,21 +144,19 @@ function Index() {
 
       <section aria-label="Choose a letter" className="mail-stack relative z-10 mx-auto max-w-5xl">
         <p className="mail-stack-instruction font-type text-[10px] uppercase tracking-[0.18em] text-ink/50 sm:text-xs">
-          {menuOpen ? "choose a letter" : "a letter is waiting"}
+          choose a letter
         </p>
 
-        <div id="letter-menu" className={`mail-card-fan ${menuOpen ? "is-open" : "is-closed"}`}>
+        <div id="letter-menu" className="mail-card-fan is-open">
           <motion.div
             aria-hidden
-            className={`mail-envelope mail-envelope--flap ${
-              menuOpen ? "mail-envelope--flap-open" : "mail-envelope--flap-closed"
-            }`}
-            initial={reduceMotion ? false : { opacity: 0, y: 70, rotate: -2, rotateX: 180 }}
+            className="mail-envelope mail-envelope--flap mail-envelope--flap-open"
+            initial={reduceMotion ? false : { opacity: 0, y: 35, rotate: -1, rotateX: 0 }}
             animate={{
               opacity: 1,
               y: 0,
               rotate: -1,
-              rotateX: menuOpen ? 0 : 180,
+              rotateX: 0,
             }}
             transition={
               reduceMotion
@@ -180,45 +172,43 @@ function Index() {
             <img src={envelopeImage} alt="" width={1200} height={800} />
           </motion.div>
 
-          {menuOpen
-            ? letters.map((letter, index) => {
-                const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
-                const contents = (
-                  <>
-                    <span className="mail-card-number font-type">0{index + 1}</span>
-                    <span className="mail-card-copy">
-                      <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
-                        {letter.label}
-                      </span>
-                      <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
-                        {letter.note}
-                      </span>
-                    </span>
-                    <span aria-hidden className="mail-card-mark font-display">
-                      ↗
-                    </span>
-                  </>
-                );
+          {letters.map((letter, index) => {
+            const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
+            const contents = (
+              <>
+                <span className="mail-card-number font-type">0{index + 1}</span>
+                <span className="mail-card-copy">
+                  <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
+                    {letter.label}
+                  </span>
+                  <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
+                    {letter.note}
+                  </span>
+                </span>
+                <span aria-hidden className="mail-card-mark font-display">
+                  ↗
+                </span>
+              </>
+            );
 
-                return (
-                  <div
-                    key={letter.label}
-                    className={cardClass}
-                    style={{ animationDelay: reduceMotion ? "0ms" : `${240 + index * 105}ms` }}
-                  >
-                    {letter.to ? (
-                      <Link to={letter.to} className="mail-card-action">
-                        {contents}
-                      </Link>
-                    ) : (
-                      <button type="button" onClick={draw} className="mail-card-action text-left">
-                        {contents}
-                      </button>
-                    )}
-                  </div>
-                );
-              })
-            : null}
+            return (
+              <div
+                key={letter.label}
+                className={cardClass}
+                style={{ animationDelay: reduceMotion ? "0ms" : `${240 + index * 105}ms` }}
+              >
+                {letter.to ? (
+                  <Link to={letter.to} className="mail-card-action">
+                    {contents}
+                  </Link>
+                ) : (
+                  <button type="button" onClick={draw} className="mail-card-action text-left">
+                    {contents}
+                  </button>
+                )}
+              </div>
+            );
+          })}
 
           <motion.div
             aria-hidden
@@ -232,9 +222,7 @@ function Index() {
         </div>
 
         <p className="mail-stack-caption mx-auto max-w-md text-center font-type text-[10px] leading-relaxed text-ink/55 sm:text-xs">
-          {menuOpen
-            ? "Choose where you would like to go."
-            : "The handwritten collection is opening for you."}
+          Choose where you would like to go.
         </p>
       </section>
 
@@ -259,26 +247,26 @@ function Index() {
             </button>
 
             <div className="letter-reveal-stage mx-auto flex min-h-full w-full max-w-4xl items-center justify-center">
-              <div className="relative w-full pb-20 pt-14 sm:pt-8">
+              <div className="letter-pocket-scene relative w-full pt-14 sm:pt-8">
                 <motion.img
                   src={envelopeImage}
                   alt=""
                   aria-hidden
                   width={1200}
                   height={800}
-                  className="letter-reveal-envelope letter-reveal-envelope--back pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-auto w-[min(660px,96%)] drop-shadow-[0_24px_32px_rgb(43_52_55/0.24)]"
-                  initial={reduceMotion ? false : { y: 100, opacity: 0, rotate: 2 }}
-                  animate={{ y: 0, opacity: 1, rotate: -1 }}
-                  exit={{ y: 70, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 95, damping: 17 }}
+                  className="letter-reveal-envelope letter-reveal-envelope--back pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-auto w-[min(650px,96%)] drop-shadow-[0_24px_32px_rgb(43_52_55/0.24)]"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.98, rotate: 1 }}
+                  animate={{ opacity: 1, scale: 1, rotate: -1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.38, ease: "easeOut" }}
                 />
 
                 <motion.div
-                  className="letter-reveal-paper typewriter-sheet relative z-20 mx-auto w-full max-w-2xl px-5 pb-20 pt-8 sm:px-10 sm:pb-24 sm:pt-10"
-                  initial={reduceMotion ? false : { y: 210, opacity: 0, rotate: -1.5, scale: 0.95 }}
+                  className="letter-reveal-paper typewriter-sheet relative z-20 mx-auto w-full max-w-xl px-5 pt-8 sm:px-10 sm:pt-10"
+                  initial={reduceMotion ? false : { y: 220, opacity: 0, rotate: -1.5, scale: 0.97 }}
                   animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ y: 130, opacity: 0, scale: 0.97 }}
-                  transition={{ delay: 0.08, type: "spring", stiffness: 82, damping: 18 }}
+                  exit={{ y: 150, opacity: 0, scale: 0.97 }}
+                  transition={{ delay: 0.16, type: "spring", stiffness: 76, damping: 18 }}
                 >
                   <NoteReveal
                     note={note}
@@ -295,12 +283,22 @@ function Index() {
                   aria-hidden
                   width={1200}
                   height={800}
-                  className="letter-reveal-envelope letter-reveal-envelope--front pointer-events-none absolute inset-x-0 bottom-0 z-30 mx-auto h-auto w-[min(660px,96%)]"
-                  initial={reduceMotion ? false : { y: 100, opacity: 0, rotate: 2 }}
-                  animate={{ y: 0, opacity: 1, rotate: -1 }}
-                  exit={{ y: 70, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 95, damping: 17 }}
+                  className="letter-reveal-envelope letter-reveal-envelope--front pointer-events-none absolute inset-x-0 bottom-0 z-30 mx-auto h-auto w-[min(650px,96%)]"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.98, rotate: 1 }}
+                  animate={{ opacity: 1, scale: 1, rotate: -1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.38, ease: "easeOut" }}
                 />
+
+                <motion.p
+                  aria-hidden
+                  className="letter-envelope-address absolute z-40 font-type"
+                  initial={reduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.62, duration: 0.35 }}
+                >
+                  to: whoever needs this today
+                </motion.p>
               </div>
             </div>
           </motion.div>
