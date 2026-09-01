@@ -4,7 +4,7 @@ import type { Note } from "@/data/notes";
 import { duckMusic } from "@/components/BackgroundMusic";
 
 /** How long a note without a video stays on screen before the next one. */
-const READ_MS = 9000;
+const READ_MS = 10_000;
 const TYPE_INTERVAL_MS = 42;
 
 export function NoteReveal({
