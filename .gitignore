@@ -30,3 +30,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Stranger FM audio cleanup reviews and source copies
+.audio-cleanup/

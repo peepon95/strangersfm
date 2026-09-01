@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stranger Audio Cleanup"
+  short_description: "Clean and trim Stranger FM quote recordings"
+  default_prompt: "Use $stranger-audio-cleanup to clean newly added Stranger FM recordings and prepare a listening report."
