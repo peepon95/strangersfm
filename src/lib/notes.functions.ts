@@ -9,6 +9,12 @@ const extractedHandwriting: Record<number, string> = {
   6: "/handwriting/note-006.png",
   7: "/handwriting/note-007.png",
   8: "/handwriting/note-008.png",
+  9: "/handwriting/note-009.png",
+  10: "/handwriting/note-010.png",
+  11: "/handwriting/note-011.png",
+  12: "/handwriting/note-012.png",
+  13: "/handwriting/note-013.png",
+  14: "/handwriting/note-014.png",
 };
 
 const cleanedAudio: Record<number, string> = {
@@ -17,7 +23,14 @@ const cleanedAudio: Record<number, string> = {
   6: "/audio/note-006.m4a",
   7: "/audio/note-007.m4a",
   8: "/audio/note-008.m4a",
+  9: "/audio/note-009.m4a",
+  10: "/audio/note-010.m4a",
+  11: "/audio/note-011.m4a",
+  12: "/audio/note-012.m4a",
+  13: "/audio/note-013.m4a",
+  14: "/audio/note-014.m4a",
 };
+
 
 /** Notes uploaded through the admin page, readable by everyone. */
 export const listPublishedNotes = createServerFn({ method: "GET" }).handler(
