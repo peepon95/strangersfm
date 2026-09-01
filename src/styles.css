@@ -356,7 +356,7 @@
   .mail-card {
     position: absolute;
     left: 50%;
-    bottom: clamp(132px, 19vh, 178px);
+    bottom: clamp(220px, 31vh, 258px);
     z-index: 10;
     width: clamp(158px, 21vw, 210px);
     height: clamp(218px, 30vw, 292px);
@@ -772,7 +772,7 @@
     }
 
     .mail-card {
-      bottom: 112px;
+      bottom: 174px;
       width: clamp(124px, 37vw, 150px);
       height: clamp(190px, 53vw, 226px);
     }
