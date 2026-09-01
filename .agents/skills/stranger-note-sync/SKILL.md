@@ -72,3 +72,18 @@ Keep clips small so the page never downloads the raw recording.
 Flip `published` to true, then check `/` (jar + pile + plane count) and
 `/notes` (wall). Confirm every new note shows ink-only handwriting and plays
 its cleaned clip.
+
+## 6. Tidy the Drive folder
+
+Once the notes are live, move every folder you just processed into the
+`added into lovable` folder inside the Drive root, so only unprocessed
+strangers are left at the top level:
+
+```
+python3 scripts/archive_drive_folders.py --dry-run   # see what will move
+python3 scripts/archive_drive_folders.py             # move them all
+python3 scripts/archive_drive_folders.py <folderId>  # or just some
+```
+
+It creates `added into lovable` if it is missing. The sync route ignores that
+folder, so archived strangers are never re-imported.
