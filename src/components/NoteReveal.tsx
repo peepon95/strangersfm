@@ -251,9 +251,7 @@ export function NoteReveal({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -30, scale: 0.98 }}
       transition={{ type: "spring", stiffness: 110, damping: 18 }}
-      className={`flex w-full max-w-2xl flex-col items-center ${
-        presentation === "letter" ? "gap-3 sm:gap-4" : "gap-6 sm:gap-8"
-      }`}
+      className="flex w-full max-w-2xl flex-col items-center gap-6 sm:gap-8"
     >
       <p
         aria-label={intro}
@@ -276,9 +274,7 @@ export function NoteReveal({
           src={note.image}
           alt={note.transcript}
           loading="lazy"
-          className={`w-full max-w-xl object-contain drop-shadow-[0_18px_28px_var(--paper-shadow)] ${
-            presentation === "letter" ? "max-h-[30dvh]" : "max-h-[46dvh]"
-          }`}
+          className="w-full max-w-xl object-contain drop-shadow-[0_18px_28px_var(--paper-shadow)] max-h-[46dvh]"
         />
         <figcaption className="sr-only">{note.transcript}</figcaption>
       </motion.figure>
@@ -291,9 +287,7 @@ export function NoteReveal({
 
       {note.audioUrl ? (
         <motion.div
-          className={`w-full max-w-sm border-y border-dashed border-ink/25 px-1 ${
-            presentation === "letter" ? "py-3" : "py-4"
-          }`}
+          className="w-full max-w-sm border-y border-dashed border-ink/25 px-1 py-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: typeDuration / 1000 + 0.35 }}
