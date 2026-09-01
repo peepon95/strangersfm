@@ -401,21 +401,21 @@
   }
 
   .mail-card--notes {
-    transform: translateX(-87%) translateY(-34px) rotate(-5deg);
+    transform: translateX(-87%) rotate(-5deg);
   }
 
   .mail-card--notes:hover,
   .mail-card--notes:focus-within {
-    transform: translateX(-87%) translateY(-58px) rotate(-3deg);
+    transform: translateX(-87%) translateY(-24px) rotate(-3deg);
   }
 
   .mail-card--write {
-    transform: translateX(-29%) translateY(-30px) rotate(6deg);
+    transform: translateX(-29%) rotate(6deg);
   }
 
   .mail-card--write:hover,
   .mail-card--write:focus-within {
-    transform: translateX(-29%) translateY(-55px) rotate(4deg);
+    transform: translateX(-29%) translateY(-24px) rotate(4deg);
   }
 
   .mail-card--pull {
@@ -794,21 +794,21 @@
     }
 
     .mail-card--notes {
-      transform: translateX(-70%) translateY(-42px) rotate(-4deg);
+      transform: translateX(-70%) rotate(-4deg);
     }
 
     .mail-card--notes:hover,
     .mail-card--notes:focus-within {
-      transform: translateX(-70%) translateY(-58px) rotate(-2deg);
+      transform: translateX(-70%) translateY(-16px) rotate(-2deg);
     }
 
     .mail-card--write {
-      transform: translateX(-29%) translateY(-38px) rotate(5deg);
+      transform: translateX(-29%) rotate(5deg);
     }
 
     .mail-card--write:hover,
     .mail-card--write:focus-within {
-      transform: translateX(-29%) translateY(-54px) rotate(3deg);
+      transform: translateX(-29%) translateY(-16px) rotate(3deg);
     }
 
     .mail-card--pull {

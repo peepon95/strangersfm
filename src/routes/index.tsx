@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
@@ -72,8 +72,14 @@ function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const reduceMotion = useReducedMotion();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [current, setCurrent] = useState<number | null>(null);
   const bag = useRef<number[]>([]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMenuOpen(true), reduceMotion ? 0 : 650);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
   const draw = useCallback(() => {
     setCurrent((previous) => {
@@ -144,19 +150,21 @@ function Index() {
 
       <section aria-label="Choose a letter" className="mail-stack relative z-10 mx-auto max-w-5xl">
         <p className="mail-stack-instruction font-type text-[10px] uppercase tracking-[0.18em] text-ink/50 sm:text-xs">
-          choose a letter
+          {menuOpen ? "choose a letter" : "a letter is arriving"}
         </p>
 
-        <div id="letter-menu" className="mail-card-fan is-open">
+        <div id="letter-menu" className={`mail-card-fan ${menuOpen ? "is-open" : "is-closed"}`}>
           <motion.div
             aria-hidden
-            className="mail-envelope mail-envelope--flap mail-envelope--flap-open"
-            initial={reduceMotion ? false : { opacity: 0, y: 35, rotate: -1, rotateX: 0 }}
+            className={`mail-envelope mail-envelope--flap ${
+              menuOpen ? "mail-envelope--flap-open" : "mail-envelope--flap-closed"
+            }`}
+            initial={reduceMotion ? false : { opacity: 0, y: 35, rotate: -1, rotateX: 180 }}
             animate={{
               opacity: 1,
               y: 0,
               rotate: -1,
-              rotateX: 0,
+              rotateX: menuOpen ? 0 : 180,
             }}
             transition={
               reduceMotion
@@ -172,43 +180,45 @@ function Index() {
             <img src={envelopeImage} alt="" width={1200} height={800} />
           </motion.div>
 
-          {letters.map((letter, index) => {
-            const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
-            const contents = (
-              <>
-                <span className="mail-card-number font-type">0{index + 1}</span>
-                <span className="mail-card-copy">
-                  <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
-                    {letter.label}
-                  </span>
-                  <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
-                    {letter.note}
-                  </span>
-                </span>
-                <span aria-hidden className="mail-card-mark font-display">
-                  ↗
-                </span>
-              </>
-            );
+          {menuOpen
+            ? letters.map((letter, index) => {
+                const cardClass = `mail-card ${letter.className} group focus-within:z-30`;
+                const contents = (
+                  <>
+                    <span className="mail-card-number font-type">0{index + 1}</span>
+                    <span className="mail-card-copy">
+                      <span className="font-display text-[clamp(1.15rem,2.35vw,1.75rem)] leading-[0.95] text-ink">
+                        {letter.label}
+                      </span>
+                      <span className="mt-3 block font-type text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink/55 sm:text-[10px]">
+                        {letter.note}
+                      </span>
+                    </span>
+                    <span aria-hidden className="mail-card-mark font-display">
+                      ↗
+                    </span>
+                  </>
+                );
 
-            return (
-              <div
-                key={letter.label}
-                className={cardClass}
-                style={{ animationDelay: reduceMotion ? "0ms" : `${240 + index * 105}ms` }}
-              >
-                {letter.to ? (
-                  <Link to={letter.to} className="mail-card-action">
-                    {contents}
-                  </Link>
-                ) : (
-                  <button type="button" onClick={draw} className="mail-card-action text-left">
-                    {contents}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+                return (
+                  <div
+                    key={letter.label}
+                    className={cardClass}
+                    style={{ animationDelay: reduceMotion ? "0ms" : `${240 + index * 105}ms` }}
+                  >
+                    {letter.to ? (
+                      <Link to={letter.to} className="mail-card-action">
+                        {contents}
+                      </Link>
+                    ) : (
+                      <button type="button" onClick={draw} className="mail-card-action text-left">
+                        {contents}
+                      </button>
+                    )}
+                  </div>
+                );
+              })
+            : null}
 
           <motion.div
             aria-hidden
@@ -222,7 +232,9 @@ function Index() {
         </div>
 
         <p className="mail-stack-caption mx-auto max-w-md text-center font-type text-[10px] leading-relaxed text-ink/55 sm:text-xs">
-          Choose where you would like to go.
+          {menuOpen
+            ? "Choose where you would like to go."
+            : "Opening a small archive of handwritten voices."}
         </p>
       </section>
 
