@@ -111,9 +111,14 @@ function extensionFor(name: string, fallback: string) {
 async function runSync() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const folders = await driveList(
+  const allFolders = await driveList(
     `'${DRIVE_ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
   );
+  /** Folders already dealt with get tucked in here, so never look inside it. */
+  const folders = allFolders.filter(
+    (f) => f.name.trim().toLowerCase() !== "added into lovable",
+  );
+
 
   const { data: existing, error: existingError } = await supabaseAdmin
     .from("stranger_notes")
