@@ -36,6 +36,10 @@ const letters = [
 ] as const;
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    note: typeof search.note === "string" && /^\d{3}$/.test(search.note) ? search.note : undefined,
+    from: search.from === "notes" ? ("notes" as const) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "stranger fm · an archive of handwritten notes" },
@@ -71,9 +75,15 @@ export const Route = createFileRoute("/")({
 function Index() {
   const uploaded = Route.useLoaderData();
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
   const reduceMotion = useReducedMotion();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [current, setCurrent] = useState<number | null>(null);
+  const [current, setCurrent] = useState<number | null>(() => {
+    if (!search.note) return null;
+    const selectedIndex = notes.findIndex((note) => note.id === search.note);
+    return selectedIndex >= 0 ? selectedIndex : null;
+  });
   const bag = useRef<number[]>([]);
 
   useEffect(() => {
@@ -81,7 +91,16 @@ function Index() {
     return () => window.clearTimeout(timer);
   }, [reduceMotion]);
 
+  useEffect(() => {
+    if (!search.note) return;
+    const selectedIndex = notes.findIndex((note) => note.id === search.note);
+    setCurrent(selectedIndex >= 0 ? selectedIndex : null);
+  }, [notes, search.note]);
+
   const draw = useCallback(() => {
+    if (search.note) {
+      void navigate({ to: "/", search: {}, replace: true });
+    }
     setCurrent((previous) => {
       if (bag.current.length === 0) {
         bag.current = notes
@@ -92,7 +111,18 @@ function Index() {
       }
       return bag.current.pop() ?? 0;
     });
-  }, [notes]);
+  }, [navigate, notes, search.note]);
+
+  const closeNote = useCallback(() => {
+    if (search.from === "notes") {
+      void navigate({ to: "/notes" });
+      return;
+    }
+    setCurrent(null);
+    if (search.note) {
+      void navigate({ to: "/", search: {}, replace: true });
+    }
+  }, [navigate, search.from, search.note]);
 
   const note = current === null ? null : notes[current];
 
@@ -252,7 +282,7 @@ function Index() {
           >
             <button
               type="button"
-              onClick={() => setCurrent(null)}
+              onClick={closeNote}
               className="letter-close fixed left-4 top-4 z-[70] font-type text-[10px] uppercase tracking-[0.12em] sm:left-8 sm:top-7 sm:text-xs"
             >
               ← back to the letters
@@ -263,7 +293,7 @@ function Index() {
                 note={note}
                 autoplay
                 onNext={draw}
-                onBack={() => setCurrent(null)}
+                onBack={closeNote}
                 presentation="letter"
               />
             </div>

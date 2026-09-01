@@ -262,6 +262,22 @@
     background: #f7f3ea;
     border: 1px solid rgb(57 55 49 / 13%);
     box-shadow: 5px 7px 16px rgb(43 52 55 / 9%);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .archive-note-link:hover .archive-note-file,
+  .archive-note-link:focus-visible .archive-note-file {
+    transform: translateY(-5px);
+    border-color: rgb(45 55 58 / 30%);
+    box-shadow: 8px 13px 24px rgb(43 52 55 / 16%);
+  }
+
+  .archive-note-link:focus-visible .archive-note-file {
+    outline: 1px dashed rgb(45 55 58 / 45%);
+    outline-offset: 5px;
   }
 
   .folder-stack {

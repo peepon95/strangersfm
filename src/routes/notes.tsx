@@ -48,6 +48,9 @@ function NotesWall() {
             <p className="mt-3 text-xs uppercase tracking-[0.12em] text-ink/50 sm:text-sm">
               {String(notes.length).padStart(2, "0")} of {TOTAL_GOAL} strangers filed
             </p>
+            <p className="mt-2 font-type text-[10px] leading-relaxed text-ink/45 sm:text-xs">
+              Choose a handwriting to open its letter and hear the voice behind it.
+            </p>
           </div>
           <Link
             to="/"
@@ -62,22 +65,29 @@ function NotesWall() {
 
       <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
         {notes.map((note, index) => (
-          <figure
+          <Link
             key={note.id}
-            className="archive-note-file break-inside-avoid p-4 sm:p-5"
+            to="/"
+            search={{ note: note.id, from: "notes" }}
+            aria-label={`Open the letter from stranger number ${note.id}${
+              note.audioUrl ? " and listen to their voice" : ""
+            }`}
+            className="archive-note-link group block break-inside-avoid focus:outline-none"
             style={{ rotate: `${(index % 3) - 1}deg` }}
           >
-            <figcaption className="mb-4 flex items-center justify-between gap-3 border-b border-dashed border-ink/20 pb-2 font-type text-[9px] uppercase tracking-[0.12em] text-ink/45">
-              <span>stranger no. {note.id}</span>
-              <span>voice {note.audioUrl ? "filed" : "pending"}</span>
-            </figcaption>
-            <img
-              src={note.image}
-              alt={note.transcript}
-              loading="lazy"
-              className="w-full object-contain drop-shadow-[0_8px_12px_var(--paper-shadow)]"
-            />
-          </figure>
+            <figure className="archive-note-file p-4 sm:p-5">
+              <figcaption className="mb-4 flex items-center justify-between gap-3 border-b border-dashed border-ink/20 pb-2 font-type text-[9px] uppercase tracking-[0.12em] text-ink/45">
+                <span>stranger no. {note.id}</span>
+                <span>{note.audioUrl ? "open + listen" : "open letter"} ↗</span>
+              </figcaption>
+              <img
+                src={note.image}
+                alt={note.transcript}
+                loading="lazy"
+                className="w-full object-contain drop-shadow-[0_8px_12px_var(--paper-shadow)]"
+              />
+            </figure>
+          </Link>
         ))}
       </div>
     </ArchivePageShell>
