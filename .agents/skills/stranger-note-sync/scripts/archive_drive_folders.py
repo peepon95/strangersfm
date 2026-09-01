@@ -39,8 +39,12 @@ def call(method, path, params=None, body=None):
         req.add_header(k, v)
     if data:
         req.add_header("Content-Type", "application/json")
-    with urllib.request.urlopen(req) as res:
-        text = res.read().decode()
+    try:
+        with urllib.request.urlopen(req) as res:
+            text = res.read().decode()
+    except urllib.error.HTTPError as err:
+        detail = err.read().decode(errors="replace")
+        raise RuntimeError(f"Drive API {method} {path} failed [{err.code}]: {detail}") from err
     return json.loads(text) if text else {}
 
 
