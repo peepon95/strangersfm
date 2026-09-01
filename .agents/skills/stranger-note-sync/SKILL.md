@@ -54,24 +54,45 @@ Playwright) before declaring it done.
 
 ## 4. Clean the audio
 
-Trim, denoise and normalize with ffmpeg, then upload to the `note-media`
-bucket and set `audio_url`:
+Use `$stranger-audio-cleanup` to align each recording to its written quote,
+remove setup/sign-off speech, denoise it, and create the listening report. After
+the report is approved, publish the selected clips into the versioned site
+assets:
 
 ```
-ffmpeg -y -ss <start> -to <end> -i in.mp4 \
-  -af "highpass=f=90,lowpass=f=7500,afftdn=nf=-28:nt=w,\
-adeclick,acompressor=threshold=-20dB:ratio=3:attack=8:release=180,\
-dynaudnorm=f=200:g=5,loudnorm=I=-16:TP=-1.5:LRA=11" \
-  -ac 1 -ar 44100 out.m4a
+python3 .agents/skills/stranger-audio-cleanup/scripts/clean_stranger_audio.py \
+  --project-root . --numbers <numbers> --force
+
+python3 .agents/skills/stranger-audio-cleanup/scripts/clean_stranger_audio.py \
+  --project-root . --numbers <approved-numbers> --force --publish-local
 ```
 
-Keep clips small so the page never downloads the raw recording.
+The result must be an audio-only `.m4a` under `public/audio`, not the original
+video container or the full recording. Do not invent audio for a note whose
+Drive folder contains only a photo; leave its voice pending.
 
 ## 5. Publish and verify
 
-Flip `published` to true, then check `/` (jar + pile + plane count) and
-`/notes` (wall). Confirm every new note shows ink-only handwriting and plays
-its cleaned clip.
+Run the deterministic asset preflight before building. List intentionally
+silent notes with `--audio-optional`:
+
+```
+uv run --with pillow python \
+  .agents/skills/stranger-note-sync/scripts/validate_note_assets.py \
+  --project-root . --numbers <numbers> --audio-optional <silent-numbers>
+```
+
+This must reject opaque/full-photo handwriting, missing extracted PNGs,
+recordings that still contain video, and unusually long audio. Build and deploy
+the site, then run the same command with `--site-url` against production. A Git
+push alone does not prove that Cloudflare has the new static assets.
+
+Only then flip drafts to `published: true` or confirm already-published rows.
+Check `/` (pull a note) and `/notes` (wall). Confirm every new note shows
+ink-only handwriting and plays only its cleaned quote. If the local asset is
+correct but production shows the original photo, check the handwriting URL
+directly: a 404 means production is stale and the row is falling back to its
+Supabase photo.
 
 ## 6. Tidy the Drive folder
 

@@ -723,6 +723,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Upload ready cleaned files and update Supabase",
     )
+    parser.add_argument(
+        "--publish-local",
+        action="store_true",
+        help="Copy approved cleaned clips into public/audio for the next site build",
+    )
     parser.add_argument("--email", help="Supabase admin email required by --apply")
     parser.add_argument(
         "--allow-low-confidence",
@@ -734,6 +739,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--file and --numbers cannot be combined")
     if args.apply and args.file:
         parser.error("--apply is only supported for Supabase notes")
+    if args.publish_local and args.file:
+        parser.error("--publish-local is only supported for numbered Stranger FM notes")
     if args.apply and not args.email:
         parser.error("--apply requires --email")
     return args
@@ -822,6 +829,27 @@ def main() -> int:
         manifest["entries"] = retained + entries
         write_manifest(manifest_path, manifest)
         report_html(entries, output_dir)
+
+    if args.publish_local:
+        publishable = [entry for entry in entries if entry["status"] == "ready"]
+        uncertain = [entry for entry in entries if entry["status"] == "review"]
+        if uncertain and not args.allow_low_confidence:
+            numbers = ", ".join(str(entry["number"]) for entry in uncertain)
+            log(f"Not publishing review-status note(s): {numbers}.")
+        elif args.allow_low_confidence:
+            publishable.extend(uncertain)
+        audio_dir = project_root / "public" / "audio"
+        audio_dir.mkdir(parents=True, exist_ok=True)
+        for entry in publishable:
+            cleaned_path = entry.get("cleaned_path")
+            if not cleaned_path:
+                continue
+            destination = audio_dir / f"note-{int(entry['number']):03d}.m4a"
+            shutil.copy2(cleaned_path, destination)
+            entry["published_local_path"] = str(destination.resolve())
+            log(f"Published cleaned note {int(entry['number']):03d} to public/audio.")
+        manifest["entries"] = retained + entries
+        write_manifest(manifest_path, manifest)
 
     if args.apply:
         assert supabase_url and api_key

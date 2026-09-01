@@ -46,3 +46,5 @@ Read [references/review-and-apply.md](references/review-and-apply.md) before app
 The default local model is `mlx-community/whisper-large-v3-turbo`, chosen for multilingual and mixed Malay/English speech. Its first run downloads the model, then later runs reuse it. Override with `--model`; use a tiny model only for a quick plumbing test.
 
 Use `--force` to regenerate existing reviewed files. Use `--apply --email user@example.com` only after the user has listened to and approved the report. Applying prompts securely for the Supabase password, uploads a new versioned audio file, updates the note, and leaves the original file untouched.
+
+This project also supports versioned site assets. After the listening review is approved, use `--publish-local` with the same note selection to copy ready clips into `public/audio` for the next build. Review-status clips remain blocked unless the user explicitly approves them and `--allow-low-confidence` is supplied. A site build and deployment are still required; verify the deployed audio URLs rather than assuming a Git push updated production.
