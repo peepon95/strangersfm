@@ -15,7 +15,7 @@ Run:
 python3 .agents/skills/stranger-audio-cleanup/scripts/clean_stranger_audio.py --project-root .
 ```
 
-This finds newly published notes, downloads their recordings, reduces steady background noise, evens out loudness, trims speech before and after the quote, and writes `.audio-cleanup/report.html`. Open that report and listen to every original/cleaned pair before applying anything live.
+This finds newly published notes, uses their synced local recording when available (otherwise downloading it), reduces steady background noise, evens out loudness, trims speech before and after the quote, and writes `.audio-cleanup/report.html`. Open that report and listen to every original/cleaned pair before applying anything live.
 
 Useful selections:
 

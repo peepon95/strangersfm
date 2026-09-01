@@ -51,6 +51,20 @@ TRAILING_PHRASES = (
     ("okay", "thank", "you"),
     ("ok", "thank", "you"),
 )
+NEGATIONS = {
+    "no",
+    "not",
+    "never",
+    "cant",
+    "cannot",
+    "dont",
+    "doesnt",
+    "didnt",
+    "wont",
+    "wouldnt",
+    "shouldnt",
+    "couldnt",
+}
 CLEAN_FILTER = (
     "highpass=f=75,lowpass=f=10500,"
     "afftdn=nr=12:nf=-35:tn=1,"
@@ -317,6 +331,17 @@ def inserted_filler_ranges(
     return ranges
 
 
+def has_negation_mismatch(expected: list[str], recognized: list[str]) -> bool:
+    normalize = lambda token: token.replace("'", "")
+    expected_negations = [
+        normalize(token) for token in expected if normalize(token) in NEGATIONS
+    ]
+    recognized_negations = [
+        normalize(token) for token in recognized if normalize(token) in NEGATIONS
+    ]
+    return expected_negations != recognized_negations
+
+
 def subtract_ranges(
     start: float, end: float, removals: list[tuple[float, float]]
 ) -> list[tuple[float, float]]:
@@ -343,6 +368,9 @@ def render_cleaned(
     if len(kept) == 1:
         start, end = kept[0]
         command = base + [
+            "-map",
+            "0:a:0",
+            "-vn",
             "-af",
             f"atrim=start={start:.3f}:end={end:.3f},asetpts=PTS-STARTPTS,{CLEAN_FILTER}",
             "-ac",
@@ -372,6 +400,7 @@ def render_cleaned(
             ";".join(pieces),
             "-map",
             "[clean]",
+            "-vn",
             "-ac",
             "1",
             "-ar",
@@ -421,6 +450,7 @@ def report_html(entries: list[dict[str, Any]], output_dir: Path) -> None:
         cleaned = html.escape(entry.get("cleaned_relative") or "")
         confidence = float(entry.get("confidence", 0.0))
         trim = html.escape(entry.get("trim_summary") or "")
+        review_reason = html.escape(entry.get("review_reason") or "")
         error = html.escape(entry.get("error") or "")
         audio = (
             f'<div><strong>Original</strong><audio controls preload="metadata" src="{original}"></audio></div>'
@@ -433,6 +463,7 @@ def report_html(entries: list[dict[str, Any]], output_dir: Path) -> None:
           <header><h2>Note {number}</h2><span>{status}</span></header>
           <p class="quote">{expected}</p>
           <p><b>Match confidence:</b> {confidence:.0%} · <b>Edit:</b> {trim}</p>
+          {f'<p class="warning"><b>Review note:</b> {review_reason}</p>' if review_reason else ""}
           <details><summary>Recognized speech</summary><p>{recognized}</p></details>
           {audio}
           {f'<p class="error">{error}</p>' if error else ""}
@@ -448,6 +479,7 @@ main{{width:min(940px,calc(100% - 32px));margin:48px auto}} h1{{font-family:Geor
 .card header{{display:flex;justify-content:space-between;gap:16px;align-items:center;text-transform:uppercase;letter-spacing:.12em}} .card header span{{font-size:.8rem;padding:4px 9px;border:1px solid}}
 .card.ready header span{{color:#245b3d}} .card.review header span,.card.error header span{{color:#9a3d2d}} .quote{{font:1.45rem/1.45 Georgia,serif}}
 audio{{display:block;width:100%;margin-top:8px}} .card>div{{margin:18px 0}} details p{{color:#526175}} .error{{color:#9a3d2d;white-space:pre-wrap}}
+.warning{{padding:10px 12px;border-left:3px solid #9a3d2d;background:#fff8ee}}
 </style></head><body><main><p>STRANGER.FM / PRIVATE CORRESPONDENCE</p><h1>Audio cleanup review</h1>
 <p class="intro">Listen to every original and cleaned pair. Confirm that the full written quote remains, non-quote remarks are gone, and the voice still sounds natural. Nothing in this report changes the live website.</p>
 {"".join(cards) if cards else "<p>No recordings needed processing.</p>"}
@@ -600,7 +632,22 @@ def process_one(
             end = min(duration, window[-1].end + 0.18)
             removals = inserted_filler_ranges(expected, window)
             kept = subtract_ranges(start, end, removals)
-            status = "ready" if confidence >= READY_THRESHOLD else "review"
+            negation_mismatch = has_negation_mismatch(
+                expected, [word.token for word in window]
+            )
+            status = (
+                "ready"
+                if confidence >= READY_THRESHOLD and not negation_mismatch
+                else "review"
+            )
+            if negation_mismatch:
+                entry["review_reason"] = (
+                    "A positive/negative word differs between the written quote and audio."
+                )
+            elif confidence < READY_THRESHOLD:
+                entry["review_reason"] = (
+                    "The spoken words did not reliably align with the saved written quote."
+                )
         else:
             confidence = 0.0
             start, end = 0.0, duration
@@ -752,23 +799,29 @@ def main() -> int:
         return 0
 
     entries: list[dict[str, Any]] = []
-    for index, note in enumerate(notes, start=1):
-        number = int(note.get("number") or 0)
-        log(f"[{index}/{len(notes)}] Cleaning note {number:03d}…")
-        entry = process_one(note, output_dir, args.model, local_source)
-        entries.append(entry)
-        log(f"    {entry['status']} ({float(entry.get('confidence', 0)):.0%} match)")
-
-    # Replace manifest records for this batch, preserving history for other notes.
-    batch_numbers = {int(entry["number"]) for entry in entries}
+    batch_numbers = {int(note.get("number") or 0) for note in notes}
     retained = [
         item
         for item in manifest.get("entries", [])
         if int(item.get("number", -1)) not in batch_numbers
     ]
-    manifest["entries"] = retained + entries
-    write_manifest(manifest_path, manifest)
-    report_html(entries, output_dir)
+    for index, note in enumerate(notes, start=1):
+        number = int(note.get("number") or 0)
+        log(f"[{index}/{len(notes)}] Cleaning note {number:03d}…")
+        source_for_note = local_source
+        if source_for_note is None:
+            local_candidates = sorted(
+                (project_root / "public" / "audio").glob(f"note-{number:03d}.*")
+            )
+            if local_candidates:
+                source_for_note = local_candidates[0]
+        entry = process_one(note, output_dir, args.model, source_for_note)
+        entries.append(entry)
+        log(f"    {entry['status']} ({float(entry.get('confidence', 0)):.0%} match)")
+        # Save progress after every note so an interrupted long batch remains reviewable.
+        manifest["entries"] = retained + entries
+        write_manifest(manifest_path, manifest)
+        report_html(entries, output_dir)
 
     if args.apply:
         assert supabase_url and api_key
