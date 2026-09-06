@@ -602,229 +602,446 @@
     outline: none;
   }
 
-  .hotline-stage {
-    background-color: #111c2a;
-    background-image:
-      radial-gradient(circle at 18% 12%, rgb(50 78 100 / 42%), transparent 34%),
-      radial-gradient(circle at 82% 78%, rgb(118 76 36 / 20%), transparent 31%),
-      repeating-linear-gradient(96deg, transparent 0 8px, rgb(255 255 255 / 1.2%) 8px 9px);
+  .hotline-page {
+    background-position: center;
   }
 
-  .hotline-status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 999px;
-    background: rgb(242 238 227 / 30%);
-    box-shadow: 0 0 0 3px rgb(242 238 227 / 6%);
-  }
-
-  .hotline-status-dot.is-live {
-    background: #efb84a;
-    box-shadow: 0 0 12px rgb(239 184 74 / 72%);
-  }
-
-  .hotline-receiver-mark {
-    display: grid;
-    width: clamp(88px, 12vw, 132px);
-    height: clamp(88px, 12vw, 132px);
-    place-items: center;
-    border: 1px solid rgb(242 238 227 / 25%);
-    border-radius: 999px;
-    color: #efb84a;
-  }
-
-  .hotline-receiver-mark svg {
-    width: 50%;
-    height: 50%;
-  }
-
-  .hotline-console {
-    overflow: hidden;
-    background: #d8d1c2;
-    border: 1px solid rgb(255 255 255 / 25%);
-    border-radius: 3px;
-    box-shadow:
-      16px 20px 0 rgb(0 0 0 / 14%),
-      0 30px 75px rgb(0 0 0 / 35%);
-  }
-
-  .hotline-console-top {
-    padding: 12px 16px;
-    border-bottom: 1px solid rgb(45 55 58 / 18%);
-    background: #c5bcac;
-  }
-
-  .hotline-display {
-    margin: 13px;
-    color: var(--ink);
-    background-color: #f3eee2;
-    background-image:
-      radial-gradient(circle at 35% 10%, rgb(255 255 255 / 60%), transparent 44%),
-      repeating-linear-gradient(92deg, transparent 0 6px, rgb(70 62 50 / 1.4%) 6px 7px);
-    border: 1px solid rgb(45 55 58 / 24%);
-    box-shadow: inset 0 0 34px rgb(61 52 40 / 7%);
-  }
-
-  .hotline-call-circle,
-  .hotline-speaker {
-    display: grid;
-    width: 78px;
-    height: 78px;
-    place-items: center;
-    border: 1px solid rgb(45 55 58 / 24%);
-    border-radius: 999px;
-  }
-
-  .hotline-call-circle svg,
-  .hotline-speaker svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .hotline-speaker {
+  .iphone-call-shell {
     position: relative;
+    width: min(430px, 100%);
+    height: clamp(660px, calc(100dvh - 160px), 790px);
+    min-height: 660px;
+    overflow: hidden;
+    color: #fff;
+    background: #17263a;
+    border: 7px solid #f4efe3;
+    border-radius: 48px;
+    box-shadow:
+      0 0 0 1px rgb(40 48 51 / 18%),
+      0 28px 65px rgb(43 52 55 / 24%);
+    isolation: isolate;
   }
 
-  .hotline-speaker::before,
-  .hotline-speaker::after {
-    content: "";
+  .iphone-call-grain,
+  .iphone-call-wallpaper,
+  .iphone-call-shade {
     position: absolute;
-    inset: -1px;
-    border: 1px solid rgb(45 55 58 / 20%);
-    border-radius: inherit;
-    opacity: 0;
+    inset: 0;
+    pointer-events: none;
   }
 
-  .hotline-speaker.is-speaking::before {
-    animation: hotline-signal 1.8s ease-out infinite;
+  .iphone-call-grain {
+    z-index: -1;
+    background-image:
+      radial-gradient(circle at 20% 14%, rgb(112 142 160 / 42%), transparent 34%),
+      radial-gradient(circle at 78% 74%, rgb(173 124 77 / 32%), transparent 33%),
+      repeating-linear-gradient(96deg, transparent 0 7px, rgb(255 255 255 / 1.5%) 7px 8px);
   }
 
-  .hotline-speaker.is-speaking::after {
-    animation: hotline-signal 1.8s 0.75s ease-out infinite;
+  .iphone-call-wallpaper {
+    z-index: -2;
+    background-position: center;
+    background-size: cover;
+    filter: blur(22px) saturate(0.65);
+    opacity: 0.46;
+    scale: 1.16;
+    transition: background-image 400ms ease;
   }
 
-  @keyframes hotline-signal {
-    0% {
-      scale: 0.95;
-      opacity: 0.5;
-    }
-    100% {
-      scale: 1.55;
-      opacity: 0;
-    }
+  .iphone-call-shade {
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(11 23 37 / 56%), rgb(9 18 30 / 80%));
   }
 
-  .hotline-call-button,
-  .hotline-listen-button {
-    display: inline-flex;
-    min-height: 48px;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 19px;
-    background: var(--ink);
-    color: var(--paper);
+  .iphone-status-bar {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    padding: 15px 22px 0;
     font-family: var(--font-type);
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-size: 9px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    box-shadow: 4px 5px 0 rgb(45 55 58 / 18%);
-    transition:
-      transform 160ms ease,
-      box-shadow 160ms ease;
+    color: rgb(255 255 255 / 72%);
   }
 
-  .hotline-call-button:hover,
-  .hotline-call-button:focus-visible,
-  .hotline-listen-button:hover,
-  .hotline-listen-button:focus-visible {
-    transform: translate(-1px, -2px);
-    box-shadow: 6px 7px 0 rgb(45 55 58 / 14%);
+  .iphone-status-bar > :last-child {
+    text-align: right;
+  }
+
+  .iphone-dynamic-island {
+    width: 88px;
+    height: 22px;
+    margin-top: -7px;
+    border-radius: 999px;
+    background: rgb(3 8 14 / 82%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 4%);
+  }
+
+  .iphone-call-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 70px 26px 27px;
+  }
+
+  .iphone-caller-copy {
+    width: 100%;
+    text-align: center;
+  }
+
+  .iphone-call-kicker {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 58%);
+  }
+
+  .iphone-caller-name {
+    margin-top: 9px;
+    font-family: var(--font-sans);
+    font-size: clamp(42px, 12vw, 58px);
+    font-weight: 300;
+    line-height: 1.04;
+    letter-spacing: -0.055em;
+  }
+
+  .iphone-call-subtitle,
+  .iphone-call-timer {
+    margin-top: 9px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 300;
+    color: rgb(255 255 255 / 68%);
+  }
+
+  .iphone-incoming-mark {
+    display: grid;
+    width: 138px;
+    height: 138px;
+    margin: auto;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: 999px;
+    background: rgb(242 238 227 / 7%);
+    box-shadow:
+      0 0 0 18px rgb(242 238 227 / 3.5%),
+      inset 0 1px rgb(255 255 255 / 8%);
+  }
+
+  .iphone-incoming-mark svg {
+    width: 58px;
+    height: 58px;
+  }
+
+  .iphone-incoming-actions {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-inline: 16px;
+  }
+
+  .iphone-action-stack,
+  .iphone-control {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 9px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 300;
+    color: #fff;
+  }
+
+  .iphone-round-action,
+  .iphone-hangup-button {
+    display: grid;
+    width: 68px;
+    height: 68px;
+    place-items: center;
+    border-radius: 999px;
+    transition:
+      transform 150ms ease,
+      filter 150ms ease;
+  }
+
+  .iphone-round-action svg,
+  .iphone-hangup-button svg {
+    width: 29px;
+    height: 29px;
+  }
+
+  .iphone-round-action--decline,
+  .iphone-hangup-button {
+    background: #f14841;
+  }
+
+  .iphone-round-action--answer {
+    background: #35c85a;
+  }
+
+  .iphone-action-stack:hover .iphone-round-action,
+  .iphone-action-stack:focus-visible .iphone-round-action,
+  .iphone-hangup-button:hover,
+  .iphone-hangup-button:focus-visible {
+    transform: scale(1.06);
+    filter: brightness(1.08);
     outline: none;
   }
 
-  .hotline-menu-key {
+  .iphone-action-stack:focus-visible {
+    outline: none;
+  }
+
+  .iphone-caller-copy--compact {
+    margin-top: 7px;
+  }
+
+  .iphone-caller-name--small {
+    font-size: 36px;
+  }
+
+  .iphone-number-pad {
     display: grid;
-    width: 100%;
-    grid-template-columns: 48px 1fr;
+    width: min(330px, 100%);
+    margin-block: auto;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    gap: 24px 17px;
+  }
+
+  .iphone-number-key {
+    display: flex;
+    min-width: 0;
     align-items: center;
-    gap: 15px;
-    padding: 9px 0;
-    border-bottom: 1px solid rgb(45 55 58 / 15%);
+    flex-direction: column;
+    gap: 8px;
+    color: #fff;
   }
 
-  .hotline-menu-key:hover .hotline-key-number,
-  .hotline-menu-key:focus-visible .hotline-key-number {
-    background: var(--ink);
-    color: var(--paper);
-    transform: scale(1.05);
+  .iphone-number-key--0 {
+    grid-column: 3;
   }
 
-  .hotline-menu-key:focus-visible {
-    outline: 1px dashed rgb(45 55 58 / 45%);
-    outline-offset: 4px;
-  }
-
-  .hotline-menu-key--surprise {
-    border-bottom: 0;
-  }
-
-  .hotline-key-number {
+  .iphone-number-circle {
     display: grid;
-    width: 44px;
-    height: 44px;
+    width: 72px;
+    height: 72px;
     place-items: center;
-    border: 1px solid rgb(45 55 58 / 26%);
+    border: 1px solid rgb(255 255 255 / 9%);
     border-radius: 999px;
-    font-family: var(--font-type);
-    font-size: 13px;
-    color: var(--ink);
+    background: rgb(242 238 227 / 16%);
+    font-family: var(--font-sans);
+    font-size: 31px;
+    font-weight: 300;
+    box-shadow: inset 0 1px rgb(255 255 255 / 8%);
     transition:
-      transform 160ms ease,
-      color 160ms ease,
-      background-color 160ms ease;
+      transform 150ms ease,
+      background-color 150ms ease;
   }
 
-  .hotline-progress {
-    width: min(290px, 90%);
-    height: 2px;
+  .iphone-number-label {
+    max-width: 92px;
     overflow: hidden;
-    background: rgb(45 55 58 / 14%);
+    font-family: var(--font-type);
+    font-size: 8px;
+    letter-spacing: 0.05em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgb(255 255 255 / 62%);
   }
 
-  .hotline-progress span {
+  .iphone-number-key:hover .iphone-number-circle,
+  .iphone-number-key:focus-visible .iphone-number-circle {
+    transform: scale(1.06);
+    background: rgb(242 238 227 / 30%);
+  }
+
+  .iphone-number-key:focus-visible {
+    outline: none;
+  }
+
+  .iphone-keypad-screen > .iphone-hangup-button {
+    flex: 0 0 auto;
+  }
+
+  .iphone-caller-copy--active {
+    margin-top: 4px;
+  }
+
+  .iphone-caller-name--active {
+    font-size: 42px;
+  }
+
+  .iphone-call-progress {
+    width: min(230px, 78%);
+    height: 2px;
+    margin-top: 24px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 16%);
+  }
+
+  .iphone-call-progress span {
     display: block;
     height: 100%;
-    background: var(--ink);
-    transition: width 180ms linear;
+    border-radius: inherit;
+    background: #f4efe3;
+    transition: width 160ms linear;
   }
 
-  .hotline-small-control {
-    display: inline-flex;
-    min-height: 42px;
+  .iphone-call-controls {
+    display: grid;
+    width: min(330px, 100%);
+    margin-block: auto;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 17px;
+  }
+
+  .iphone-call-controls .iphone-control:last-child {
+    grid-column: 2;
+  }
+
+  .iphone-control-circle {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 8%);
+    border-radius: 999px;
+    background: rgb(242 238 227 / 16%);
+    box-shadow: inset 0 1px rgb(255 255 255 / 8%);
+    transition:
+      transform 150ms ease,
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .iphone-control-circle svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .iphone-control-circle.is-active,
+  .iphone-control:hover .iphone-control-circle,
+  .iphone-control:focus-visible .iphone-control-circle {
+    background: #f4efe3;
+    color: #17263a;
+    transform: scale(1.04);
+  }
+
+  .iphone-control:focus-visible {
+    outline: none;
+  }
+
+  .iphone-note-peek {
+    position: absolute;
+    inset: 188px 28px 154px;
+    z-index: 5;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 9px 10px;
-    border: 1px solid rgb(45 55 58 / 20%);
-    font-family: var(--font-type);
+    padding: 24px;
+    background-color: #f4efe3;
+    background-image: repeating-linear-gradient(
+      92deg,
+      transparent 0 6px,
+      rgb(70 62 50 / 1.4%) 6px 7px
+    );
+    border: 1px solid rgb(255 255 255 / 30%);
+    box-shadow: 0 24px 55px rgb(0 0 0 / 35%);
+  }
+
+  .iphone-note-peek img {
+    width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .iphone-note-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    padding: 5px;
+    border-bottom: 1px solid rgb(45 55 58 / 32%);
+    color: var(--ink);
     font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition:
-      color 160ms ease,
-      background-color 160ms ease;
   }
 
-  .hotline-small-control:hover,
-  .hotline-small-control:focus-visible {
-    background: var(--ink);
-    color: var(--paper);
-    outline: none;
+  .iphone-note-close:focus-visible {
+    outline: 1px dashed var(--ink);
+    outline-offset: 3px;
   }
 
-  .hotline-small-control--hangup {
-    color: #8c3e34;
+  .iphone-active-footer {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  .iphone-active-footer p {
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 44%);
+  }
+
+  .iphone-active-footer .iphone-hangup-button {
+    align-self: center;
+  }
+
+  @media (max-width: 639px) {
+    .hotline-page {
+      padding-inline: 0;
+      padding-bottom: 0;
+    }
+
+    .iphone-call-shell {
+      width: 100%;
+      height: calc(100dvh - 64px);
+      min-height: 630px;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .iphone-call-screen {
+      padding-inline: 24px;
+      padding-bottom: 24px;
+    }
+
+    .iphone-number-pad,
+    .iphone-call-controls {
+      gap-block: 19px;
+    }
+
+    .iphone-number-circle,
+    .iphone-control-circle {
+      width: 66px;
+      height: 66px;
+    }
+
+    .iphone-note-peek {
+      inset-inline: 22px;
+    }
+
+    .hotline-page > div > div:last-child {
+      display: none;
+    }
   }
 
   .envelope-note-reveal {

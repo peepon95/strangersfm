@@ -1,43 +1,59 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowLeft, Phone, PhoneCall, PhoneOff, RotateCcw, Volume2 } from "lucide-react";
+import {
+  Grid3X3,
+  Image as ImageIcon,
+  Pause,
+  Phone,
+  PhoneCall,
+  PhoneOff,
+  Play,
+  RotateCcw,
+  SkipForward,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { notes as builtInNotes } from "@/data/notes";
 import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
-type LineState = "idle" | "menu" | "connecting" | "ready" | "playing" | "ended";
+type LineState = "incoming" | "menu" | "connecting" | "ready" | "playing" | "paused";
 type CategoryId = "1" | "2" | "3" | "4" | "0";
 
 const categories: Array<{
   id: CategoryId;
+  shortTitle: string;
   title: string;
-  prompt: string;
   noteIds: string[];
 }> = [
   {
     id: "1",
+    shortTitle: "begin",
     title: "a push to begin",
-    prompt: "when you need a little courage to start",
     noteIds: ["001", "006", "009", "016", "022"],
   },
   {
     id: "2",
+    shortTitle: "comfort",
     title: "comfort for a heavy day",
-    prompt: "when today is asking a lot of you",
     noteIds: ["003", "004", "006", "019"],
   },
   {
     id: "3",
+    shortTitle: "worth",
     title: "remember your worth",
-    prompt: "when you need to come back to yourself",
     noteIds: ["002", "005", "007", "008", "012", "015"],
   },
   {
     id: "4",
+    shortTitle: "perspective",
     title: "a different perspective",
-    prompt: "when your thoughts need a little more room",
     noteIds: ["010", "014", "019"],
+  },
+  {
+    id: "0",
+    shortTitle: "surprise",
+    title: "let the line choose",
+    noteIds: [],
   },
 ];
 
@@ -49,19 +65,19 @@ export const Route = createFileRoute("/hotline")({
       { title: "The listening line · stranger fm" },
       {
         name: "description",
-        content: "Call the Stranger FM listening line and hear a message recorded by a stranger.",
+        content: "Answer the Stranger FM listening line and hear a message from a stranger.",
       },
       { property: "og:title", content: "The listening line · stranger fm" },
       {
         property: "og:description",
-        content: "Choose what you need today, then hear a stranger's voice.",
+        content: "Choose what you need today, then stay on the line for another voice.",
       },
       { property: "og:type", content: "website" },
     ],
   }),
   loader: () => listPublishedNotes(),
   errorComponent: () => (
-    <main className="hotline-stage flex min-h-screen items-center justify-center px-6 text-center font-type text-[#f2eee3]">
+    <main className="archive-stage flex min-h-screen items-center justify-center px-6 text-center font-type text-ink/60">
       The listening line is resting. Please try again in a moment.
     </main>
   ),
@@ -74,10 +90,12 @@ function Hotline() {
   const reduceMotion = useReducedMotion();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previousNote = useRef<string | null>(null);
-  const [lineState, setLineState] = useState<LineState>("idle");
+  const [lineState, setLineState] = useState<LineState>("incoming");
   const [selected, setSelected] = useState<Note | null>(null);
   const [category, setCategory] = useState<CategoryId | null>(null);
   const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const [showNote, setShowNote] = useState(false);
 
   const playableNotes = useMemo(
     () => notes.filter((note) => note.audioUrl && !heldForReview.has(note.id)),
@@ -91,6 +109,8 @@ function Hotline() {
     audio.src = note.audioUrl;
     audio.load();
     setProgress(0);
+    setElapsed(0);
+    setShowNote(false);
     setLineState("connecting");
 
     const begin = () => {
@@ -139,7 +159,7 @@ function Hotline() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [chooseCategory, lineState]);
 
-  function beginCall() {
+  function answerCall() {
     setLineState("menu");
   }
 
@@ -152,20 +172,32 @@ function Hotline() {
     );
   }
 
+  function togglePlayback() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) resumeAudio();
+    else {
+      audio.pause();
+      setLineState("paused");
+    }
+  }
+
   function replay() {
     const audio = audioRef.current;
     if (!audio || !selected) return;
     audio.currentTime = selected.clipStart ?? 0;
     setProgress(0);
+    setElapsed(0);
     resumeAudio();
   }
 
+  function playNext() {
+    chooseCategory(category ?? "0");
+  }
+
   function returnToMenu() {
-    const audio = audioRef.current;
-    audio?.pause();
-    setSelected(null);
-    setCategory(null);
-    setProgress(0);
+    audioRef.current?.pause();
+    setShowNote(false);
     setLineState("menu");
   }
 
@@ -173,13 +205,14 @@ function Hotline() {
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
-      audio.removeAttribute("src");
-      audio.load();
+      audio.currentTime = 0;
     }
     setSelected(null);
     setCategory(null);
     setProgress(0);
-    setLineState("idle");
+    setElapsed(0);
+    setShowNote(false);
+    setLineState("incoming");
   }
 
   function updateProgress() {
@@ -189,224 +222,241 @@ function Hotline() {
     const start = selected?.clipStart ?? 0;
     const end = selected?.clipEnd ?? audio.duration;
     const span = Math.max(end - start, 0.1);
-    setProgress(Math.min(100, Math.max(0, ((audio.currentTime - start) / span) * 100)));
+    const played = Math.max(0, audio.currentTime - start);
+    setElapsed(played);
+    setProgress(Math.min(100, Math.max(0, (played / span) * 100)));
 
     if (selected?.clipEnd !== undefined && audio.currentTime >= selected.clipEnd) {
       audio.pause();
-      setProgress(100);
-      setLineState("ended");
+      playNext();
     }
   }
 
   const activeCategory = categories.find((item) => item.id === category);
-  const isMessageView = ["connecting", "ready", "playing", "ended"].includes(lineState);
+  const isMessageView = ["connecting", "ready", "playing", "paused"].includes(lineState);
+  const callTime = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(
+    Math.floor(elapsed % 60),
+  ).padStart(2, "0")}`;
 
   return (
-    <main className="hotline-stage min-h-screen px-4 pb-12 pt-28 text-[#f2eee3] sm:px-8 sm:pb-16 sm:pt-32">
+    <main className="hotline-page archive-stage min-h-screen px-3 pb-8 pt-24 sm:px-8 sm:pb-12 sm:pt-28">
       <audio
         ref={audioRef}
         preload="metadata"
         onTimeUpdate={updateProgress}
-        onEnded={() => {
-          setProgress(100);
-          setLineState("ended");
-        }}
+        onEnded={playNext}
+        onError={() => setLineState("ready")}
       />
 
-      <div className="mx-auto w-full max-w-5xl">
-        <header className="flex items-center justify-between gap-5 border-b border-[#f2eee3]/20 pb-4 font-type">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-[#f2eee3]/52">
-              stranger.fm / line 01
-            </p>
-            <h1 className="mt-2 text-lg uppercase tracking-[0.16em] sm:text-2xl">
-              the listening line
-            </h1>
-          </div>
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-[#f2eee3]/60">
-            <span className={`hotline-status-dot ${lineState === "idle" ? "" : "is-live"}`} />
-            {lineState === "idle" ? "line ready" : "connected"}
-          </div>
-        </header>
-
-        <section className="grid items-center gap-9 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:py-16">
-          <div className="hotline-intro max-w-lg">
-            <motion.div
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
+        <div className="iphone-call-shell">
+          <div className="iphone-call-grain" aria-hidden />
+          {selected && isMessageView ? (
+            <div
+              className="iphone-call-wallpaper"
+              style={{ backgroundImage: `url(${selected.image})` }}
               aria-hidden
-              initial={reduceMotion ? false : { opacity: 0, rotate: -8, scale: 0.9 }}
-              animate={{ opacity: 1, rotate: -3, scale: 1 }}
-              className="hotline-receiver-mark"
-            >
-              <PhoneCall strokeWidth={1.15} />
-            </motion.div>
-            <p className="mt-7 font-display text-4xl leading-[0.98] sm:text-6xl">
-              You don’t need to leave a message.
-              <span className="mt-2 block italic text-[#efb84a]">This one is for you.</span>
-            </p>
-            <p className="mt-6 max-w-md font-type text-xs leading-6 text-[#f2eee3]/58 sm:text-sm">
-              Choose what you need today. A stranger will answer in their own voice.
-            </p>
+            />
+          ) : null}
+          <div className="iphone-call-shade" aria-hidden />
+
+          <div className="iphone-status-bar" aria-hidden>
+            <span>stranger.fm</span>
+            <span className="iphone-dynamic-island" />
+            <span>web call</span>
           </div>
 
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: reduceMotion ? 0 : 0.12, duration: 0.45 }}
-            className="hotline-console"
-          >
-            <div className="hotline-console-top flex items-center justify-between font-type text-[9px] uppercase tracking-[0.16em] text-ink/45">
-              <span>web call · no charge</span>
-              <span>{String(playableNotes.length).padStart(2, "0")} voices online</span>
-            </div>
+          <AnimatePresence mode="wait">
+            {lineState === "incoming" ? (
+              <motion.section
+                key="incoming"
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.03 }}
+                className="iphone-call-screen iphone-incoming-screen"
+                aria-label="Incoming call from Stranger FM"
+              >
+                <div className="iphone-caller-copy">
+                  <p className="iphone-call-kicker font-type">incoming voice</p>
+                  <h1 className="iphone-caller-name">stranger.fm</h1>
+                  <p className="iphone-call-subtitle">a message is waiting for you</p>
+                </div>
 
-            <div className="hotline-display" aria-live="polite">
-              <AnimatePresence mode="wait">
-                {lineState === "idle" ? (
-                  <motion.div
-                    key="idle"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex min-h-[370px] flex-col items-center justify-center px-5 py-9 text-center"
-                  >
-                    <div className="hotline-call-circle">
-                      <Phone aria-hidden strokeWidth={1.4} />
-                    </div>
-                    <p className="mt-7 font-type text-[10px] uppercase tracking-[0.18em] text-ink/45">
-                      an anonymous listening experience
-                    </p>
-                    <button type="button" onClick={beginCall} className="hotline-call-button mt-7">
-                      <PhoneCall aria-hidden size={18} />
-                      start a free web call
+                <motion.div
+                  aria-hidden
+                  className="iphone-incoming-mark"
+                  animate={reduceMotion ? undefined : { scale: [1, 1.06, 1] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <PhoneCall strokeWidth={1.25} />
+                </motion.div>
+
+                <div className="iphone-incoming-actions">
+                  <Link to="/" className="iphone-action-stack">
+                    <span className="iphone-round-action iphone-round-action--decline">
+                      <PhoneOff aria-hidden />
+                    </span>
+                    <span>not now</span>
+                  </Link>
+                  <button type="button" onClick={answerCall} className="iphone-action-stack">
+                    <span className="iphone-round-action iphone-round-action--answer">
+                      <Phone aria-hidden />
+                    </span>
+                    <span>answer</span>
+                  </button>
+                </div>
+              </motion.section>
+            ) : lineState === "menu" ? (
+              <motion.section
+                key="menu"
+                initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="iphone-call-screen iphone-keypad-screen"
+                aria-label="Choose a message category"
+              >
+                <div className="iphone-caller-copy iphone-caller-copy--compact">
+                  <p className="iphone-call-kicker font-type">connected</p>
+                  <h1 className="iphone-caller-name iphone-caller-name--small">
+                    what do you need?
+                  </h1>
+                  <p className="iphone-call-subtitle">press or tap a number</p>
+                </div>
+
+                <div className="iphone-number-pad">
+                  {categories.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => chooseCategory(item.id)}
+                      className={`iphone-number-key iphone-number-key--${item.id}`}
+                      aria-label={`Press ${item.id} for ${item.title}`}
+                    >
+                      <span className="iphone-number-circle">{item.id}</span>
+                      <span className="iphone-number-label">{item.shortTitle}</span>
                     </button>
-                    <p className="mt-5 max-w-xs font-type text-[9px] leading-relaxed text-ink/40">
-                      Sound will play through your device. No microphone or phone number is used.
-                    </p>
-                  </motion.div>
-                ) : lineState === "menu" ? (
-                  <motion.div
-                    key="menu"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    className="px-5 py-7 sm:px-8"
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={hangUp}
+                  className="iphone-hangup-button"
+                  aria-label="Hang up"
+                >
+                  <PhoneOff aria-hidden />
+                </button>
+              </motion.section>
+            ) : isMessageView && selected ? (
+              <motion.section
+                key={`voice-${selected.id}`}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="iphone-call-screen iphone-active-screen"
+                aria-label={`Playing a message from stranger number ${selected.id}`}
+              >
+                <div className="iphone-caller-copy iphone-caller-copy--active">
+                  <p className="iphone-call-kicker font-type">
+                    {activeCategory?.title ?? "the listening line"}
+                  </p>
+                  <h1 className="iphone-caller-name iphone-caller-name--active">
+                    stranger {selected.id}
+                  </h1>
+                  <p className="iphone-call-timer" aria-label={`${callTime} elapsed`}>
+                    {lineState === "connecting"
+                      ? "connecting…"
+                      : lineState === "ready"
+                        ? "tap play to listen"
+                        : callTime}
+                  </p>
+                </div>
+
+                <div className="iphone-call-progress" aria-hidden>
+                  <span style={{ width: `${progress}%` }} />
+                </div>
+
+                <div className="iphone-call-controls">
+                  <button type="button" onClick={togglePlayback} className="iphone-control">
+                    <span className="iphone-control-circle">
+                      {lineState === "playing" ? <Pause aria-hidden /> : <Play aria-hidden />}
+                    </span>
+                    <span>{lineState === "playing" ? "pause" : "play"}</span>
+                  </button>
+                  <button type="button" onClick={returnToMenu} className="iphone-control">
+                    <span className="iphone-control-circle">
+                      <Grid3X3 aria-hidden />
+                    </span>
+                    <span>keypad</span>
+                  </button>
+                  <button type="button" onClick={playNext} className="iphone-control">
+                    <span className="iphone-control-circle">
+                      <SkipForward aria-hidden />
+                    </span>
+                    <span>next</span>
+                  </button>
+                  <button type="button" onClick={replay} className="iphone-control">
+                    <span className="iphone-control-circle">
+                      <RotateCcw aria-hidden />
+                    </span>
+                    <span>replay</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowNote((visible) => !visible)}
+                    className="iphone-control"
+                    aria-pressed={showNote}
                   >
-                    <p className="font-type text-[9px] uppercase tracking-[0.18em] text-ink/42">
-                      press or tap · what do you need to hear?
-                    </p>
-                    <div className="mt-6 space-y-3">
-                      {categories.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => chooseCategory(item.id)}
-                          className="hotline-menu-key group"
-                        >
-                          <span className="hotline-key-number">{item.id}</span>
-                          <span className="min-w-0 text-left">
-                            <span className="block font-display text-xl leading-none text-ink sm:text-2xl">
-                              {item.title}
-                            </span>
-                            <span className="mt-1.5 block font-type text-[9px] leading-relaxed text-ink/42 sm:text-[10px]">
-                              {item.prompt}
-                            </span>
-                          </span>
-                        </button>
-                      ))}
+                    <span className={`iphone-control-circle ${showNote ? "is-active" : ""}`}>
+                      <ImageIcon aria-hidden />
+                    </span>
+                    <span>the note</span>
+                  </button>
+                </div>
+
+                <AnimatePresence>
+                  {showNote ? (
+                    <motion.figure
+                      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 18 }}
+                      className="iphone-note-peek"
+                    >
                       <button
                         type="button"
-                        onClick={() => chooseCategory("0")}
-                        className="hotline-menu-key hotline-menu-key--surprise group"
+                        onClick={() => setShowNote(false)}
+                        className="iphone-note-close font-type"
                       >
-                        <span className="hotline-key-number">0</span>
-                        <span className="text-left font-type text-[10px] uppercase tracking-[0.12em] text-ink/70">
-                          let the line choose for me
-                        </span>
+                        close
                       </button>
-                    </div>
-                  </motion.div>
-                ) : isMessageView && selected ? (
-                  <motion.div
-                    key={`message-${selected.id}`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    className="flex min-h-[440px] flex-col px-6 py-8 sm:px-9"
+                      <img src={selected.image} alt={selected.transcript} />
+                      <figcaption className="sr-only">{selected.transcript}</figcaption>
+                    </motion.figure>
+                  ) : null}
+                </AnimatePresence>
+
+                <div className="iphone-active-footer">
+                  <p className="font-type">the next voice will play automatically</p>
+                  <button
+                    type="button"
+                    onClick={hangUp}
+                    className="iphone-hangup-button"
+                    aria-label="Hang up"
                   >
-                    <div className="flex items-start justify-between gap-5 font-type text-[9px] uppercase tracking-[0.15em] text-ink/42">
-                      <span>{activeCategory?.title ?? "something unexpected"}</span>
-                      <span>voice {selected.id}</span>
-                    </div>
+                    <PhoneOff aria-hidden />
+                  </button>
+                </div>
+              </motion.section>
+            ) : null}
+          </AnimatePresence>
+        </div>
 
-                    <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
-                      <div
-                        className={`hotline-speaker ${lineState === "playing" ? "is-speaking" : ""}`}
-                      >
-                        <Volume2 aria-hidden strokeWidth={1.3} />
-                      </div>
-                      <p className="mt-7 font-display text-3xl italic text-ink sm:text-4xl">
-                        {lineState === "connecting"
-                          ? "connecting you to a stranger…"
-                          : lineState === "ended"
-                            ? "the line is still open."
-                            : "a stranger is speaking…"}
-                      </p>
-
-                      <div className="hotline-progress mt-8" aria-hidden>
-                        <span style={{ width: `${progress}%` }} />
-                      </div>
-
-                      {lineState === "ready" ? (
-                        <button
-                          type="button"
-                          onClick={resumeAudio}
-                          className="hotline-listen-button mt-7"
-                        >
-                          <Volume2 aria-hidden size={16} />
-                          tap to hear the message
-                        </button>
-                      ) : null}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 border-t border-ink/15 pt-5">
-                      <button
-                        type="button"
-                        onClick={() => chooseCategory(category ?? "0")}
-                        className="hotline-small-control"
-                      >
-                        another voice
-                      </button>
-                      <button type="button" onClick={replay} className="hotline-small-control">
-                        <RotateCcw aria-hidden size={13} /> replay
-                      </button>
-                      <button
-                        type="button"
-                        onClick={returnToMenu}
-                        className="hotline-small-control"
-                      >
-                        <ArrowLeft aria-hidden size={13} /> main menu
-                      </button>
-                      <button
-                        type="button"
-                        onClick={hangUp}
-                        className="hotline-small-control hotline-small-control--hangup"
-                      >
-                        <PhoneOff aria-hidden size={13} /> hang up
-                      </button>
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        </section>
-
-        <footer className="flex flex-col items-start justify-between gap-4 border-t border-[#f2eee3]/16 pt-5 font-type text-[9px] leading-relaxed tracking-[0.08em] text-[#f2eee3]/42 sm:flex-row sm:items-center">
-          <p>A creative archive of real voices. This is not a counselling or crisis service.</p>
-          <Link to="/" className="border-b border-current pb-1 uppercase hover:text-[#f2eee3]">
-            return to the letters
+        <div className="mt-5 flex w-full max-w-[430px] items-start justify-between gap-5 font-type text-[10px] leading-relaxed text-ink/45">
+          <p>Real voices from the Stranger FM archive.</p>
+          <Link to="/" className="shrink-0 border-b border-current pb-0.5 uppercase">
+            back to letters
           </Link>
-        </footer>
+        </div>
       </div>
     </main>
   );
