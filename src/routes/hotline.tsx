@@ -10,6 +10,7 @@ import {
   Play,
   RotateCcw,
   SkipForward,
+  Volume2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { notes as builtInNotes } from "@/data/notes";
@@ -89,6 +90,7 @@ function Hotline() {
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const reduceMotion = useReducedMotion();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const menuAudioRef = useRef<HTMLAudioElement | null>(null);
   const previousNote = useRef<string | null>(null);
   const [lineState, setLineState] = useState<LineState>("incoming");
   const [selected, setSelected] = useState<Note | null>(null);
@@ -96,6 +98,7 @@ function Hotline() {
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [showNote, setShowNote] = useState(false);
+  const [menuPromptPlaying, setMenuPromptPlaying] = useState(false);
 
   const playableNotes = useMemo(
     () => notes.filter((note) => note.audioUrl && !heldForReview.has(note.id)),
@@ -127,6 +130,9 @@ function Hotline() {
 
   const chooseCategory = useCallback(
     (categoryId: CategoryId) => {
+      menuAudioRef.current?.pause();
+      setMenuPromptPlaying(false);
+
       const definition = categories.find((item) => item.id === categoryId);
       let pool =
         categoryId === "0"
@@ -159,8 +165,17 @@ function Hotline() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [chooseCategory, lineState]);
 
+  function playMenuPrompt() {
+    const prompt = menuAudioRef.current;
+    if (!prompt) return;
+
+    prompt.currentTime = 0;
+    void prompt.play().catch(() => setMenuPromptPlaying(false));
+  }
+
   function answerCall() {
     setLineState("menu");
+    playMenuPrompt();
   }
 
   function resumeAudio() {
@@ -199,6 +214,7 @@ function Hotline() {
     audioRef.current?.pause();
     setShowNote(false);
     setLineState("menu");
+    playMenuPrompt();
   }
 
   function hangUp() {
@@ -207,6 +223,11 @@ function Hotline() {
       audio.pause();
       audio.currentTime = 0;
     }
+    if (menuAudioRef.current) {
+      menuAudioRef.current.pause();
+      menuAudioRef.current.currentTime = 0;
+    }
+    setMenuPromptPlaying(false);
     setSelected(null);
     setCategory(null);
     setProgress(0);
@@ -247,6 +268,14 @@ function Hotline() {
         onEnded={playNext}
         onError={() => setLineState("ready")}
       />
+      <audio
+        ref={menuAudioRef}
+        src="/audio/hotline-menu.m4a"
+        preload="auto"
+        onPlay={() => setMenuPromptPlaying(true)}
+        onPause={() => setMenuPromptPlaying(false)}
+        onEnded={() => setMenuPromptPlaying(false)}
+      />
 
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
         <div className="iphone-call-shell">
@@ -279,7 +308,7 @@ function Hotline() {
                 <div className="iphone-caller-copy">
                   <p className="iphone-call-kicker font-type">incoming voice</p>
                   <h1 className="iphone-caller-name">stranger.fm</h1>
-                  <p className="iphone-call-subtitle">a message is waiting for you</p>
+                  <p className="iphone-call-subtitle">answer to hear the message menu</p>
                 </div>
 
                 <motion.div
@@ -318,22 +347,33 @@ function Hotline() {
                 <div className="iphone-caller-copy iphone-caller-copy--compact">
                   <p className="iphone-call-kicker font-type">connected</p>
                   <h1 className="iphone-caller-name iphone-caller-name--small">
-                    what do you need?
+                    choose what you need
                   </h1>
-                  <p className="iphone-call-subtitle">press or tap a number</p>
+                  <p className="iphone-call-subtitle">tap a category or press 0–4</p>
                 </div>
 
-                <div className="iphone-number-pad">
+                <div className="iphone-voicemail-prompt" aria-live="polite">
+                  <Volume2 aria-hidden />
+                  <span>{menuPromptPlaying ? "voicemail menu playing…" : "ready for you"}</span>
+                  <button type="button" onClick={playMenuPrompt}>
+                    hear menu again
+                  </button>
+                </div>
+
+                <div className="iphone-category-list">
                   {categories.map((item) => (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => chooseCategory(item.id)}
-                      className={`iphone-number-key iphone-number-key--${item.id}`}
+                      className="iphone-category-choice"
                       aria-label={`Press ${item.id} for ${item.title}`}
                     >
-                      <span className="iphone-number-circle">{item.id}</span>
-                      <span className="iphone-number-label">{item.shortTitle}</span>
+                      <span className="iphone-category-number">{item.id}</span>
+                      <span className="iphone-category-copy">
+                        <strong>{item.shortTitle}</strong>
+                        <span>{item.title}</span>
+                      </span>
                     </button>
                   ))}
                 </div>

@@ -808,65 +808,118 @@
     font-size: 36px;
   }
 
-  .iphone-number-pad {
-    display: grid;
-    width: min(330px, 100%);
-    margin-block: auto;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: start;
-    gap: 24px 17px;
+  .iphone-voicemail-prompt {
+    display: flex;
+    align-items: center;
+    width: min(340px, 100%);
+    min-height: 40px;
+    margin-top: 16px;
+    padding: 8px 11px;
+    gap: 8px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 13px;
+    background: rgb(242 238 227 / 9%);
+    font-family: var(--font-type);
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 62%);
   }
 
-  .iphone-number-key {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    flex-direction: column;
-    gap: 8px;
+  .iphone-voicemail-prompt svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+  }
+
+  .iphone-voicemail-prompt span {
+    flex: 1;
+  }
+
+  .iphone-voicemail-prompt button {
+    flex: 0 0 auto;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgb(255 255 255 / 36%);
     color: #fff;
   }
 
-  .iphone-number-key--0 {
-    grid-column: 3;
+  .iphone-voicemail-prompt button:focus-visible {
+    outline: 1px dashed #fff;
+    outline-offset: 3px;
   }
 
-  .iphone-number-circle {
-    display: grid;
-    width: 72px;
-    height: 72px;
-    place-items: center;
-    border: 1px solid rgb(255 255 255 / 9%);
-    border-radius: 999px;
-    background: rgb(242 238 227 / 16%);
-    font-family: var(--font-sans);
-    font-size: 31px;
-    font-weight: 300;
-    box-shadow: inset 0 1px rgb(255 255 255 / 8%);
+  .iphone-category-list {
+    display: flex;
+    width: min(340px, 100%);
+    margin-block: 14px auto;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .iphone-category-choice {
+    display: flex;
+    width: 100%;
+    min-height: 54px;
+    align-items: center;
+    padding: 6px 14px 6px 8px;
+    gap: 12px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 17px;
+    background: rgb(242 238 227 / 12%);
+    color: #fff;
+    text-align: left;
     transition:
       transform 150ms ease,
       background-color 150ms ease;
   }
 
-  .iphone-number-label {
-    max-width: 92px;
+  .iphone-category-number {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 999px;
+    background: rgb(242 238 227 / 18%);
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .iphone-category-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .iphone-category-copy strong {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .iphone-category-copy > span {
     overflow: hidden;
     font-family: var(--font-type);
     font-size: 8px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.07em;
     text-overflow: ellipsis;
     text-transform: uppercase;
     white-space: nowrap;
-    color: rgb(255 255 255 / 62%);
+    color: rgb(255 255 255 / 52%);
   }
 
-  .iphone-number-key:hover .iphone-number-circle,
-  .iphone-number-key:focus-visible .iphone-number-circle {
-    transform: scale(1.06);
-    background: rgb(242 238 227 / 30%);
+  .iphone-category-choice:hover,
+  .iphone-category-choice:focus-visible {
+    transform: translateX(3px);
+    background: rgb(242 238 227 / 24%);
   }
 
-  .iphone-number-key:focus-visible {
+  .iphone-category-choice:focus-visible {
     outline: none;
+    box-shadow: 0 0 0 1px #fff;
   }
 
   .iphone-keypad-screen > .iphone-hangup-button {
@@ -1024,15 +1077,26 @@
       padding-bottom: 24px;
     }
 
-    .iphone-number-pad,
     .iphone-call-controls {
       gap-block: 19px;
     }
 
-    .iphone-number-circle,
     .iphone-control-circle {
       width: 66px;
       height: 66px;
+    }
+
+    .iphone-voicemail-prompt {
+      margin-top: 12px;
+    }
+
+    .iphone-category-list {
+      margin-block: 10px auto;
+      gap: 6px;
+    }
+
+    .iphone-category-choice {
+      min-height: 50px;
     }
 
     .iphone-note-peek {
