@@ -18,7 +18,7 @@ import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 
 type LineState = "incoming" | "menu" | "connecting" | "ready" | "playing" | "paused";
-type CategoryId = "1" | "2" | "3" | "4" | "0";
+type CategoryId = "1" | "2" | "0";
 
 const categories: Array<{
   id: CategoryId;
@@ -39,23 +39,26 @@ const categories: Array<{
     noteIds: ["003", "004", "006", "019"],
   },
   {
-    id: "3",
-    shortTitle: "worth",
-    title: "remember your worth",
-    noteIds: ["002", "005", "007", "008", "012", "015"],
-  },
-  {
-    id: "4",
-    shortTitle: "perspective",
-    title: "a different perspective",
-    noteIds: ["010", "014", "019"],
-  },
-  {
     id: "0",
     shortTitle: "surprise",
     title: "let the line choose",
     noteIds: [],
   },
+];
+
+const keypadKeys = [
+  { key: "1", letters: "" },
+  { key: "2", letters: "ABC" },
+  { key: "3", letters: "DEF" },
+  { key: "4", letters: "GHI" },
+  { key: "5", letters: "JKL" },
+  { key: "6", letters: "MNO" },
+  { key: "7", letters: "PQRS" },
+  { key: "8", letters: "TUV" },
+  { key: "9", letters: "WXYZ" },
+  { key: "*", letters: "" },
+  { key: "0", letters: "+" },
+  { key: "#", letters: "" },
 ];
 
 const heldForReview = new Set(["011", "013", "017", "023"]);
@@ -156,7 +159,7 @@ function Hotline() {
     if (lineState !== "menu") return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (["0", "1", "2", "3", "4"].includes(event.key)) {
+      if (categories.some((item) => item.id === event.key)) {
         chooseCategory(event.key as CategoryId);
       }
     };
@@ -170,6 +173,8 @@ function Hotline() {
     if (!prompt) return;
 
     prompt.currentTime = 0;
+    prompt.muted = false;
+    prompt.volume = 1;
     void prompt.play().catch(() => setMenuPromptPlaying(false));
   }
 
@@ -349,33 +354,52 @@ function Hotline() {
                   <h1 className="iphone-caller-name iphone-caller-name--small">
                     choose what you need
                   </h1>
-                  <p className="iphone-call-subtitle">tap a category or press 0–4</p>
+                  <p className="iphone-call-subtitle">tap 1, 2, or 0</p>
                 </div>
 
-                <div className="iphone-voicemail-prompt" aria-live="polite">
+                <button
+                  type="button"
+                  className={`iphone-voicemail-prompt ${menuPromptPlaying ? "is-playing" : ""}`}
+                  onClick={playMenuPrompt}
+                  aria-label={
+                    menuPromptPlaying
+                      ? "Replay voicemail instructions"
+                      : "Play voicemail instructions"
+                  }
+                >
                   <Volume2 aria-hidden />
-                  <span>{menuPromptPlaying ? "voicemail menu playing…" : "ready for you"}</span>
-                  <button type="button" onClick={playMenuPrompt}>
-                    hear menu again
-                  </button>
-                </div>
+                  <span>
+                    {menuPromptPlaying
+                      ? "voicemail instructions playing…"
+                      : "play voicemail instructions"}
+                  </span>
+                </button>
 
-                <div className="iphone-category-list">
-                  {categories.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => chooseCategory(item.id)}
-                      className="iphone-category-choice"
-                      aria-label={`Press ${item.id} for ${item.title}`}
-                    >
-                      <span className="iphone-category-number">{item.id}</span>
-                      <span className="iphone-category-copy">
-                        <strong>{item.shortTitle}</strong>
-                        <span>{item.title}</span>
-                      </span>
-                    </button>
-                  ))}
+                <div className="iphone-number-pad" aria-label="Voicemail keypad">
+                  {keypadKeys.map((keypadKey) => {
+                    const choice = categories.find((item) => item.id === keypadKey.key);
+
+                    return (
+                      <button
+                        key={keypadKey.key}
+                        type="button"
+                        onClick={() => choice && chooseCategory(choice.id)}
+                        className={`iphone-number-key ${choice ? "is-choice" : ""}`}
+                        aria-label={
+                          choice ? `Press ${choice.id} for ${choice.title}` : keypadKey.key
+                        }
+                        disabled={!choice}
+                      >
+                        <span className="iphone-number-circle">
+                          <span className="iphone-number-digit">{keypadKey.key}</span>
+                          {keypadKey.letters ? (
+                            <span className="iphone-number-letters">{keypadKey.letters}</span>
+                          ) : null}
+                        </span>
+                        <span className="iphone-number-category">{choice?.shortTitle ?? ""}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <button
