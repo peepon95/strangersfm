@@ -141,6 +141,12 @@ function Index() {
           <p className="mt-3 max-w-md font-type text-[11px] leading-relaxed text-ink/55 sm:text-sm">
             100 strangers. one handwritten message each. preserved in their own voice.
           </p>
+          <Link
+            to="/hotline"
+            className="mt-3 inline-block border-b border-ink/30 pb-0.5 font-type text-[9px] uppercase tracking-[0.12em] text-ink/55 transition-colors hover:border-ink hover:text-ink sm:text-[10px]"
+          >
+            try the listening line →
+          </Link>
         </div>
 
         <div className="border-t border-ink/30 pt-2 text-right font-type text-[10px] uppercase leading-relaxed tracking-[0.15em] text-ink/55 sm:text-xs">

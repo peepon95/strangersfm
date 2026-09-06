@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as HotlineRouteImport } from './routes/hotline'
 import { Route as NotesRouteImport } from './routes/notes'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -35,6 +36,11 @@ const AboutRoute = AboutRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HotlineRoute = HotlineRouteImport.update({
+  id: '/hotline',
+  path: '/hotline',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotesRoute = NotesRouteImport.update({
@@ -62,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -93,6 +102,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/hotline'
     | '/notes'
     | '/submit'
     | '/admin'
@@ -102,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/hotline'
     | '/notes'
     | '/submit'
     | '/admin'
@@ -112,6 +123,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/hotline'
     | '/notes'
     | '/submit'
     | '/_authenticated/admin'
@@ -123,6 +135,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  HotlineRoute: typeof HotlineRoute
   NotesRoute: typeof NotesRoute
   SubmitRoute: typeof SubmitRoute
   ApiPublicDriveSyncRoute: typeof ApiPublicDriveSyncRoute
@@ -156,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hotline': {
+      id: '/hotline'
+      path: '/hotline'
+      fullPath: '/hotline'
+      preLoaderRoute: typeof HotlineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notes': {
@@ -205,6 +225,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  HotlineRoute: HotlineRoute,
   NotesRoute: NotesRoute,
   SubmitRoute: SubmitRoute,
   ApiPublicDriveSyncRoute: ApiPublicDriveSyncRoute,

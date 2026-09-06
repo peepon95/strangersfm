@@ -5,6 +5,7 @@ const navItems = [
   { label: "Why this exists", to: "/about" },
   { label: "Every note", to: "/notes" },
   { label: "Write a note", to: "/submit" },
+  { label: "Listening line", to: "/hotline" },
 ] as const;
 
 export function SideNav() {
