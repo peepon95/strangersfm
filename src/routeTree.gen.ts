@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as HotlineRouteImport } from './routes/hotline'
 import { Route as NotesRouteImport } from './routes/notes'
 import { Route as SubmitRouteImport } from './routes/submit'
+import { Route as WalkmanRouteImport } from './routes/walkman'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicDriveSyncRouteImport } from './routes/api/public/drive-sync'
 
@@ -53,6 +54,11 @@ const SubmitRoute = SubmitRouteImport.update({
   path: '/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WalkmanRoute = WalkmanRouteImport.update({
+  id: '/walkman',
+  path: '/walkman',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
+  '/walkman': typeof WalkmanRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
+  '/walkman': typeof WalkmanRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/hotline': typeof HotlineRoute
   '/notes': typeof NotesRoute
   '/submit': typeof SubmitRoute
+  '/walkman': typeof WalkmanRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/public/drive-sync': typeof ApiPublicDriveSyncRoute
 }
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/hotline'
     | '/notes'
     | '/submit'
+    | '/walkman'
     | '/admin'
     | '/api/public/drive-sync'
   fileRoutesByTo: FileRoutesByTo
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/hotline'
     | '/notes'
     | '/submit'
+    | '/walkman'
     | '/admin'
     | '/api/public/drive-sync'
   id:
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/hotline'
     | '/notes'
     | '/submit'
+    | '/walkman'
     | '/_authenticated/admin'
     | '/api/public/drive-sync'
   fileRoutesById: FileRoutesById
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   HotlineRoute: typeof HotlineRoute
   NotesRoute: typeof NotesRoute
   SubmitRoute: typeof SubmitRoute
+  WalkmanRoute: typeof WalkmanRoute
   ApiPublicDriveSyncRoute: typeof ApiPublicDriveSyncRoute
 }
 
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/walkman': {
+      id: '/walkman'
+      path: '/walkman'
+      fullPath: '/walkman'
+      preLoaderRoute: typeof WalkmanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -228,6 +248,7 @@ const rootRouteChildren: RootRouteChildren = {
   HotlineRoute: HotlineRoute,
   NotesRoute: NotesRoute,
   SubmitRoute: SubmitRoute,
+  WalkmanRoute: WalkmanRoute,
   ApiPublicDriveSyncRoute: ApiPublicDriveSyncRoute,
 }
 export const routeTree = rootRouteImport

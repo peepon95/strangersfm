@@ -622,6 +622,346 @@
     background-position: center;
   }
 
+  .walkman-page {
+    background:
+      radial-gradient(circle at 50% 0%, rgb(255 255 255 / 70%), transparent 42%),
+      var(--archive-stage);
+  }
+
+  .walkman-heading {
+    border-bottom: 1px dashed rgb(45 55 58 / 20%);
+    padding-bottom: 20px;
+  }
+
+  .walkman-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    align-items: start;
+    gap: clamp(28px, 6vw, 76px);
+  }
+
+  .walkman-deck {
+    position: relative;
+    overflow: hidden;
+    min-height: 510px;
+    padding: clamp(20px, 4vw, 42px);
+    border: 1px solid rgb(38 45 45 / 28%);
+    border-radius: 10px 10px 24px 24px;
+    background: linear-gradient(115deg, rgb(255 255 255 / 8%), transparent 35%), #303938;
+    box-shadow:
+      0 24px 55px rgb(31 42 42 / 23%),
+      inset 0 1px rgb(255 255 255 / 14%);
+    color: #eae6d9;
+  }
+
+  .walkman-deck::after {
+    position: absolute;
+    right: 10%;
+    bottom: 12px;
+    left: 10%;
+    height: 1px;
+    background: rgb(255 255 255 / 13%);
+    content: "";
+  }
+
+  .walkman-deck-topline,
+  .walkman-deck-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: var(--font-type);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .walkman-deck-topline {
+    color: rgb(234 230 217 / 58%);
+  }
+
+  .walkman-cassette-bay {
+    position: relative;
+    display: grid;
+    min-height: 265px;
+    margin: 46px auto 36px;
+    align-content: center;
+    gap: 22px;
+    width: min(100%, 440px);
+    padding: 26px 30px 28px;
+    border: 1px solid rgb(18 25 24 / 50%);
+    border-radius: 7px;
+    background: #d7d0ba;
+    box-shadow:
+      inset 0 12px 24px rgb(255 255 255 / 20%),
+      inset 0 -15px 22px rgb(35 40 37 / 18%),
+      0 14px 25px rgb(0 0 0 / 25%);
+    color: #34403c;
+    transform: translateY(-18px);
+    transition: transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .walkman-cassette-bay.is-inserted {
+    transform: translateY(0);
+  }
+
+  .walkman-tape-window {
+    position: relative;
+    display: flex;
+    height: 112px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 42px;
+    overflow: hidden;
+    border: 8px solid #b7b09c;
+    border-radius: 5px;
+    background: #252b29;
+    box-shadow: inset 0 4px 12px rgb(0 0 0 / 55%);
+  }
+
+  .walkman-reel {
+    position: relative;
+    display: block;
+    width: 52px;
+    height: 52px;
+    border: 7px dotted #d9d0b8;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      #313b37 0 16%,
+      #b2a990 17% 24%,
+      #313b37 25% 44%,
+      #c9bea3 45% 52%,
+      #303936 53%
+    );
+  }
+
+  .walkman-reel.is-spinning {
+    animation: walkman-spin 1.1s linear infinite;
+  }
+
+  @keyframes walkman-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  .walkman-tape-line {
+    position: absolute;
+    top: 50%;
+    right: 82px;
+    left: 82px;
+    height: 4px;
+    background: #111817;
+    box-shadow: 0 1px rgb(255 255 255 / 12%);
+    transform: translateY(-50%);
+  }
+
+  .walkman-cassette-label {
+    display: grid;
+    gap: 7px;
+    text-align: center;
+    font-family: var(--font-type);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .walkman-cassette-label strong {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    text-transform: none;
+  }
+
+  .walkman-deck-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .walkman-deck-controls button {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgb(234 230 217 / 25%);
+    border-radius: 50%;
+    color: rgb(234 230 217 / 75%);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .walkman-deck-controls button:hover,
+  .walkman-deck-controls button:focus-visible {
+    border-color: rgb(234 230 217 / 70%);
+    color: #fff;
+    outline: none;
+    transform: translateY(-2px);
+  }
+
+  .walkman-deck-controls svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .walkman-deck-controls .walkman-play-button {
+    width: 64px;
+    height: 64px;
+    background: #e7dfcc;
+    color: #303936;
+  }
+
+  .walkman-deck-controls .walkman-play-button svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .walkman-progress {
+    height: 2px;
+    margin: 30px auto 22px;
+    width: min(440px, 100%);
+    overflow: hidden;
+    background: rgb(234 230 217 / 18%);
+  }
+
+  .walkman-progress span {
+    display: block;
+    height: 100%;
+    background: #e7dfcc;
+    transition: width 120ms linear;
+  }
+
+  .walkman-deck-footer {
+    color: rgb(234 230 217 / 53%);
+    font-size: 9px;
+  }
+
+  .walkman-insert-button {
+    border-bottom: 1px solid rgb(234 230 217 / 40%);
+    padding-bottom: 3px;
+    color: #e7dfcc;
+    transition:
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .walkman-insert-button:hover,
+  .walkman-insert-button:focus-visible {
+    border-color: #fff;
+    color: #fff;
+    outline: none;
+  }
+
+  .walkman-track-list {
+    max-height: 510px;
+    overflow-y: auto;
+    padding: 4px 3px 4px 0;
+  }
+
+  .walkman-track {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 20px;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    border-bottom: 1px dashed rgb(45 55 58 / 15%);
+    padding: 15px 8px;
+    text-align: left;
+    transition:
+      background 160ms ease,
+      padding 160ms ease;
+  }
+
+  .walkman-track:hover,
+  .walkman-track:focus-visible,
+  .walkman-track.is-active {
+    background: rgb(255 255 255 / 43%);
+    outline: none;
+  }
+
+  .walkman-track.is-active {
+    padding-left: 14px;
+  }
+
+  .walkman-track-copy {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .walkman-track-copy strong {
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .walkman-track-copy span {
+    font-family: var(--font-type);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(45 55 58 / 48%);
+  }
+
+  @media (max-width: 760px) {
+    .walkman-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .walkman-track-list {
+      max-height: none;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .walkman-page {
+      padding-top: 94px;
+    }
+
+    .walkman-heading h1 {
+      font-size: 38px;
+    }
+
+    .walkman-deck {
+      min-height: 470px;
+      padding: 18px;
+    }
+
+    .walkman-cassette-bay {
+      min-height: 235px;
+      margin-top: 38px;
+      padding-inline: 18px;
+    }
+
+    .walkman-tape-window {
+      padding-inline: 22px;
+    }
+
+    .walkman-tape-line {
+      right: 56px;
+      left: 56px;
+    }
+
+    .walkman-reel {
+      width: 44px;
+      height: 44px;
+    }
+
+    .walkman-deck-footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
   .iphone-call-shell {
     position: relative;
     width: min(430px, 100%);
