@@ -56,6 +56,14 @@ function About() {
 
         <div className="archive-rule my-8" />
 
+        <p className="text-[10px] uppercase leading-relaxed tracking-[0.14em] text-ink/45">
+          music credit: the song that inspired this space is "Wash." by Bon Iver. I do not own it,
+          and no rights are claimed. The soft loop playing here is a separate royalty free ambient
+          track.
+        </p>
+
+        <div className="archive-rule my-8" />
+
         <div className="flex flex-wrap gap-3">
           <Link
             to="/"
