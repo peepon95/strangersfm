@@ -7,23 +7,27 @@ import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
  */
 export function BackgroundMusic() {
   const ref = useRef<HTMLAudioElement | null>(null);
-  const [on, setOn] = useState(true);
-  const [, setStarted] = useState(false);
+  const [on, setOn] = useState(false);
+  const mutedByUser = useRef(false);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const sync = () => setOn(!el.paused);
+    el.addEventListener("play", sync);
+    el.addEventListener("pause", sync);
+
     const start = () => {
-      const el = ref.current;
-      if (!el || !el.paused) return;
+      if (mutedByUser.current || !el.paused) return;
       el.volume = 0.32;
-      el.play().then(
-        () => setStarted(true),
-        () => undefined,
-      );
+      el.play().catch(() => undefined);
     };
     start();
     const events = ["pointerdown", "pointerup", "click", "touchstart", "keydown", "scroll"];
     events.forEach((e) => window.addEventListener(e, start, { passive: true }));
     return () => {
+      el.removeEventListener("play", sync);
+      el.removeEventListener("pause", sync);
       events.forEach((e) => window.removeEventListener(e, start));
     };
   }, []);
