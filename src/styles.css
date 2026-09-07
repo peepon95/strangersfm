@@ -407,42 +407,33 @@
     box-shadow: 0 25px 42px rgb(43 52 55 / 20%);
   }
 
-  .mail-card--about {
-    transform: translateX(-145%) rotate(-13deg);
-  }
-
-  .mail-card--about:hover,
-  .mail-card--about:focus-within {
-    transform: translateX(-145%) translateY(-22px) rotate(-10deg);
-  }
-
   .mail-card--notes {
-    transform: translateX(-87%) rotate(-5deg);
+    transform: translateX(-100%) rotate(-9deg);
   }
 
   .mail-card--notes:hover,
   .mail-card--notes:focus-within {
-    transform: translateX(-87%) translateY(-24px) rotate(-3deg);
+    transform: translateX(-100%) translateY(-24px) rotate(-7deg);
   }
 
   .mail-card--write {
-    transform: translateX(-29%) rotate(6deg);
+    transform: translateX(0%) rotate(1deg);
   }
 
   .mail-card--write:hover,
   .mail-card--write:focus-within {
-    transform: translateX(-29%) translateY(-24px) rotate(4deg);
+    transform: translateX(0%) translateY(-24px) rotate(0deg);
   }
 
   .mail-card--pull {
     z-index: 14;
-    transform: translateX(29%) rotate(13deg);
+    transform: translateX(100%) rotate(9deg);
     background-color: #ece5d6;
   }
 
   .mail-card--pull:hover,
   .mail-card--pull:focus-within {
-    transform: translateX(29%) translateY(-24px) rotate(10deg);
+    transform: translateX(100%) translateY(-24px) rotate(7deg);
   }
 
   .mail-card-action {
@@ -523,6 +514,29 @@
 
   .mail-stack-caption {
     margin-top: -8px;
+  }
+
+  .mail-about-link {
+    position: absolute;
+    left: clamp(18px, 4vw, 52px);
+    bottom: clamp(18px, 4vh, 42px);
+    z-index: 20;
+    font-family: var(--font-type);
+    font-size: clamp(9px, 1vw, 11px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.62;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .mail-about-link:hover,
+  .mail-about-link:focus-visible {
+    opacity: 1;
+    transform: translateY(-2px);
+    outline: none;
   }
 
   .folder-layer {

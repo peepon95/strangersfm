@@ -10,12 +10,6 @@ const envelopeImage = "/images/open-envelope.png";
 
 const letters = [
   {
-    label: "why this exists",
-    note: "the story behind the notebook",
-    to: "/about",
-    className: "mail-card--about",
-  },
-  {
     label: "every note",
     note: "browse the handwritten letters",
     to: "/notes",
@@ -276,6 +270,13 @@ function Index() {
             : "Opening a small archive of handwritten voices."}
         </p>
       </section>
+
+      <Link
+        to="/about"
+        className="mail-about-link"
+      >
+        why this exists
+      </Link>
 
       <AnimatePresence>
         {note ? (
