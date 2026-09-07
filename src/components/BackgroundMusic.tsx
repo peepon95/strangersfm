@@ -45,12 +45,14 @@ export function BackgroundMusic() {
   const toggle = () => {
     const el = ref.current;
     if (!el) return;
-    if (on) {
-      el.pause();
-    } else {
+    if (el.paused) {
+      mutedByUser.current = false;
+      el.volume = 0.32;
       el.play().catch(() => undefined);
+    } else {
+      mutedByUser.current = true;
+      el.pause();
     }
-    setOn(!on);
   };
 
   return (
