@@ -271,6 +271,13 @@ function Index() {
         </p>
       </section>
 
+      <Link
+        to="/about"
+        className="mail-about-link"
+      >
+        why this exists
+      </Link>
+
       <AnimatePresence>
         {note ? (
           <motion.div
