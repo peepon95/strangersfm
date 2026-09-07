@@ -101,10 +101,15 @@ Once the notes are live, move every folder you just processed into the
 strangers are left at the top level:
 
 ```
-python3 scripts/archive_drive_folders.py --dry-run   # see what will move
-python3 scripts/archive_drive_folders.py             # move them all
-python3 scripts/archive_drive_folders.py <folderId>  # or just some
+python3 scripts/archive_drive_folders.py <folderId> <folderId> --dry-run
+python3 scripts/archive_drive_folders.py <folderId> <folderId>
 ```
 
-It creates `added into lovable` if it is missing. The sync route ignores that
-folder, so archived strangers are never re-imported.
+Pass the exact folder ids you just published (they are stored as
+`drive_folder_id` on each row). `--all` moves every folder sitting in the root,
+which is only safe when nothing new is waiting there.
+
+It creates `added into lovable` if it is missing, or reuses one that already
+exists (name match ignores case and stray spaces). The sync route skips that
+folder, so archived strangers are never re-imported and the root only ever
+shows strangers that still need work.
