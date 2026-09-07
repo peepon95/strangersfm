@@ -5,9 +5,13 @@ Run this after the notes are published, so the Drive root only ever shows
 folders that still need work.
 
 Usage:
-    python3 archive_drive_folders.py --dry-run
-    python3 archive_drive_folders.py                # move everything
-    python3 archive_drive_folders.py <id> <id> ...  # move only these folders
+    python3 archive_drive_folders.py <id> <id> ...  # move these folders
+    python3 archive_drive_folders.py <id> --dry-run # preview first
+    python3 archive_drive_folders.py --all          # move every folder in the root
+
+Only pass folders whose notes are already published. --all archives
+everything at the root, including strangers that were never imported, so use
+it only when the root holds nothing new.
 
 Needs LOVABLE_API_KEY and GOOGLE_DRIVE_API_KEY in the environment (they are
 already set in the Lovable sandbox).
@@ -78,8 +82,12 @@ def ensure_archive():
 
 
 def main():
-    args = [a for a in sys.argv[1:] if a != "--dry-run"]
+    flags = {"--dry-run", "--all"}
+    args = [a for a in sys.argv[1:] if a not in flags]
     dry = "--dry-run" in sys.argv
+    if not args and "--all" not in sys.argv:
+        print(__doc__)
+        sys.exit(1)
 
     archive_id = ensure_archive()
     folders = [
