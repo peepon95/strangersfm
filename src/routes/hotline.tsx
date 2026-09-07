@@ -147,6 +147,7 @@ function Hotline() {
       if (pool.length === 0) return;
 
       const note = pool[Math.floor(Math.random() * pool.length)];
+      if (!note) return;
       previousNote.current = note.id;
       setCategory(categoryId);
       setSelected(note);
@@ -319,7 +320,7 @@ function Hotline() {
                 <motion.div
                   aria-hidden
                   className="iphone-incoming-mark"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.06, 1] }}
+                  animate={reduceMotion ? {} : { scale: [1, 1.06, 1] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <PhoneCall strokeWidth={1.25} />
