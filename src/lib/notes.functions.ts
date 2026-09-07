@@ -24,6 +24,12 @@ const extractedHandwriting: Record<number, string> = {
   21: "/handwriting/note-021.png",
   22: "/handwriting/note-022.png",
   23: "/handwriting/note-023.png",
+  25: "/handwriting/note-025.png",
+  26: "/handwriting/note-026.png",
+  27: "/handwriting/note-027.png",
+  28: "/handwriting/note-028.png",
+  29: "/handwriting/note-029.png",
+  30: "/handwriting/note-030.png",
 };
 
 const cleanedAudio: Record<number, string> = {
@@ -44,6 +50,12 @@ const cleanedAudio: Record<number, string> = {
   19: "/audio/note-019.m4a",
   22: "/audio/note-022.m4a",
   23: "/audio/note-023.m4a",
+  25: "/audio/note-025.m4a",
+  26: "/audio/note-026.m4a",
+  27: "/audio/note-027.m4a",
+  28: "/audio/note-028.m4a",
+  29: "/audio/note-029.m4a",
+  30: "/audio/note-030.m4a",
 };
 
 
