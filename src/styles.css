@@ -516,6 +516,29 @@
     margin-top: -8px;
   }
 
+  .mail-about-link {
+    position: absolute;
+    left: clamp(18px, 4vw, 52px);
+    bottom: clamp(18px, 4vh, 42px);
+    z-index: 20;
+    font-family: var(--font-type);
+    font-size: clamp(9px, 1vw, 11px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.62;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .mail-about-link:hover,
+  .mail-about-link:focus-visible {
+    opacity: 1;
+    transform: translateY(-2px);
+    outline: none;
+  }
+
   .folder-layer {
     border: 1px solid rgb(45 55 58 / 14%);
     border-radius: 4px 4px 0 0;
