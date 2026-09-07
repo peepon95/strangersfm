@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { notes as builtInNotes } from "@/data/notes";
 import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
+import "./voice-recorder.css";
 
 const heldForReview = new Set(["011", "013", "017", "023"]);
 const meterBars = Array.from({ length: 12 }, (_, index) => index);
@@ -50,8 +51,9 @@ function Walkman() {
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
-  const [isInserted, setIsInserted] = useState(false);
+  const [isInserted, setIsInserted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -166,6 +168,14 @@ function Walkman() {
       <audio
         ref={audioRef}
         preload="metadata"
+        onPlaying={() => setIsRolling(true)}
+        onPause={() => setIsRolling(false)}
+        onWaiting={() => setIsRolling(false)}
+        onEmptied={() => setIsRolling(false)}
+        onError={() => {
+          setIsRolling(false);
+          setIsPlaying(false);
+        }}
         onTimeUpdate={updateProgress}
         onLoadedMetadata={updateProgress}
         onEnded={next}
@@ -192,11 +202,21 @@ function Walkman() {
         </header>
 
         <div className="walkman-layout mt-10 sm:mt-14">
-          <section className="walkman-deck" aria-label="Stranger FM cassette player">
+          <section
+            className={`walkman-deck silver-recorder ${isRolling ? "is-rolling" : ""}`}
+            aria-label="Stranger FM cassette player"
+          >
+            <div className="recorder-speaker" aria-hidden="true" />
+            <span className="recorder-brand" aria-hidden="true">
+              stranger.fm
+            </span>
+            <span className="recorder-model" aria-hidden="true">
+              MICROCASSETTE RECORDER
+            </span>
             <div className="walkman-deck-topline">
-              <span>stranger.fm voice deck · model 100</span>
-              <span className={isPlaying ? "walkman-status-light is-on" : "walkman-status-light"}>
-                {isPlaying ? "on air" : isInserted ? "tape loaded" : "standby"}
+              <span>MC · 100</span>
+              <span className={isRolling ? "walkman-status-light is-on" : "walkman-status-light"}>
+                {isRolling ? "PLAY" : "READY"}
               </span>
             </div>
 
@@ -211,21 +231,24 @@ function Walkman() {
                 <span className="walkman-cassette-screws" aria-hidden />
                 <span className="walkman-tape-window" aria-hidden>
                   <span
-                    className={`walkman-reel walkman-reel--left ${isPlaying ? "is-spinning" : ""}`}
+                    className={`walkman-reel walkman-reel--left ${isRolling ? "is-spinning" : ""}`}
                   />
                   <span
-                    className={`walkman-reel walkman-reel--right ${isPlaying ? "is-spinning" : ""}`}
+                    className={`walkman-reel walkman-reel--right ${isRolling ? "is-spinning" : ""}`}
                   />
                   <span className="walkman-tape-line" />
+                  <span className="recorder-tape-type">MC 60</span>
                 </span>
                 <span className="walkman-cassette-label">
                   <span>stranger.fm · side {tapeSide}</span>
-                  <strong>{activeNote ? `stranger no. ${activeNote.id}` : "no tape"}</strong>
+                  <strong>
+                    {activeNote ? `a little kindness · no. ${activeNote.id}` : "no tape"}
+                  </strong>
                   <span>voice archive / track {String(sideTrack).padStart(2, "0")}</span>
                 </span>
               </button>
               <span className="walkman-insert-prompt" aria-hidden>
-                {isInserted ? "tape engaged" : "press cassette to insert"}
+                {isInserted ? "press play to listen" : "press the door to close + play"}
               </span>
             </div>
 
