@@ -58,7 +58,9 @@ const cleanedAudio: Record<number, string> = {
   28: "/audio/note-028.m4a",
   29: "/audio/note-029.m4a",
   30: "/audio/note-030.m4a",
+  31: "/audio/note-031.m4a",
 };
+
 
 
 /** Notes uploaded through the admin page, readable by everyone. */
