@@ -50,6 +50,12 @@ const cleanedAudio: Record<number, string> = {
   19: "/audio/note-019.m4a",
   22: "/audio/note-022.m4a",
   23: "/audio/note-023.m4a",
+  25: "/audio/note-025.m4a",
+  26: "/audio/note-026.m4a",
+  27: "/audio/note-027.m4a",
+  28: "/audio/note-028.m4a",
+  29: "/audio/note-029.m4a",
+  30: "/audio/note-030.m4a",
 };
 
 
