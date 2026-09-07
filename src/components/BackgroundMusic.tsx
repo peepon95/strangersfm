@@ -8,7 +8,7 @@ import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
 export function BackgroundMusic() {
   const ref = useRef<HTMLAudioElement | null>(null);
   const [on, setOn] = useState(true);
-  const [started, setStarted] = useState(false);
+  const [, setStarted] = useState(false);
 
   useEffect(() => {
     const start = () => {
