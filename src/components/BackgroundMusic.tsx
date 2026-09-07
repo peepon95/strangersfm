@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import ambient from "@/assets/ambient-loop.mp3.asset.json";
+import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
 
 /**
  * Soft ambient loop that starts on the visitor's first interaction
