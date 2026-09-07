@@ -7,26 +7,30 @@ import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
  */
 export function BackgroundMusic() {
   const ref = useRef<HTMLAudioElement | null>(null);
-  const [on, setOn] = useState(true);
-  const [started, setStarted] = useState(false);
+  const [on, setOn] = useState(false);
+  const mutedByUser = useRef(false);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const sync = () => setOn(!el.paused);
+    el.addEventListener("play", sync);
+    el.addEventListener("pause", sync);
+
     const start = () => {
-      const el = ref.current;
-      if (!el || started) return;
+      if (mutedByUser.current || !el.paused) return;
       el.volume = 0.32;
-      el.play().then(
-        () => setStarted(true),
-        () => undefined,
-      );
+      el.play().catch(() => undefined);
     };
-    window.addEventListener("pointerdown", start);
-    window.addEventListener("keydown", start);
+    start();
+    const events = ["pointerdown", "pointerup", "click", "touchstart", "keydown", "scroll"];
+    events.forEach((e) => window.addEventListener(e, start, { passive: true }));
     return () => {
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
+      el.removeEventListener("play", sync);
+      el.removeEventListener("pause", sync);
+      events.forEach((e) => window.removeEventListener(e, start));
     };
-  }, [started]);
+  }, []);
 
   useEffect(() => {
     const duck = (e: Event) => {
@@ -41,12 +45,14 @@ export function BackgroundMusic() {
   const toggle = () => {
     const el = ref.current;
     if (!el) return;
-    if (on) {
-      el.pause();
-    } else {
+    if (el.paused) {
+      mutedByUser.current = false;
+      el.volume = 0.32;
       el.play().catch(() => undefined);
+    } else {
+      mutedByUser.current = true;
+      el.pause();
     }
-    setOn(!on);
   };
 
   return (
@@ -70,7 +76,7 @@ export function BackgroundMusic() {
             />
           ))}
         </span>
-        {on ? "music on" : "music off"}
+        {on ? "music on" : "play music"}
       </button>
     </>
   );
