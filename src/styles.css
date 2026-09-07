@@ -408,32 +408,32 @@
   }
 
   .mail-card--notes {
-    transform: translateX(-100%) rotate(-9deg);
+    transform: translateX(-87%) rotate(-5deg);
   }
 
   .mail-card--notes:hover,
   .mail-card--notes:focus-within {
-    transform: translateX(-100%) translateY(-24px) rotate(-7deg);
+    transform: translateX(-87%) translateY(-24px) rotate(-3deg);
   }
 
   .mail-card--write {
-    transform: translateX(0%) rotate(1deg);
+    transform: translateX(-29%) rotate(6deg);
   }
 
   .mail-card--write:hover,
   .mail-card--write:focus-within {
-    transform: translateX(0%) translateY(-24px) rotate(0deg);
+    transform: translateX(-29%) translateY(-24px) rotate(4deg);
   }
 
   .mail-card--pull {
     z-index: 14;
-    transform: translateX(100%) rotate(9deg);
+    transform: translateX(29%) rotate(13deg);
     background-color: #ece5d6;
   }
 
   .mail-card--pull:hover,
   .mail-card--pull:focus-within {
-    transform: translateX(100%) translateY(-24px) rotate(7deg);
+    transform: translateX(29%) translateY(-24px) rotate(10deg);
   }
 
   .mail-card-action {
