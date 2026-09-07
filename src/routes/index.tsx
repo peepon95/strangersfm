@@ -129,8 +129,8 @@ function Index() {
 
       <header className="relative z-20 mx-auto flex w-full max-w-6xl items-start justify-between gap-6">
         <div>
-          <p className="font-type text-[10px] uppercase tracking-[0.28em] text-ink/55 sm:text-xs">
-            an archive of voices
+          <p className="font-type text-[10px] tracking-[0.12em] text-ink/55 sm:text-xs">
+            Welcome to the nicest places on the internet.
           </p>
           <h1 className="mt-2 font-type text-2xl tracking-[-0.05em] text-ink sm:text-4xl">
             stranger.fm
@@ -147,10 +147,9 @@ function Index() {
         </div>
 
         <div className="border-t border-ink/30 pt-2 text-right font-type text-[10px] uppercase leading-relaxed tracking-[0.15em] text-ink/55 sm:text-xs">
-          <span className="block text-base text-ink sm:text-xl">
-            {String(notes.length).padStart(2, "0")} / {TOTAL_GOAL}
+          <span className="block whitespace-nowrap text-base text-ink sm:text-xl">
+            {String(notes.length).padStart(2, "0")} / {TOTAL_GOAL} letters
           </span>
-          letters found
         </div>
       </header>
 
@@ -182,10 +181,6 @@ function Index() {
       </div>
 
       <section aria-label="Choose a letter" className="mail-stack relative z-10 mx-auto max-w-5xl">
-        <p className="mail-stack-instruction font-type text-[10px] uppercase tracking-[0.18em] text-ink/50 sm:text-xs">
-          {menuOpen ? "choose a letter" : "a letter is arriving"}
-        </p>
-
         <div id="letter-menu" className={`mail-card-fan ${menuOpen ? "is-open" : "is-closed"}`}>
           <motion.div
             aria-hidden

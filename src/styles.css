@@ -408,32 +408,34 @@
   }
 
   .mail-card--notes {
-    transform: translateX(-87%) rotate(-5deg);
+    left: calc(50% - clamp(112px, 15vw, 150px));
+    transform: translateX(-50%) rotate(-5deg);
   }
 
   .mail-card--notes:hover,
   .mail-card--notes:focus-within {
-    transform: translateX(-87%) translateY(-24px) rotate(-3deg);
+    transform: translateX(-50%) translateY(-24px) rotate(-3deg);
   }
 
   .mail-card--write {
-    transform: translateX(-29%) rotate(6deg);
+    transform: translateX(-50%) rotate(6deg);
   }
 
   .mail-card--write:hover,
   .mail-card--write:focus-within {
-    transform: translateX(-29%) translateY(-24px) rotate(4deg);
+    transform: translateX(-50%) translateY(-24px) rotate(4deg);
   }
 
   .mail-card--pull {
     z-index: 14;
-    transform: translateX(29%) rotate(13deg);
+    left: calc(50% + clamp(112px, 15vw, 150px));
+    transform: translateX(-50%) rotate(13deg);
     background-color: #ece5d6;
   }
 
   .mail-card--pull:hover,
   .mail-card--pull:focus-within {
-    transform: translateX(29%) translateY(-24px) rotate(10deg);
+    transform: translateX(-50%) translateY(-24px) rotate(10deg);
   }
 
   .mail-card-action {
@@ -1330,30 +1332,33 @@
     }
 
     .mail-card--notes {
-      transform: translateX(-70%) rotate(-4deg);
+      left: calc(50% - 30vw);
+      transform: translateX(-50%) rotate(-4deg);
     }
 
     .mail-card--notes:hover,
     .mail-card--notes:focus-within {
-      transform: translateX(-70%) translateY(-16px) rotate(-2deg);
+      transform: translateX(-50%) translateY(-16px) rotate(-2deg);
     }
 
     .mail-card--write {
-      transform: translateX(-29%) rotate(5deg);
+      left: 50%;
+      transform: translateX(-50%) rotate(5deg);
     }
 
     .mail-card--write:hover,
     .mail-card--write:focus-within {
-      transform: translateX(-29%) translateY(-16px) rotate(3deg);
+      transform: translateX(-50%) translateY(-16px) rotate(3deg);
     }
 
     .mail-card--pull {
-      transform: translateX(3%) rotate(12deg);
+      left: calc(50% + 30vw);
+      transform: translateX(-50%) rotate(12deg);
     }
 
     .mail-card--pull:hover,
     .mail-card--pull:focus-within {
-      transform: translateX(3%) translateY(-16px) rotate(9deg);
+      transform: translateX(-50%) translateY(-16px) rotate(9deg);
     }
 
     .mail-envelope {
