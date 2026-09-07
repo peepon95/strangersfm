@@ -36,10 +36,13 @@ const letters = [
 ] as const;
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    note: typeof search.note === "string" && /^\d{3}$/.test(search.note) ? search.note : undefined,
-    from: search.from === "notes" ? ("notes" as const) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { note?: string; from?: "notes" } => {
+    const parsed: { note?: string; from?: "notes" } = {};
+    const note = search["note"];
+    if (typeof note === "string" && /^\d{3}$/.test(note)) parsed.note = note;
+    if (search["from"] === "notes") parsed.from = "notes";
+    return parsed;
+  },
   head: () => ({
     meta: [
       { title: "stranger fm · an archive of handwritten notes" },
