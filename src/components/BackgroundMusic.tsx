@@ -76,7 +76,7 @@ export function BackgroundMusic() {
             />
           ))}
         </span>
-        {on ? "music on" : "music off"}
+        {on ? "music on" : "play music"}
       </button>
     </>
   );
