@@ -13,20 +13,20 @@ export function BackgroundMusic() {
   useEffect(() => {
     const start = () => {
       const el = ref.current;
-      if (!el || started) return;
+      if (!el || !el.paused) return;
       el.volume = 0.32;
       el.play().then(
         () => setStarted(true),
         () => undefined,
       );
     };
-    window.addEventListener("pointerdown", start);
-    window.addEventListener("keydown", start);
+    start();
+    const events = ["pointerdown", "pointerup", "click", "touchstart", "keydown", "scroll"];
+    events.forEach((e) => window.addEventListener(e, start, { passive: true }));
     return () => {
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
+      events.forEach((e) => window.removeEventListener(e, start));
     };
-  }, [started]);
+  }, []);
 
   useEffect(() => {
     const duck = (e: Event) => {
