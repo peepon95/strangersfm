@@ -305,14 +305,19 @@ function Walkman() {
                 aria-hidden={isInserted}
               >
                 <span className="loose-tape-screws" aria-hidden />
+                <span className="loose-tape-edge" aria-hidden>
+                  <i />
+                  <i />
+                  <i />
+                </span>
                 <span className="loose-tape-reels" aria-hidden="true">
                   <i />
                   <i />
                 </span>
                 <span className="loose-tape-label">
-                  <span>STRANGER.FM · MC 60</span>
+                  <span>STRANGER.FM · NORMAL POSITION</span>
                   <b>
-                    VOICE {activeNote?.id ?? "000"} · SIDE {tapeSide}
+                    VOICE {activeNote?.id ?? "000"} · {tapeSide} · C90
                   </b>
                 </span>
                 <span className="loose-tape-caption">
