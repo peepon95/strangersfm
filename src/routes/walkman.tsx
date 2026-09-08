@@ -7,7 +7,7 @@ import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 import "./voice-recorder.css";
 
-const heldForReview = new Set(["011", "013", "017", "023"]);
+const heldForReview = new Set(["011", "013", "017"]);
 const meterBars = Array.from({ length: 12 }, (_, index) => index);
 
 function formatTime(seconds: number) {
@@ -51,7 +51,10 @@ function Walkman() {
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
-  const [isInserted, setIsInserted] = useState(true);
+  const [isInserted, setIsInserted] = useState(false);
+  const [isInserting, setIsInserting] = useState(false);
+  const insertionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const soundContext = useRef<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -59,6 +62,61 @@ function Walkman() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.82);
+  const recordedCount = notes.filter((note) => note.audioUrl).length;
+  const reviewCount = recordedCount - playableNotes.length;
+
+  useEffect(
+    () => () => {
+      if (insertionTimer.current) clearTimeout(insertionTimer.current);
+      void soundContext.current?.close();
+    },
+    [],
+  );
+
+  const mechanicalSound = useCallback(
+    (inserting: boolean) => {
+      try {
+        const context = soundContext.current ?? new AudioContext();
+        soundContext.current = context;
+        void context.resume();
+        // Short filtered noise bursts: cassette slide, latch, then the play key.
+        const bursts = inserting
+          ? [
+              [0, 0.24, 0.035],
+              [0.58, 0.065, 0.12],
+              [0.82, 0.035, 0.09],
+            ]
+          : [[0, 0.06, 0.1]];
+        for (const [delay, duration, level] of bursts) {
+          const buffer = context.createBuffer(
+            1,
+            Math.ceil(context.sampleRate * duration),
+            context.sampleRate,
+          );
+          const samples = buffer.getChannelData(0);
+          for (let i = 0; i < samples.length; i++)
+            samples[i] = (Math.random() * 2 - 1) * Math.exp((-5 * i) / samples.length);
+          const source = context.createBufferSource();
+          source.buffer = buffer;
+          const filter = context.createBiquadFilter();
+          filter.type = "lowpass";
+          filter.frequency.value = duration > 0.1 ? 900 : 2400;
+          const gain = context.createGain();
+          gain.gain.value = level * volume;
+          source.connect(filter).connect(gain).connect(context.destination);
+          source.onended = () => {
+            source.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+          source.start(context.currentTime + delay);
+        }
+      } catch {
+        /* Audio feedback is optional when Web Audio is unavailable. */
+      }
+    },
+    [volume],
+  );
 
   const activeNote = playableNotes[trackIndex] ?? null;
   const activeAudioUrl = activeNote?.audioUrl;
@@ -95,17 +153,31 @@ function Walkman() {
   }, [activeAudioUrl, isInserted, isPlaying]);
 
   const insertAndPlay = useCallback(() => {
-    if (!activeNote) return;
-    setIsInserted(true);
-    setIsPlaying(true);
-  }, [activeNote]);
+    if (!activeNote || isInserting) return;
+    if (isInserted) {
+      setIsPlaying(true);
+      return;
+    }
+    mechanicalSound(true);
+    setIsInserting(true);
+    insertionTimer.current = setTimeout(() => {
+      setIsInserted(true);
+      setIsInserting(false);
+      setIsPlaying(true);
+      insertionTimer.current = null;
+    }, 1100);
+  }, [activeNote, isInserting, isInserted, mechanicalSound]);
 
   const pause = useCallback(() => setIsPlaying(false), []);
 
   const ejectTape = useCallback(() => {
+    if (insertionTimer.current) clearTimeout(insertionTimer.current);
+    insertionTimer.current = null;
+    setIsInserting(false);
+    mechanicalSound(false);
     setIsPlaying(false);
     setIsInserted(false);
-  }, []);
+  }, [mechanicalSound]);
 
   const next = useCallback(() => {
     if (playableNotes.length === 0) return;
@@ -119,16 +191,14 @@ function Walkman() {
       setTrackIndex((index) => (index + 1) % playableNotes.length);
     }
 
-    setIsPlaying(true);
-    setIsInserted(true);
-  }, [isShuffling, playableNotes.length]);
+    insertAndPlay();
+  }, [isShuffling, playableNotes.length, insertAndPlay]);
 
   const previous = useCallback(() => {
     if (playableNotes.length === 0) return;
     setTrackIndex((index) => (index - 1 + playableNotes.length) % playableNotes.length);
-    setIsPlaying(true);
-    setIsInserted(true);
-  }, [playableNotes.length]);
+    insertAndPlay();
+  }, [playableNotes.length, insertAndPlay]);
 
   const togglePlayback = () => {
     if (!isInserted) {
@@ -159,8 +229,7 @@ function Walkman() {
 
   const selectTrack = (index: number) => {
     setTrackIndex(index);
-    setIsInserted(true);
-    setIsPlaying(true);
+    insertAndPlay();
   };
 
   return (
@@ -197,6 +266,10 @@ function Walkman() {
             </div>
             <p className="font-type text-[10px] uppercase tracking-[0.16em] text-ink/45">
               {playableNotes.length} voices on tape
+              <span className="block mt-2 normal-case tracking-normal">
+                {recordedCount} recorded · {reviewCount} awaiting review ·{" "}
+                {notes.length - recordedCount} without audio
+              </span>
             </p>
           </div>
         </header>
@@ -220,7 +293,28 @@ function Walkman() {
               </span>
             </div>
 
-            <div className={`walkman-cassette-slot ${isInserted ? "is-inserted" : ""}`}>
+            <div
+              className={`walkman-cassette-slot ${isInserted ? "is-inserted" : ""} ${isInserting ? "is-inserting" : ""}`}
+            >
+              <button
+                className="recorder-loose-tape"
+                type="button"
+                disabled={isInserting || isInserted}
+                onClick={insertAndPlay}
+                aria-label="Insert tape and play"
+                aria-hidden={isInserted}
+              >
+                <span className="loose-tape-label">
+                  STRANGER.FM <b>SIDE {tapeSide}</b>
+                </span>
+                <span className="loose-tape-reels" aria-hidden="true">
+                  <i />
+                  <i />
+                </span>
+                <span className="loose-tape-caption">
+                  {isInserting ? "loading your tape…" : "press to insert ↘"}
+                </span>
+              </button>
               <div className="walkman-slot-mouth" aria-hidden />
               <button
                 type="button"
@@ -248,7 +342,11 @@ function Walkman() {
                 </span>
               </button>
               <span className="walkman-insert-prompt" aria-hidden>
-                {isInserted ? "press play to listen" : "press the door to close + play"}
+                {isInserting
+                  ? "inserting tape…"
+                  : isInserted
+                    ? "press play to listen"
+                    : "press the tape to insert + play"}
               </span>
             </div>
 

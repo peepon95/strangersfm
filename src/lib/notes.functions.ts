@@ -36,7 +36,7 @@ const extractedHandwriting: Record<number, string> = {
 
 const cleanedAudio: Record<number, string> = {
   4: "/audio/note-004.m4a",
-  5: "/audio/note-005.m4a",
+  5: "/audio/note-005-enhanced-20260908.m4a",
   6: "/audio/note-006.m4a",
   7: "/audio/note-007.m4a",
   8: "/audio/note-008.m4a",
