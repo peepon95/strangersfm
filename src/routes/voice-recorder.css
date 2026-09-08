@@ -1,6 +1,10 @@
 /* Silver microcassette recorder: dimensions scale together, including hardware. */
 .walkman-page {
-  background: radial-gradient(ellipse at 28% 48%, #c4c9ae 0, #e4e6d8 40%, #f5f3e9 85%);
+  background-color: #e7ecee;
+  background-image:
+    radial-gradient(ellipse at 28% 48%, rgb(181 202 211 / 34%), transparent 38%),
+    radial-gradient(circle at 50% -10%, rgb(255 255 255 / 82%), transparent 47%),
+    repeating-linear-gradient(96deg, transparent 0 7px, rgb(38 49 54 / 1.5%) 7px 8px);
 }
 .walkman-layout {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
