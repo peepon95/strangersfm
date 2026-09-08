@@ -304,15 +304,19 @@ function Walkman() {
                 aria-label="Insert tape and play"
                 aria-hidden={isInserted}
               >
-                <span className="loose-tape-label">
-                  STRANGER.FM <b>SIDE {tapeSide}</b>
-                </span>
+                <span className="loose-tape-screws" aria-hidden />
                 <span className="loose-tape-reels" aria-hidden="true">
                   <i />
                   <i />
                 </span>
+                <span className="loose-tape-label">
+                  <span>STRANGER.FM · MC 60</span>
+                  <b>
+                    VOICE {activeNote?.id ?? "000"} · SIDE {tapeSide}
+                  </b>
+                </span>
                 <span className="loose-tape-caption">
-                  {isInserting ? "loading your tape…" : "press to insert ↘"}
+                  {isInserting ? "loading…" : "press to insert"}
                 </span>
               </button>
               <div className="walkman-slot-mouth" aria-hidden />
@@ -485,7 +489,16 @@ function Walkman() {
                       onClick={() => selectTrack(index)}
                       className={`walkman-track ${index === trackIndex ? "is-active" : ""}`}
                     >
-                      <span className="font-type text-[10px] text-ink/40">{note.id}</span>
+                      <span
+                        className={`directory-cassette ${index % 2 === 0 ? "is-clear" : "is-dark"}`}
+                        aria-hidden="true"
+                      >
+                        <span className="directory-cassette-reels">
+                          <i />
+                          <i />
+                        </span>
+                        <b>SFM {note.id}</b>
+                      </span>
                       <span className="walkman-track-copy">
                         <strong>{note.translation ?? note.transcript}</strong>
                         <span>
