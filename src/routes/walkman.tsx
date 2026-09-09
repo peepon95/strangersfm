@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Pause, Play, Shuffle, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { duckMusic } from "@/components/BackgroundMusic";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
@@ -152,6 +153,11 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
       audio.pause();
     }
   }, [activeAudioUrl, isInserted, isPlaying]);
+
+  useEffect(() => {
+    duckMusic(isPlaying && isInserted);
+    return () => duckMusic(false);
+  }, [isInserted, isPlaying]);
 
   const insertAndPlay = useCallback(() => {
     if (!activeNote || isInserting) return;

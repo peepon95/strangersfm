@@ -42,23 +42,27 @@ function About() {
 
         <div className="space-y-6 text-sm leading-7 text-ink/70 sm:text-base sm:leading-8">
           <p>
-            Hi, I am Ee Von. 2026 has been a rough year with a lot of unexpected changes. But I
-            guess that is life. So I started stranger fm, where I ask strangers to write one piece
-            of advice or one message in my notebook. I am on a mission to meet 100 strangers.
+            Having one of those days? Yeah, I have been there too. Sometimes, a little pick-me-up
+            from a stranger is hard to come by. So I started stranger.fm: I ask strangers to write
+            one piece of advice or one message in my notebook, then say it in their own voice.
           </p>
           <p>
-            If you are feeling down, sad or demotivated, I hope these notes make your day and remind
-            you that we are all rooting for you.
+            If you are feeling down, sad, or unmotivated, I hope these words make your day a little
+            lighter and remind you that people you have never met are rooting for you.
           </p>
-          <p>This too shall pass. Go out there and make magic.</p>
-          <p className="pt-2">Always, Ee Von</p>
+          <p>This too shall pass. Go out there and make some magic.</p>
+          <p className="pt-2">
+            Always,
+            <br />
+            Ee Von
+          </p>
         </div>
 
         <div className="archive-rule my-8" />
 
         <p className="text-[10px] uppercase leading-relaxed tracking-[0.14em] text-ink/45">
-          music credit: "Wash." written and performed by Bon Iver, from Bon Iver, Bon Iver (2011).
-          I do not own this song and no rights are claimed. It plays here only because it inspired
+          music credit: "Wash." written and performed by Bon Iver, from Bon Iver, Bon Iver (2011). I
+          do not own this song and no rights are claimed. It plays here only because it inspired
           this space.
         </p>
 
@@ -69,7 +73,7 @@ function About() {
             to="/"
             className="archive-button px-6 py-3 text-[10px] uppercase tracking-[0.14em] sm:text-xs"
           >
-            pull a note
+            listen to the archive
           </Link>
           <Link
             to="/notes"

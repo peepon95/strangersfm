@@ -1,7 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import type { Note } from "@/data/notes";
@@ -134,8 +133,6 @@ function LetterIndex({ uploaded }: { uploaded: Note[] }) {
 
   return (
     <main className="archive-stage relative min-h-screen overflow-hidden px-4 pb-0 pt-7 sm:px-8 sm:pt-10">
-      <BackgroundMusic />
-
       <header className="relative z-20 mx-auto flex w-full max-w-6xl items-start justify-between gap-6">
         <div>
           <p className="font-type text-[10px] tracking-[0.12em] text-ink/55 sm:text-xs">

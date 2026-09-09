@@ -1138,8 +1138,8 @@
   }
 
   .walkman-track-list {
-    max-height: 390px;
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
     padding: 4px 3px 4px 0;
     content-visibility: auto;
   }
@@ -1176,13 +1176,12 @@
   }
 
   .walkman-track-copy strong {
-    overflow: hidden;
     font-family: var(--font-display);
     font-size: 17px;
     font-weight: 400;
     letter-spacing: -0.02em;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.15;
+    white-space: normal;
   }
 
   .walkman-track-copy span {

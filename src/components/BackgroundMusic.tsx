@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
 
+const AMBIENT_VOLUME = 0.14;
+const DUCKED_VOLUME = 0.035;
+const AMBIENT_URL = `https://project--${ambient.project_id}.lovable.app${ambient.url}`;
+
 /**
  * Soft ambient loop that starts on the visitor's first interaction
  * (browsers block audio before that) and ducks while a note plays.
@@ -17,9 +21,10 @@ export function BackgroundMusic() {
     el.addEventListener("play", sync);
     el.addEventListener("pause", sync);
 
-    const start = () => {
+    const start = (event?: Event) => {
+      if (event?.target instanceof Element && event.target.closest("[data-music-toggle]")) return;
       if (mutedByUser.current || !el.paused) return;
-      el.volume = 0.32;
+      el.volume = AMBIENT_VOLUME;
       el.play().catch(() => undefined);
     };
     start();
@@ -36,7 +41,7 @@ export function BackgroundMusic() {
     const duck = (e: Event) => {
       const el = ref.current;
       if (!el) return;
-      el.volume = (e as CustomEvent<boolean>).detail ? 0.07 : 0.32;
+      el.volume = (e as CustomEvent<boolean>).detail ? DUCKED_VOLUME : AMBIENT_VOLUME;
     };
     window.addEventListener("music-duck", duck);
     return () => window.removeEventListener("music-duck", duck);
@@ -47,7 +52,7 @@ export function BackgroundMusic() {
     if (!el) return;
     if (el.paused) {
       mutedByUser.current = false;
-      el.volume = 0.32;
+      el.volume = AMBIENT_VOLUME;
       el.play().catch(() => undefined);
     } else {
       mutedByUser.current = true;
@@ -57,9 +62,10 @@ export function BackgroundMusic() {
 
   return (
     <>
-      <audio ref={ref} src={ambient.url} loop preload="auto" />
+      <audio ref={ref} src={AMBIENT_URL} loop preload="auto" />
       <button
         type="button"
+        data-music-toggle
         onClick={toggle}
         aria-label={on ? "Turn the music off" : "Turn the music on"}
         className="fixed bottom-5 right-5 z-30 flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-xs uppercase tracking-[0.18em] text-muted-foreground backdrop-blur transition-colors hover:text-foreground"

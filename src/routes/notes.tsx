@@ -56,7 +56,7 @@ function NotesWall() {
             to="/"
             className="archive-button px-5 py-3 text-[10px] uppercase tracking-[0.13em] sm:text-xs"
           >
-            pull one at random
+            listen to the archive
           </Link>
         </div>
       </header>
