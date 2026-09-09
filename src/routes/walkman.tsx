@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Pause, Play, Shuffle, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { notes as builtInNotes } from "@/data/notes";
+import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
 import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 import "./voice-recorder.css";
@@ -39,11 +39,14 @@ export const Route = createFileRoute("/walkman")({
       The voice archive is resting. Please try again in a moment.
     </main>
   ),
-  component: Walkman,
+  component: WalkmanRoute,
 });
 
-function Walkman() {
-  const uploaded = Route.useLoaderData();
+function WalkmanRoute() {
+  return <VoiceArchive uploaded={Route.useLoaderData()} />;
+}
+
+export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const playableNotes = useMemo(
     () => notes.filter((note) => note.audioUrl && !heldForReview.has(note.id)),
@@ -62,8 +65,6 @@ function Walkman() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.82);
-  const recordedCount = notes.filter((note) => note.audioUrl).length;
-  const reviewCount = recordedCount - playableNotes.length;
 
   useEffect(
     () => () => {
@@ -258,17 +259,17 @@ function Walkman() {
           <div className="mt-3 flex flex-wrap items-end justify-between gap-5">
             <div>
               <h1 className="font-type text-4xl tracking-[-0.06em] text-ink sm:text-6xl">
-                press play, stay awhile
+                100 strangers. one handwritten message each.
               </h1>
               <p className="mt-3 max-w-lg font-type text-xs leading-relaxed text-ink/55 sm:text-sm">
-                Insert the tape and let every published voice play, one stranger after another.
+                Preserved in their own voice. Insert the tape and listen, one stranger after
+                another.
               </p>
             </div>
             <p className="font-type text-[10px] uppercase tracking-[0.16em] text-ink/45">
-              {playableNotes.length} voices on tape
+              {notes.length} / {TOTAL_GOAL} notes
               <span className="block mt-2 normal-case tracking-normal">
-                {recordedCount} recorded · {reviewCount} awaiting review ·{" "}
-                {notes.length - recordedCount} without audio
+                {playableNotes.length} voices on tape
               </span>
             </p>
           </div>

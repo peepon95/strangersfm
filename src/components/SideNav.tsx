@@ -1,12 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 
 const navItems = [
-  { label: "Pull a note", to: "/" },
   { label: "Why this exists", to: "/about" },
-  { label: "Every note", to: "/notes" },
-  { label: "Voice archive", to: "/walkman" },
   { label: "Write a note", to: "/submit" },
-  { label: "Listening line", to: "/hotline" },
+  { label: "Every note", to: "/notes" },
 ] as const;
 
 export function SideNav() {

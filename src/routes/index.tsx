@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { NoteReveal } from "@/components/NoteReveal";
 import { notes as builtInNotes, TOTAL_GOAL } from "@/data/notes";
+import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
+import { VoiceArchive } from "@/routes/walkman";
 
 const envelopeImage = "/images/open-envelope.png";
 
@@ -39,17 +41,16 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "stranger fm · an archive of handwritten notes" },
+      { title: "stranger fm · the voice archive" },
       {
         name: "description",
         content:
-          "100 strangers, one notebook. Open a letter and read a handwritten message to the world, in their own hand, in their own voice.",
+          "100 strangers. One handwritten message each. Preserved in their own voice. Press play and listen to the archive.",
       },
-      { property: "og:title", content: "stranger fm · an archive of handwritten notes" },
+      { property: "og:title", content: "stranger fm · the voice archive" },
       {
         property: "og:description",
-        content:
-          "Open a letter and read a handwritten message to the world, in a stranger's own hand and voice.",
+        content: "100 strangers. One handwritten message each. Preserved in their own voice.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -71,6 +72,14 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const uploaded = Route.useLoaderData();
+  const search = Route.useSearch();
+
+  if (!search.note) return <VoiceArchive uploaded={uploaded} />;
+
+  return <LetterIndex uploaded={uploaded} />;
+}
+
+function LetterIndex({ uploaded }: { uploaded: Note[] }) {
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -266,10 +275,7 @@ function Index() {
         </p>
       </section>
 
-      <Link
-        to="/about"
-        className="mail-about-link"
-      >
+      <Link to="/about" className="mail-about-link">
         why this exists
       </Link>
 
