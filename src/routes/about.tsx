@@ -42,15 +42,27 @@ function About() {
 
         <div className="space-y-6 text-sm leading-7 text-ink/70 sm:text-base sm:leading-8">
           <p>
-            Having one of those days? Yeah, I have been there too. Sometimes, a little pick-me-up
-            from a stranger is hard to come by. So I started stranger.fm: I ask strangers to write
-            one piece of advice or one message in my notebook, then say it in their own voice.
+            Having one of those days? Yeah, I’ve been there too. Sometimes, a few kind words from a
+            stranger might be all you need.
           </p>
           <p>
-            If you are feeling down, sad, or unmotivated, I hope these words make your day a little
-            lighter and remind you that people you have never met are rooting for you.
+            That’s why I started <strong>Strangers.fm</strong>, a little project where I’m on a
+            mission to meet 100 strangers and ask each of them to leave behind one piece of advice,
+            a thought, or simply something they think someone else might need to hear.
           </p>
-          <p>This too shall pass. Go out there and make some magic.</p>
+          <p>
+            I ask them to write it down in my notebook, and then record them saying it in their own
+            voice.
+          </p>
+          <p>
+            So if you’re feeling a little down, lost, sad, or just having one of those days, I hope
+            you find something here that makes your day a little lighter.
+          </p>
+          <p>
+            A reminder that somewhere out there, people you’ve never even met are rooting for you.
+          </p>
+          <p>Whatever you’re going through, this too shall pass.</p>
+          <p>Now go out there and make some magic. ✨</p>
           <p className="pt-2">
             Always,
             <br />
