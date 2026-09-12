@@ -8,7 +8,7 @@ import type { Note } from "@/data/notes";
 import { listPublishedNotes } from "@/lib/notes.functions";
 import "./voice-recorder.css";
 
-const heldForReview = new Set(["011"]);
+const heldForReview = new Set<string>();
 const meterBars = Array.from({ length: 12 }, (_, index) => index);
 
 function formatTime(seconds: number) {
