@@ -49,7 +49,7 @@ function NotesWall() {
               {String(notes.length).padStart(2, "0")} of {TOTAL_GOAL} strangers filed
             </p>
             <p className="mt-2 font-type text-[10px] leading-relaxed text-ink/45 sm:text-xs">
-              Choose a handwriting to open its letter and hear the voice behind it.
+              Choose a handwriting to hear the voice behind it in the archive.
             </p>
           </div>
           <Link
@@ -67,9 +67,8 @@ function NotesWall() {
         {notes.map((note, index) => (
           <Link
             key={note.id}
-            to="/"
-            search={{ note: note.id, from: "notes" }}
-            aria-label={`Open the letter from stranger number ${note.id}${
+            to="/walkman"
+            aria-label={`Open the voice archive for stranger number ${note.id}${
               note.audioUrl ? " and listen to their voice" : ""
             }`}
             className="archive-note-link group block break-inside-avoid focus:outline-none"
@@ -78,7 +77,7 @@ function NotesWall() {
             <figure className="archive-note-file p-4 sm:p-5">
               <figcaption className="mb-4 flex items-center justify-between gap-3 border-b border-dashed border-ink/20 pb-2 font-type text-[9px] uppercase tracking-[0.12em] text-ink/45">
                 <span>stranger no. {note.id}</span>
-                <span>{note.audioUrl ? "open + listen" : "open letter"} ↗</span>
+                <span>{note.audioUrl ? "open + listen" : "listen in archive"} ↗</span>
               </figcaption>
               <img
                 src={note.image}
