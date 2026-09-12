@@ -24,7 +24,7 @@ export const notes: Note[] = [
     image: "/handwriting/note-001.png",
     transcript: "Cari kekuatan diri, dan usahakan kekuatan itu hingga berjaya.",
     translation: "Find your own strength, and work at that strength until you succeed.",
-    audioUrl: "/audio/note-001-enhanced-20260908.m4a",
+    audioUrl: "/audio/note-001-clear-20260912.m4a",
   },
   {
     id: "002",
