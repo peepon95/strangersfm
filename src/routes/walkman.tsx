@@ -137,9 +137,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
 
   const activeNote = playableNotes[trackIndex] ?? null;
   const activeAudioUrl = activeNote?.audioUrl;
-  const sideBreak = Math.ceil(playableNotes.length / 2);
-  const tapeSide = trackIndex < sideBreak ? "A" : "B";
-  const sideTrack = trackIndex < sideBreak ? trackIndex + 1 : trackIndex - sideBreak + 1;
+  const trackNumber = trackIndex + 1;
 
   useEffect(() => {
     const audio = audioRef.current;
