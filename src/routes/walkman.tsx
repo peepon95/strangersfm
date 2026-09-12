@@ -337,7 +337,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                 <span className="loose-tape-label">
                   <span>STRANGER.FM · NORMAL POSITION</span>
                   <b>
-                    VOICE {activeNote?.id ?? "000"} · {tapeSide} · C90
+                    VOICE {activeNote?.id ?? "000"} · TRACK {String(trackNumber).padStart(2, "0")}
                   </b>
                 </span>
                 <span className="loose-tape-caption">
@@ -363,11 +363,11 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                   <span className="recorder-tape-type">MC 60</span>
                 </span>
                 <span className="walkman-cassette-label">
-                  <span>stranger.fm · side {tapeSide}</span>
+                  <span>stranger.fm</span>
                   <strong>
                     {activeNote ? `a little kindness · no. ${activeNote.id}` : "no tape"}
                   </strong>
-                  <span>voice archive / track {String(sideTrack).padStart(2, "0")}</span>
+                  <span>voice archive / track {String(trackNumber).padStart(2, "0")}</span>
                 </span>
               </button>
               <span className="walkman-insert-prompt" aria-hidden>
@@ -472,7 +472,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                   style={{ "--tape-progress": `${volume * 100}%` } as CSSProperties}
                 />
               </label>
-              <span>{isShuffling ? "tuning into strangers" : "continuous play · side A / B"}</span>
+              <span>{isShuffling ? "tuning into strangers" : "continuous play · all tracks"}</span>
             </div>
           </section>
 
@@ -527,11 +527,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                       <span className="walkman-track-copy">
                         <strong>{note.translation ?? note.transcript}</strong>
                         <span>
-                          side {index < sideBreak ? "A" : "B"} · track{" "}
-                          {String(index < sideBreak ? index + 1 : index - sideBreak + 1).padStart(
-                            2,
-                            "0",
-                          )}
+                          track {String(index + 1).padStart(2, "0")}
                         </span>
                       </span>
                       <span aria-hidden>{index === trackIndex && isPlaying ? "•••" : "↗"}</span>
