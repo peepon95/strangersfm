@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import ambient from "@/assets/wash-bon-iver.mp3.asset.json";
 
-const AMBIENT_VOLUME = 0.14;
-const DUCKED_VOLUME = 0.035;
+const AMBIENT_VOLUME = 0.07;
 const AMBIENT_URL = `https://project--${ambient.project_id}.lovable.app${ambient.url}`;
 
 /**
  * Soft ambient loop that starts on the visitor's first interaction
- * (browsers block audio before that) and ducks while a note plays.
+ * (browsers block audio before that) and pauses while a note plays.
  */
 export function BackgroundMusic() {
   const ref = useRef<HTMLAudioElement | null>(null);
   const [on, setOn] = useState(false);
   const mutedByUser = useRef(false);
+  const resumeAfterVoice = useRef(false);
+  const pausedForVoice = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -38,13 +39,29 @@ export function BackgroundMusic() {
   }, []);
 
   useEffect(() => {
-    const duck = (e: Event) => {
+    const pauseForVoice = (e: Event) => {
       const el = ref.current;
       if (!el) return;
-      el.volume = (e as CustomEvent<boolean>).detail ? DUCKED_VOLUME : AMBIENT_VOLUME;
+      const voiceIsPlaying = (e as CustomEvent<boolean>).detail;
+      if (voiceIsPlaying) {
+        if (!pausedForVoice.current) {
+          pausedForVoice.current = true;
+          resumeAfterVoice.current = !el.paused && !mutedByUser.current;
+          el.pause();
+        }
+        return;
+      }
+      if (pausedForVoice.current && resumeAfterVoice.current && !mutedByUser.current) {
+        resumeAfterVoice.current = false;
+        pausedForVoice.current = false;
+        el.volume = AMBIENT_VOLUME;
+        el.play().catch(() => undefined);
+      } else {
+        pausedForVoice.current = false;
+      }
     };
-    window.addEventListener("music-duck", duck);
-    return () => window.removeEventListener("music-duck", duck);
+    window.addEventListener("music-duck", pauseForVoice);
+    return () => window.removeEventListener("music-duck", pauseForVoice);
   }, []);
 
   const toggle = () => {
@@ -52,10 +69,14 @@ export function BackgroundMusic() {
     if (!el) return;
     if (el.paused) {
       mutedByUser.current = false;
+      resumeAfterVoice.current = false;
+      pausedForVoice.current = false;
       el.volume = AMBIENT_VOLUME;
       el.play().catch(() => undefined);
     } else {
       mutedByUser.current = true;
+      resumeAfterVoice.current = false;
+      pausedForVoice.current = false;
       el.pause();
     }
   };
