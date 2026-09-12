@@ -11,7 +11,7 @@ export const Route = createFileRoute("/submit")({
       {
         name: "description",
         content:
-          "Write one message to the world, snap your handwriting, say it out loud, and send it in. Your note joins the archive of 100 strangers.",
+          "Write one message to the world, snap your handwriting, say it out loud, and send it in. Your note joins the archive of 50 strangers.",
       },
       { property: "og:title", content: "Add your note · stranger fm" },
       {

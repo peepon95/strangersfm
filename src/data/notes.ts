@@ -16,7 +16,7 @@ export type Note = {
   clipEnd?: number;
 };
 
-export const TOTAL_GOAL = 100;
+export const TOTAL_GOAL = 50;
 
 export const notes: Note[] = [
   {

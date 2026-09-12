@@ -83,13 +83,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "stranger fm" },
       {
         name: "description",
-        content: "An archive of handwritten messages and voices from 100 strangers.",
+        content: "An archive of handwritten messages and voices from 50 strangers.",
       },
       { name: "author", content: "stranger fm" },
       { property: "og:title", content: "stranger fm" },
       {
         property: "og:description",
-        content: "A journal of handwritten messages and voices from 100 strangers.",
+        content: "A journal of handwritten messages and voices from 50 strangers.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

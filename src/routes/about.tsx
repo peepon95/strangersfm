@@ -9,13 +9,13 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Hi, I am Ee Von. I am asking 100 strangers to write down one message to the world, so that on a heavy day you can read a note from someone who is rooting for you.",
+          "Hi, I am Ee Von. I am asking 50 strangers to write down one message to the world, so that on a heavy day you can read a note from someone who is rooting for you.",
       },
       { property: "og:title", content: "About · stranger fm" },
       {
         property: "og:description",
         content:
-          "Why I am collecting 100 handwritten messages from 100 strangers, and what I hope you find here.",
+          "Why I am collecting 50 handwritten messages from 50 strangers, and what I hope you find here.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -47,8 +47,8 @@ function About() {
           </p>
           <p>
             That’s why I started <strong>Strangers.fm</strong>, a little project where I’m on a
-            mission to meet 100 strangers and ask each of them to leave behind one piece of advice,
-            a thought, or simply something they think someone else might need to hear.
+            mission to meet 50 strangers and ask each of them to leave behind one piece of advice, a
+            thought, or simply something they think someone else might need to hear.
           </p>
           <p>
             I ask them to write it down in my notebook, and then record them saying it in their own

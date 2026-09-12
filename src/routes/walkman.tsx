@@ -278,7 +278,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
           <div className="mt-3 flex flex-wrap items-end justify-between gap-5">
             <div>
               <h1 className="font-type text-4xl tracking-[-0.06em] text-ink sm:text-6xl">
-                100 strangers. one handwritten message each.
+                50 strangers. one handwritten message each.
               </h1>
               <p className="mt-3 max-w-lg font-type text-xs leading-relaxed text-ink/55 sm:text-sm">
                 Preserved in their own voice. Insert the tape and listen, one stranger after
@@ -526,9 +526,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                       </span>
                       <span className="walkman-track-copy">
                         <strong>{note.translation ?? note.transcript}</strong>
-                        <span>
-                          track {String(index + 1).padStart(2, "0")}
-                        </span>
+                        <span>track {String(index + 1).padStart(2, "0")}</span>
                       </span>
                       <span aria-hidden>{index === trackIndex && isPlaying ? "•••" : "↗"}</span>
                     </button>

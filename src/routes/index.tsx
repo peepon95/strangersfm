@@ -44,12 +44,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "100 strangers. One handwritten message each. Preserved in their own voice. Press play and listen to the archive.",
+          "50 strangers. One handwritten message each. Preserved in their own voice. Press play and listen to the archive.",
       },
       { property: "og:title", content: "stranger fm · the voice archive" },
       {
         property: "og:description",
-        content: "100 strangers. One handwritten message each. Preserved in their own voice.",
+        content: "50 strangers. One handwritten message each. Preserved in their own voice.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -142,7 +142,7 @@ function LetterIndex({ uploaded }: { uploaded: Note[] }) {
             stranger.fm
           </h1>
           <p className="mt-3 max-w-md font-type text-[11px] leading-relaxed text-ink/55 sm:text-sm">
-            100 strangers. one handwritten message each. preserved in their own voice.
+            50 strangers. one handwritten message each. preserved in their own voice.
           </p>
           <Link
             to="/hotline"
