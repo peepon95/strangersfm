@@ -49,10 +49,24 @@ function WalkmanRoute() {
 
 export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
-  const playableNotes = useMemo(
-    () => notes.filter((note) => note.audioUrl && !heldForReview.has(note.id)),
-    [notes],
-  );
+  /** The note that always opens the tape. */
+  const OPENING_NOTE = "006";
+  const orderedNotes = useMemo(() => {
+    const playable = notes.filter((note) => note.audioUrl && !heldForReview.has(note.id));
+    const opener = playable.filter((note) => note.id === OPENING_NOTE);
+    return [...opener, ...playable.filter((note) => note.id !== OPENING_NOTE)];
+  }, [notes]);
+  /** Shuffled after mount so the running order changes on every visit. */
+  const [playableNotes, setPlayableNotes] = useState<Note[]>(orderedNotes);
+
+  useEffect(() => {
+    const rest = orderedNotes.slice(1);
+    for (let i = rest.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rest[i], rest[j]] = [rest[j]!, rest[i]!];
+    }
+    setPlayableNotes([...orderedNotes.slice(0, 1), ...rest]);
+  }, [orderedNotes]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
   const [isInserted, setIsInserted] = useState(false);
@@ -123,9 +137,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
 
   const activeNote = playableNotes[trackIndex] ?? null;
   const activeAudioUrl = activeNote?.audioUrl;
-  const sideBreak = Math.ceil(playableNotes.length / 2);
-  const tapeSide = trackIndex < sideBreak ? "A" : "B";
-  const sideTrack = trackIndex < sideBreak ? trackIndex + 1 : trackIndex - sideBreak + 1;
+  const trackNumber = trackIndex + 1;
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -325,7 +337,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                 <span className="loose-tape-label">
                   <span>STRANGER.FM · NORMAL POSITION</span>
                   <b>
-                    VOICE {activeNote?.id ?? "000"} · {tapeSide} · C90
+                    VOICE {activeNote?.id ?? "000"} · TRACK {String(trackNumber).padStart(2, "0")}
                   </b>
                 </span>
                 <span className="loose-tape-caption">
@@ -351,11 +363,11 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                   <span className="recorder-tape-type">MC 60</span>
                 </span>
                 <span className="walkman-cassette-label">
-                  <span>stranger.fm · side {tapeSide}</span>
+                  <span>stranger.fm</span>
                   <strong>
                     {activeNote ? `a little kindness · no. ${activeNote.id}` : "no tape"}
                   </strong>
-                  <span>voice archive / track {String(sideTrack).padStart(2, "0")}</span>
+                  <span>voice archive / track {String(trackNumber).padStart(2, "0")}</span>
                 </span>
               </button>
               <span className="walkman-insert-prompt" aria-hidden>
@@ -460,7 +472,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                   style={{ "--tape-progress": `${volume * 100}%` } as CSSProperties}
                 />
               </label>
-              <span>{isShuffling ? "tuning into strangers" : "continuous play · side A / B"}</span>
+              <span>{isShuffling ? "tuning into strangers" : "continuous play · all tracks"}</span>
             </div>
           </section>
 
@@ -515,11 +527,7 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
                       <span className="walkman-track-copy">
                         <strong>{note.translation ?? note.transcript}</strong>
                         <span>
-                          side {index < sideBreak ? "A" : "B"} · track{" "}
-                          {String(index < sideBreak ? index + 1 : index - sideBreak + 1).padStart(
-                            2,
-                            "0",
-                          )}
+                          track {String(index + 1).padStart(2, "0")}
                         </span>
                       </span>
                       <span aria-hidden>{index === trackIndex && isPlaying ? "•••" : "↗"}</span>
