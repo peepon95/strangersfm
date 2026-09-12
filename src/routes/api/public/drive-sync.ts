@@ -102,7 +102,6 @@ async function transcribe(bytes: ArrayBuffer, filename: string, mimeType: string
   return body.text ?? "";
 }
 
-
 function extensionFor(name: string, fallback: string) {
   const dot = name.lastIndexOf(".");
   return dot > 0 ? name.slice(dot + 1).toLowerCase() : fallback;
@@ -115,18 +114,17 @@ async function runSync() {
     `'${DRIVE_ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
   );
   /** Folders already dealt with get tucked in here, so never look inside it. */
-  const folders = allFolders.filter(
-    (f) => f.name.trim().toLowerCase() !== "added into lovable",
-  );
-
+  const folders = allFolders.filter((f) => f.name.trim().toLowerCase() !== "added into lovable");
 
   const { data: existing, error: existingError } = await supabaseAdmin
     .from("stranger_notes")
-    .select("drive_folder_id, number");
+    .select("drive_folder_id, number, audio_url");
   if (existingError) throw existingError;
 
-  const seen = new Set(
-    (existing ?? []).map((r) => r.drive_folder_id).filter((v): v is string => !!v),
+  const existingByFolder = new Map(
+    (existing ?? [])
+      .filter((row): row is typeof row & { drive_folder_id: string } => !!row.drive_folder_id)
+      .map((row) => [row.drive_folder_id, row]),
   );
   /** The site ships with three notes built in, so synced numbers start after them. */
   let nextNumber = Math.max(3, ...(existing ?? []).map((r) => r.number ?? 0)) + 1;
@@ -135,7 +133,51 @@ async function runSync() {
   const skipped: string[] = [];
 
   for (const folder of folders) {
-    if (seen.has(folder.id)) continue;
+    const saved = existingByFolder.get(folder.id);
+    /**
+     * A previous sync can contain the note image but no recording (for example
+     * when a large Drive video was added later). Backfill that media without
+     * creating a duplicate stranger row.
+     */
+    if (saved) {
+      if (saved.audio_url) continue;
+
+      const files = await driveList(`'${folder.id}' in parents and trashed = false`);
+      const media = files.find(
+        (file) => file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/"),
+      );
+      if (!media) {
+        skipped.push(`${folder.name}: no recording yet`);
+        continue;
+      }
+      if (/x-msvideo/i.test(media.mimeType)) {
+        skipped.push(
+          `${folder.name}: the recording is an .AVI, save it as MP4 or M4A and it will come in`,
+        );
+        continue;
+      }
+
+      const isMov = /quicktime/i.test(media.mimeType) || /\.mov$/i.test(media.name);
+      const mediaType = isMov ? "video/mp4" : media.mimeType;
+      const mediaName = isMov ? media.name.replace(/\.mov$/i, ".mp4") : media.name;
+      const mediaPath = `drive/${folder.id}/voice.${extensionFor(mediaName, "mp4")}`;
+      await streamToStorage(supabaseAdmin, media.id, mediaPath, mediaType);
+
+      const signed = await supabaseAdmin.storage
+        .from("note-media")
+        .createSignedUrl(mediaPath, LINK_LIFETIME);
+      if (signed.error || !signed.data) {
+        throw signed.error ?? new Error("Could not link the voice");
+      }
+      const { error: updateError } = await supabaseAdmin
+        .from("stranger_notes")
+        .update({ audio_url: signed.data.signedUrl, drive_media_file_id: media.id })
+        .eq("number", saved.number);
+      if (updateError) throw updateError;
+
+      added.push(`${folder.name}: recording backfilled`);
+      continue;
+    }
 
     const files = await driveList(`'${folder.id}' in parents and trashed = false`);
     const image = files.find((f) => f.mimeType.startsWith("image/"));
@@ -230,7 +272,6 @@ async function runSync() {
         }
       }
     }
-
 
     const { error: insertError } = await supabaseAdmin.from("stranger_notes").insert({
       number: nextNumber,
