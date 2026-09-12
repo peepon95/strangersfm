@@ -82,13 +82,14 @@ export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
         soundContext.current = context;
         void context.resume();
         // Short filtered noise bursts: cassette slide, latch, then the play key.
-        const bursts = inserting
+        const bursts: Array<[number, number, number]> = inserting
           ? [
               [0, 0.24, 0.035],
               [0.58, 0.065, 0.12],
               [0.82, 0.035, 0.09],
             ]
           : [[0, 0.06, 0.1]];
+
         for (const [delay, duration, level] of bursts) {
           const buffer = context.createBuffer(
             1,
