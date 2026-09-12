@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 
 const navItems = [
-  { label: "Why this exists", to: "/about" },
+  { label: "About", to: "/about" },
   { label: "Write a note", to: "/submit" },
   { label: "Every note", to: "/notes" },
 ] as const;
