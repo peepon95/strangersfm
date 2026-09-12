@@ -49,10 +49,24 @@ function WalkmanRoute() {
 
 export function VoiceArchive({ uploaded }: { uploaded: Note[] }) {
   const notes = useMemo(() => [...builtInNotes, ...uploaded], [uploaded]);
-  const playableNotes = useMemo(
-    () => notes.filter((note) => note.audioUrl && !heldForReview.has(note.id)),
-    [notes],
-  );
+  /** The note that always opens the tape. */
+  const OPENING_NOTE = "006";
+  const orderedNotes = useMemo(() => {
+    const playable = notes.filter((note) => note.audioUrl && !heldForReview.has(note.id));
+    const opener = playable.filter((note) => note.id === OPENING_NOTE);
+    return [...opener, ...playable.filter((note) => note.id !== OPENING_NOTE)];
+  }, [notes]);
+  /** Shuffled after mount so the running order changes on every visit. */
+  const [playableNotes, setPlayableNotes] = useState<Note[]>(orderedNotes);
+
+  useEffect(() => {
+    const rest = orderedNotes.slice(1);
+    for (let i = rest.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rest[i], rest[j]] = [rest[j]!, rest[i]!];
+    }
+    setPlayableNotes([...orderedNotes.slice(0, 1), ...rest]);
+  }, [orderedNotes]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [trackIndex, setTrackIndex] = useState(0);
   const [isInserted, setIsInserted] = useState(false);
