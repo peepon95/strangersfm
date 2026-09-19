@@ -76,6 +76,7 @@ const cleanedAudio: Record<number, string> = {
   36: "/audio/note-036.m4a",
   37: "/audio/note-037.m4a",
   38: "/audio/note-038.m4a",
+  39: "/audio/note-039.m4a",
   40: "/audio/note-040.m4a",
 };
 
